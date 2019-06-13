@@ -1,4 +1,5 @@
 # set working directory
+library("IATTCassessment")
 Dir <- "C:/Users/hkxu/OneDrive - IATTC/IATTC/stock assessment/Spatial Model/LL Catch/2/"
 
 # load both gridded data and FSR data
