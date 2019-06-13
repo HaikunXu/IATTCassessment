@@ -1,7 +1,10 @@
-
+#' Generate area code for longline
+#' 
+#' \code{area_code} This code generate an area code for longline catch allocation
+#' 
 #' @export
 
-AreaCode = function(Lat, Lon, Species) {
+area_code = function(Lat, Lon, Species) {
     Areas <- rep(1, length(Lat))
     
     if (Species == "BET") {

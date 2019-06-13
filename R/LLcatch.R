@@ -1,14 +1,13 @@
-#######This code processes the raw LL catch data into the format for Stock Assessment
 #' Longline catch allocation
 #' 
-#' \code{LLcatch} Allocate Longline catch by area and year-quarter for the stock assessment
+#' \code{ll_catch} This code processes the raw LL catch data into the format for Stock Assessment
 #' 
 #' @export
 
-LLcatch = function(Grid_Catch, FSR_Catch, Species, last_year, dir) {
+ll_catch = function(Grid_Catch, FSR_Catch, Species, last_year, dir) {
     # make sure area code starts from 1
     
-    Grid_Catch$NewAreas <- AreaCode(Grid_Catch$Lat, Grid_Catch$Lon, Species = Species)
+    Grid_Catch$NewAreas <- area_code(Grid_Catch$Lat, Grid_Catch$Lon, Species = Species)
     data <- data.frame(Lat = Grid_Catch$Lat, Lon = Grid_Catch$Lon, Areas = as.factor(Grid_Catch$NewAreas))
     
     wmap <- ggplot2::map_data("world")
