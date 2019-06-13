@@ -10,5 +10,3 @@ FSR_Catch <- data.frame(FSR_Catch)
 
 
 LLcatch = LLcatch(Grid_Catch=Grid_Catch, FSR_Catch=FSR_Catch, Species="BET",last_year=2017.75)
-
-# this is comment to add at least 1 new character to my commit

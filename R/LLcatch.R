@@ -29,7 +29,7 @@ LLcatch = function(Grid_Catch,FSR_Catch,Species,last_year) {
 Grid_Catch$NewAreas <- AreaCode(Grid_Catch$Lat,Grid_Catch$Lon,Species=Species)
 data <- data.frame("Lat"=Grid_Catch$Lat,"Lon"=Grid_Catch$Lon,"Areas"=as.factor(Grid_Catch$NewAreas))
 
-wmap <- map_data("world")
+wmap <- ggplot2::map_data("world")
 ggplot() +
   geom_point(aes(x = Lon,y = Lat,color=Areas), data = data, size=6,shape=15) +
   geom_polygon(data=wmap,aes(long, lat, group = group),fill = "black",colour = "white",alpha = 1,lwd=0.5) +
