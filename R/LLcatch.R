@@ -72,7 +72,6 @@ LLcatch = function(Grid_Catch,
   
   n_areas = length(unique(Grid_Catch$NewAreas))
   
-  
   save_all <-
     matrix(0, nrow = 0, ncol = 1 + n_areas * 2) # save all the LL catch into this matrix
   
