@@ -1,5 +1,7 @@
-#################################################################################### Make table of management quantities
-
+#' Make the management table based on SS output
+#' 
+#' \code{makeManagTable} This code make the mangament table for IATTC stock assessments
+#' 
 #' @export
 
 makeManagTable <- function(replist, Path) {
