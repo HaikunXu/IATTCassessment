@@ -11,10 +11,10 @@ ll_catch = function(Grid_Catch, FSR_Catch, Species, last_year, dir) {
     data <- data.frame(Lat = Grid_Catch$Lat, Lon = Grid_Catch$Lon, Areas = as.factor(Grid_Catch$NewAreas))
     
     wmap <- ggplot2::map_data("world")
-    ggplot() + geom_point(aes(x = Lon, y = Lat, color = Areas), data = data, size = 6, shape = 15) + geom_polygon(data = wmap,
-        aes(long, lat, group = group), fill = "black", colour = "white", alpha = 1, lwd = 0.5) + coord_quickmap(ylim = c(-40,
+    ggplot() + geom_point(aes(x = Lon, y = Lat, color = Areas), data = data, size = 6, shape = 15) + geom_polygon(data = wmap, 
+        aes(long, lat, group = group), fill = "black", colour = "white", alpha = 1, lwd = 0.5) + coord_quickmap(ylim = c(-40, 
         40), xlim = c(-150, -70)) + theme_bw(8)
-
+    
     ggsave(filename = "Areas.png", dpi = 300, width = 5, height = 5)
     
     # specify the countries to be analyzed in the LL catch allocation
@@ -201,12 +201,12 @@ ll_catch = function(Grid_Catch, FSR_Catch, Species, last_year, dir) {
         save[, paste0("", seq(1, n_areas))] <- save[, paste0("", seq(1, n_areas))] * ifelse(is.na(save[, paste0("W", seq(1, 
             n_areas))]), 1, NA)
         
-        write.csv(save, paste0(dir,Countries[c], ".csv"), row.names = FALSE)
+        write.csv(save, paste0(dir, Countries[c], ".csv"), row.names = FALSE)
         
         save_all <- rbind(save_all, data.matrix(save))
     }
     colnames(save_all) <- c("YQ", paste0("N", seq(1, n_areas)), paste0("W", seq(1, n_areas)))
-    write.csv(save_all, paste0(dir,"save_all.csv"), row.names = FALSE)
+    write.csv(save_all, paste0(dir, "save_all.csv"), row.names = FALSE)
     
     LL_Catch <- data.frame(save_all) %>% gather(c(paste0("N", seq(1, n_areas)), paste0("W", seq(1, n_areas))), key = "term", 
         value = "catch") %>% group_by(YQ, term) %>% summarise(tot_catch = sum(catch, na.rm = T)) %>% spread(key = term, value = tot_catch) %>% 
@@ -227,21 +227,21 @@ ll_catch = function(Grid_Catch, FSR_Catch, Species, last_year, dir) {
         FSR_annual <- FSR_Catch %>% filter(FlagAbv == Coastal_Countries[c], SpeciesAbv == Species) %>% group_by(Year) %>% summarise(mt = sum(mt))
         
         for (y in 1:nrow(FSR_annual)) {
-            Coastal_Catch[which(Coastal_Catch[, 1] == FSR_annual$Year[y]), Area_Flag[c] + 1] <- 
-              Coastal_Catch[which(Coastal_Catch[, 1] == FSR_annual$Year[y]), Area_Flag[c] + 1] + FSR_annual$mt[y]/4
+            Coastal_Catch[which(Coastal_Catch[, 1] == FSR_annual$Year[y]), Area_Flag[c] + 1] <- Coastal_Catch[which(Coastal_Catch[, 
+                1] == FSR_annual$Year[y]), Area_Flag[c] + 1] + FSR_annual$mt[y]/4
         }
     }
     
     if (sum(Coastal_Catch[(nrow(LL_Catch) - 3):nrow(LL_Catch), 2:(n_areas + 1)]) == 0) {
-        Coastal_Catch[(nrow(LL_Catch) - 3):nrow(LL_Catch), 2:(n_areas + 1)] <- 
-          Coastal_Catch[(nrow(LL_Catch) - 3 - 4):(nrow(LL_Catch) - 4), 2:(n_areas + 1)]
+        Coastal_Catch[(nrow(LL_Catch) - 3):nrow(LL_Catch), 2:(n_areas + 1)] <- Coastal_Catch[(nrow(LL_Catch) - 3 - 4):(nrow(LL_Catch) - 
+            4), 2:(n_areas + 1)]
     }
     
-    write.csv(Coastal_Catch, paste0(dir,"Coastal_Catch.csv"), row.names = FALSE)
+    write.csv(Coastal_Catch, paste0(dir, "Coastal_Catch.csv"), row.names = FALSE)
     
     # total catch
     LL_Catch[, paste0("W", seq(1, n_areas))] <- LL_Catch[, paste0("W", seq(1, n_areas))] + Coastal_Catch[, 2:(n_areas + 1)]
-    write.csv(LL_Catch, paste0(dir,"LL_Catch.csv"), row.names = FALSE)
+    write.csv(LL_Catch, paste0(dir, "LL_Catch.csv"), row.names = FALSE)
     
     return(LL_Catch)
 }
