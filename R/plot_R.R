@@ -6,8 +6,7 @@
 
 plot_R = function(SS_Dir, lyear, Save_Dir) {
 
-cor_mat <- read.table(paste0(dir,"ss3.cor"), skip=1, fill=NA, header = TRUE)
-lyear=2017
+cor_mat <- read.table(paste0(SS_Dir,"ss3.cor"), skip=1, fill=NA, header = TRUE)
 
 R_est <- cor$value[which(cor$name=="recr_std")[3:((lyear-1974)*4+2)]]
 R_std <- cor$std_dev[which(cor$name=="recr_std")[3:((lyear-1974)*4+2)]]
