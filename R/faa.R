@@ -4,9 +4,9 @@
 #' 
 #' @export
 
-faa = function(myreplist, Last_Year, Species, Save_Dir) {
+faa = function(Dir, Last_Year, Species, Save_Dir) {
   
-# myreplist = SS_output(dir=SS_Path,ncols=400,covar=F)
+myreplist = SS_output(dir=Dir,ncols=400,covar=F)
 
 Z <- myreplist$Z_at_age
 M_Matrix <- rbind(matrix(rep(data.matrix(BET_M[1,]),nrow(Z)/2),nrow=nrow(Z)/2,byrow = T),
@@ -43,5 +43,4 @@ ggplot(data=F_vector %>% filter(Year2<=Last_Year)) +
 ggsave(file=paste0(Save_Dir,"faa.png"),width = 6, height = 10)
 ggsave(file=paste0(Save_Dir,"faa.eps"),width = 6, height = 10)
 
-return()
 }
