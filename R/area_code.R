@@ -1,6 +1,6 @@
 #' Generate area code for longline
 #' 
-#' \code{area_code} This code generate an area code for longline catch allocation
+#' \code{area_code} This function generates an area code for longline catch allocation
 #' 
 #' @export
 
