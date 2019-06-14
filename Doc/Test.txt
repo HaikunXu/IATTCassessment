@@ -1,3 +1,0 @@
-have a test
-success
-add a line

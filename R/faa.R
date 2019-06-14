@@ -26,7 +26,7 @@ F_Matrix$Year2 <- ceiling(F_Matrix$Year/4)+1974
 # F_Matrix <- na.omit(F_Matrix %>% mutate("Group"=cut(Age, breaks = c(-1,4,8,12,20,39))))
 
 F_vector <- F_Matrix %>% group_by(Gender,Year2,Age) %>% summarise(F_annual=sum(FAA)) %>%
-  mutate("Group"=cut(Age, breaks = c(0,4,8,12,29,39))) 
+  mutate("Group"=cut(Age, breaks = c(0,4,8,12,19,40), labels = c("1-4 quarters","5-8 quarters","9-12 quarters","13-19 quarters","20+ quarters"))) 
 
 F_vector <- na.omit(F_vector)
 
@@ -38,9 +38,9 @@ ggplot(data=F_vector %>% filter(Year2<=Last_Year)) +
   geom_line(aes(x=Year2,y=F_group)) +
   facet_wrap(~Group,nrow=5) +
   theme_bw(12) +
-  ylab("F") + xlab("Year")
+  ylab("Average annual F") + xlab("Year")
 
-ggsave(file=paste0(Save_Dir,"faa.png"),width = 8, height = 8)
-ggsave(file=paste0(Save_Dir,"faa.eps"),width = 8, height = 8)
+ggsave(file=paste0(Save_Dir,"faa.png"),width = 6, height = 10)
+ggsave(file=paste0(Save_Dir,"faa.eps"),width = 6, height = 10)
 
 }
