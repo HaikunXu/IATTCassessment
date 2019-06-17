@@ -2,6 +2,7 @@
 
 export(area_code)
 export(faa)
+export(impact_plot)
 export(ll_catch)
 export(makeManagTable)
 export(plot_R)

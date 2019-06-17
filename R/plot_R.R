@@ -38,7 +38,7 @@ plot_R = function(SS_Dir, lyear, Save_Dir) {
         geom_line(aes(x = year, y = R), size = 1) + geom_point(aes(x = year, y = R)) + theme_bw(12) + xlab("") + ylab("") + 
         geom_hline(yintercept = 1, linetype = "dashed")
     
-    f_all <- grid.arrange(f1, f2, nrow = 2)
+    f_all <- gridExtra::grid.arrange(f1, f2, nrow = 2)
     ggsave(f_all, file = paste0(Save_Dir, "R.png"), width = 6, height = 8)
     ggsave(f_all, file = paste0(Save_Dir, "R.eps"), width = 6, height = 8)
     
