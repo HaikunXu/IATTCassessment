@@ -15,16 +15,17 @@ faa = function(Dir, Last_Year, Species, Save_Dir) {
     F_M <- Z
     F_M[, 4:44] <- Z[, 4:44] - M_Matrix
     
-    F_Matrix <- F_M %>% gather("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", 
-        "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", 
-        "38", "39", "40", key = "Age", value = "FAA")
+    F_Matrix <- F_M %>% gather("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", 
+        "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", 
+        "32", "33", "34", "35", "36", "37", "38", "39", "40", key = "Age", value = "FAA")
     F_Matrix$Age <- as.numeric(F_Matrix$Age)
     F_Matrix$Year2 <- ceiling(F_Matrix$Year/4) + 1974
     
     # F_Matrix <- na.omit(F_Matrix %>% mutate('Group'=cut(Age, breaks = c(-1,4,8,12,20,39))))
     
-    F_vector <- F_Matrix %>% group_by(Gender, Year2, Age) %>% summarise(F_annual = sum(FAA)) %>% mutate(Group = cut(Age, breaks = c(0, 
-        4, 8, 12, 19, 40), labels = c("1-4 quarters", "5-8 quarters", "9-12 quarters", "13-19 quarters", "20+ quarters")))
+    F_vector <- F_Matrix %>% group_by(Gender, Year2, Age) %>% summarise(F_annual = sum(FAA)) %>% mutate(Group = cut(Age, 
+        breaks = c(0, 4, 8, 12, 19, 40), labels = c("1-4 quarters", "5-8 quarters", "9-12 quarters", "13-19 quarters", 
+            "20+ quarters")))
     
     F_vector <- na.omit(F_vector)
     
@@ -32,8 +33,8 @@ faa = function(Dir, Last_Year, Species, Save_Dir) {
     
     # spread(key = Group, value = F_group)
     
-    ggplot(data = F_vector %>% filter(Year2 <= Last_Year)) + geom_line(aes(x = Year2, y = F_group)) + facet_wrap(~Group, nrow = 5) + 
-        theme_bw(12) + ylab("Average annual F") + xlab("Year")
+    ggplot(data = F_vector %>% filter(Year2 <= Last_Year)) + geom_line(aes(x = Year2, y = F_group)) + facet_wrap(~Group, 
+        nrow = 5) + theme_bw(12) + ylab("Average annual F") + xlab("Year")
     
     ggsave(file = paste0(Save_Dir, "faa.png"), width = 6, height = 10)
     ggsave(file = paste0(Save_Dir, "faa.eps"), width = 6, height = 10)

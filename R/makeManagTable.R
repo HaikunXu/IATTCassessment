@@ -17,8 +17,8 @@ makeManagTable <- function(replist, Path) {
     ForeRepStart <- grep("Management_report", readLines(ForeRepName))
     ForeRepEnd <- grep("THIS FORECAST FOR PURPOSES", readLines(ForeRepName))[1]
     
-    # ForeDat <- read.table(file=ForeRepName,col.names=c(seq(1,10,by=1)),fill=T,quote='',colClasses='character', nrows=45, skip
-    # = ForeRepStart-1)
+    # ForeDat <- read.table(file=ForeRepName,col.names=c(seq(1,10,by=1)),fill=T,quote='',colClasses='character',
+    # nrows=45, skip = ForeRepStart-1)
     ForeDat <- read.table(file = ForeRepName, col.names = c(seq(1, 10, by = 1)), fill = T, quote = "", colClasses = "character", 
         nrows = ForeRepEnd - ForeRepStart, skip = ForeRepStart - 1)
     ForeDat <- as.data.frame(ForeDat)
@@ -58,8 +58,9 @@ makeManagTable <- function(replist, Path) {
     # S recent/Smsy
     SrecentSmsy <- Srecent/Smsy
     
-    # Methot takes the F by fishery averaged over the given years and makes it sum to 1 So the Fmult to use is not the one given
-    # in the output but Fmult/sum(F1,F2,...)  Compute the average F vector in absolute (rather than scaled to 1 terms)
+    # Methot takes the F by fishery averaged over the given years and makes it sum to 1 So the Fmult to use is not
+    # the one given in the output but Fmult/sum(F1,F2,...)  Compute the average F vector in absolute (rather than
+    # scaled to 1 terms)
     FvectorRepStart <- grep("Seasonal_apicalF=Fmult", readLines(ForeRepName))
     Fvector <- read.table(file = ForeRepName, nrows = 1, skip = FvectorRepStart[1] + 1)
     Fvector <- Fvector[3:length(Fvector)]
@@ -69,7 +70,8 @@ makeManagTable <- function(replist, Path) {
     Fmult <- Fmult/FmultScale
     
     # Make table with management quantities
-    RowNames <- c("msy", "Bmsy", "Smsy", "Bmsy/Bzero", "Smsy/Szero", "Crecent/msy", "Brecent/Bmsy", "Srecent/Smsy", "Fmultiplier")
+    RowNames <- c("msy", "Bmsy", "Smsy", "Bmsy/Bzero", "Smsy/Szero", "Crecent/msy", "Brecent/Bmsy", "Srecent/Smsy", 
+        "Fmultiplier")
     ManagTable <- matrix(NA, length(RowNames), 2)
     ManagTable <- data.frame(ManagTable)
     names(ManagTable) <- c("quant", "val")

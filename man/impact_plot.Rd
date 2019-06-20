@@ -4,8 +4,8 @@
 \alias{impact_plot}
 \title{Fishing impact plot}
 \usage{
-impact_plot(Dir, n_year)
+impact_plot(Dir, n_year, BaseName)
 }
 \description{
-\code{impact_plot} This function automayically generates the fishery impact plot
+\code{impact_plot} This function automayically generates the fishery impact plot for SS v3.23
 }
