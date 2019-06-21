@@ -6,7 +6,7 @@
 
 faa = function(Dir, Last_Year, Species, Save_Dir) {
     
-    myreplist = SS_output(dir = Dir, ncols = 400, covar = F)
+    myreplist = r4ss::SS_output(dir = Dir, ncols = 400, covar = F)
     
     Z <- myreplist$Z_at_age
     M_Matrix <- rbind(matrix(rep(data.matrix(BET_M[1, ]), nrow(Z)/2), nrow = nrow(Z)/2, byrow = T), matrix(rep(data.matrix(BET_M[2, 
@@ -19,11 +19,11 @@ faa = function(Dir, Last_Year, Species, Save_Dir) {
         "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", 
         "32", "33", "34", "35", "36", "37", "38", "39", "40", key = "Age", value = "FAA")
     F_Matrix$Age <- as.numeric(F_Matrix$Age)
-    F_Matrix$Year2 <- ceiling(F_Matrix$Year/4) + 1974
+    F_Matrix$Year2 <- ceiling(F_Matrix$Yr/4) + 1974
     
     # F_Matrix <- na.omit(F_Matrix %>% mutate('Group'=cut(Age, breaks = c(-1,4,8,12,20,39))))
     
-    F_vector <- F_Matrix %>% group_by(Gender, Year2, Age) %>% summarise(F_annual = sum(FAA)) %>% mutate(Group = cut(Age, 
+    F_vector <- F_Matrix %>% group_by(Sex, Year2, Age) %>% summarise(F_annual = sum(FAA)) %>% mutate(Group = cut(Age, 
         breaks = c(0, 4, 8, 12, 19, 40), labels = c("1-4 quarters", "5-8 quarters", "9-12 quarters", "13-19 quarters", 
             "20+ quarters")))
     
