@@ -4,7 +4,7 @@
 #' 
 #' @export
 
-impact_plot = function(Dir, n_year, BaseName) {
+impact_plot = function(Dir, n_year, BaseName, n_fishery) {
     
     step_name <- c("noDisc", "noPS", "noLL", "noF")
     n_step <- length(step_name)
@@ -20,7 +20,7 @@ impact_plot = function(Dir, n_year, BaseName) {
     CtrlDir <- paste0(paste0(Dir, BaseName), "/BET-EPO.dat")
     CtrlFile <- readLines(CtrlDir, warn = F)
     Line <- match("#_NOTE:  catch data is ignored for survey fleets", CtrlFile)
-    Catch0 <- read.table(file = CtrlDir, nrows = (n_year+1)*19+1, skip = Line)
+    Catch0 <- read.table(file = CtrlDir, nrows = (n_year+1)*n_fishery+1, skip = Line)
     names(Catch0) <- c("year", "seas", "fleet", "catch", "catch_se")
     Catch0 <- Catch0  %>% filter(year>0,fleet>0) %>% select(year,fleet,catch) %>% spread(fleet,catch)
     
@@ -47,7 +47,7 @@ impact_plot = function(Dir, n_year, BaseName) {
         CtrlDir <- paste0(paste0(Dir, step_name[step]), "/BET-EPO.dat")
         CtrlFile <- readLines(CtrlDir, warn = F)
         
-        Catch <- read.table(file = CtrlDir, nrows = (n_year+1)*19 + 1, skip = Line)
+        Catch <- read.table(file = CtrlDir, nrows = (n_year+1)*n_fishery + 1, skip = Line)
         names(Catch) <- c("year", "seas", "fleet", "catch", "catch_se")
         
         if (step == 1) 
@@ -59,16 +59,14 @@ impact_plot = function(Dir, n_year, BaseName) {
         if (step == 4) 
             fishery <- fishery4
         
-        # Catch <- data.matrix(Catch)
-        
-        Catch1 <- Catch %>% filter(fleet %in% fishery) %>% mutate(catch=ifelse(year>0,0,catch*0.1))
-        Catch2 <- Catch %>% filter((fleet %in% fishery)==FALSE)
+        Catch1 <- Catch %>% filter(fleet %in% fishery) %>% mutate(catch=ifelse(year>0,0,catch)) # change catch to 0
+        Catch2 <- Catch %>% filter((fleet %in% fishery)==FALSE) 
         
         Catch_combined <- rbind(Catch1,Catch2)
         
         Catch <- Catch_combined %>% filter(year>0,fleet>0) %>% select(year,fleet,catch) %>% spread(fleet,catch)
         
-        for (line in 1:((n_year+1)*19+1)) {
+        for (line in 1:((n_year+1)*n_fishery+1)) {
             CtrlFile[Line + line] <- gsub(",", "", toString(Catch_combined[line, ]))
         }
         
@@ -85,7 +83,6 @@ impact_plot = function(Dir, n_year, BaseName) {
         # command <- paste0(Dir,step_name[step],'/go_nohess.bat')
         x <- shell(cmd = command, intern = T, wait = T)
     }
-    
     
     #### ssplot section
     
@@ -109,7 +106,6 @@ impact_plot = function(Dir, n_year, BaseName) {
         2], noPS = myreplist3$timeseries$SpawnBio[1:n_year + 2] - myreplist1$timeseries$SpawnBio[1:n_year + 2], 
         noLL = myreplist4$timeseries$SpawnBio[1:n_year + 2] - myreplist1$timeseries$SpawnBio[1:n_year + 2])
     
-    
     SB_dif$noDisc_dif <- SB_dif$noDisc/apply(SB_dif[, 2:4], c(1), sum) * (myreplist5$timeseries$SpawnBio[3:174] - 
         myreplist1$timeseries$SpawnBio[3:174])
     SB_dif$noPS_dif <- SB_dif$noPS/apply(SB_dif[, 2:4], c(1), sum) * (myreplist5$timeseries$SpawnBio[3:174] - 
@@ -126,5 +122,4 @@ impact_plot = function(Dir, n_year, BaseName) {
     
     ggsave(file = paste0(Dir, "impact_plot.png"), width = 8, height = 6)
     ggsave(file = paste0(Dir, "impact_plot.eps"), width = 8, height = 6)
-    
 }
