@@ -17,15 +17,21 @@ impact_plot = function(Dir, n_year, BaseName) {
     print("change starter file (use par and do not estimate) before this section!!!")
     
     # step = 0; read BC data
-    CtrlDir <- paste0(paste0(Dir, "BET_Base_SAC9"), "/BET-EPO.dat")
+    CtrlDir <- paste0(paste0(Dir, BaseName), "/BET-EPO.dat")
     CtrlFile <- readLines(CtrlDir, warn = F)
-    Line <- 60
-    Catch0 <- read.table(file = CtrlDir, nrows = n_year, skip = Line)
+    Line <- match("#_NOTE:  catch data is ignored for survey fleets", CtrlFile)
+    Catch0 <- read.table(file = CtrlDir, nrows = (n_year+1)*19+1, skip = Line)
+    names(Catch0) <- c("year", "seas", "fleet", "catch", "catch_se")
+    Catch0 <- Catch0  %>% filter(year>0,fleet>0) %>% select(year,fleet,catch) %>% spread(fleet,catch)
     
-    ParDir <- paste0(paste0(Dir, "BET_Base_SAC9"), "/ss3.par")
+    ### for SS3.30
+    
+    ###
+    
+    ParDir <- paste0(paste0(Dir, BaseName, "/ss.par"))
     ParFile <- readLines(ParDir, warn = F)
-    Init_F_1 <- as.numeric(ParFile[73])
-    Init_F_14 <- as.numeric(ParFile[99])
+    Init_F_1 <- as.numeric(ParFile[75])
+    Init_F_14 <- as.numeric(ParFile[77])
     
     # loop starts here
     
@@ -33,17 +39,16 @@ impact_plot = function(Dir, n_year, BaseName) {
         print(paste0("step: ", step_name[step]))
         unlink(paste0(Dir, step_name[step]), recursive = TRUE)
         dir.create(paste0(Dir, step_name[step]))
-        files = c(paste0(Dir, "BET_Base_SAC9/ss3.par"), paste0(Dir, "BET_Base_SAC9/go_nohess.bat"), paste0(Dir, 
-            "BET_Base_SAC9/starter.ss"), paste0(Dir, "BET_Base_SAC9/forecast.ss"), paste0(Dir, "BET_Base_SAC9/BET-EPO.ctl"), 
-            paste0(Dir, "BET_Base_SAC9/BET-EPO.dat"), paste0(Dir, "BET_Base_SAC9/ss3.exe"))
+        files = c(paste0(Dir, BaseName,"/ss.par"), paste0(Dir, BaseName, "/go_nohess.bat"), paste0(Dir, BaseName,
+            "/starter.ss"), paste0(Dir, BaseName, "/forecast.ss"), paste0(Dir, BaseName, "/BET-EPO.ctl"), 
+            paste0(Dir, BaseName, "/BET-EPO.dat"), paste0(Dir, BaseName, "/ss.exe"))
         file.copy(from = files, to = paste0(Dir, step_name[step]))
         
         CtrlDir <- paste0(paste0(Dir, step_name[step]), "/BET-EPO.dat")
         CtrlFile <- readLines(CtrlDir, warn = F)
-        Line <- match("#F1 F2 F3 F4 F5 F6 F7 F8 F9 F10 F11 F12 F13 F14 F15 F16 F17 F18 F19 Year season                                                                                                                                                                     ", 
-            CtrlFile)
         
-        Catch <- read.table(file = CtrlDir, nrows = n_year, skip = Line)
+        Catch <- read.table(file = CtrlDir, nrows = (n_year+1)*19 + 1, skip = Line)
+        names(Catch) <- c("year", "seas", "fleet", "catch", "catch_se")
         
         if (step == 1) 
             fishery <- fishery1
@@ -54,19 +59,25 @@ impact_plot = function(Dir, n_year, BaseName) {
         if (step == 4) 
             fishery <- fishery4
         
-        Catch <- data.matrix(Catch)
-        Catch[, fishery] <- 0
+        # Catch <- data.matrix(Catch)
         
-        for (line in 1:n_year) {
-            CtrlFile[Line + line] <- gsub(",", "", toString(Catch[line, ]))
+        Catch1 <- Catch %>% filter(fleet %in% fishery) %>% mutate(catch=ifelse(year>0,0,catch*0.1))
+        Catch2 <- Catch %>% filter((fleet %in% fishery)==FALSE)
+        
+        Catch_combined <- rbind(Catch1,Catch2)
+        
+        Catch <- Catch_combined %>% filter(year>0,fleet>0) %>% select(year,fleet,catch) %>% spread(fleet,catch)
+        
+        for (line in 1:((n_year+1)*19+1)) {
+            CtrlFile[Line + line] <- gsub(",", "", toString(Catch_combined[line, ]))
         }
         
         writeLines(CtrlFile, CtrlDir)
         
-        ParDir <- paste0(paste0(Dir, step_name[step]), "/ss3.par")
+        ParDir <- paste0(paste0(Dir, step_name[step]), "/ss.par")
         ParFile <- readLines(ParDir, warn = F)
-        ParFile[73] <- toString(Init_F_1 * sum(Catch[1:20, 1:5])/sum(Catch0[1:20, 1:5]))
-        ParFile[99] <- toString(Init_F_14 * sum(Catch[1:20, 12:19])/sum(Catch0[1:20, 12:19]))
+        ParFile[75] <- toString(Init_F_1 * sum(Catch[1:20, 2:6])/sum(Catch0[1:20, 2:6]))
+        ParFile[77] <- toString(Init_F_14 * sum(Catch[1:20, 13:20])/sum(Catch0[1:20, 13:20]))
         
         writeLines(ParFile, ParDir)
         

@@ -1,6 +1,7 @@
 library(IATTCassessment)
 
-Dir <- "C:/Users/hkxu/OneDrive - IATTC/IATTC/stock assessment/BET Assessment/SS_work/BET_SAC9/Final Models/FISHERY_IMPACT_PLOT - Code/"
+Dir <- "C:/Users/hkxu/OneDrive - IATTC/IATTC/2019/External Review/Prep runs/Impact_Plot/"
 n_year=172
+BaseName = "Base - SAC9"
 
-impact_plot(Dir=Dir, n_year=172, BaseName = "BET_Base_SAC9")
+impact_plot(Dir=Dir, n_year=n_year, BaseName = BaseName)
