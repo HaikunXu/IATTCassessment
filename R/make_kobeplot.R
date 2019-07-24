@@ -4,7 +4,7 @@
 #' 
 #' @export
 
-make_kobeplot <- function(Kobe.Out, Slim = c(0, 6), Flim = c(0, 1.6)) {
+make_kobeplot <- function(Kobe.Out, Slim = c(0, 6), Flim = c(0, 1.6), sd_f, sd_b) {
     # Define the panel margins
     windows(9, 10)
     par(mfrow = c(2, 1), mar = c(5, 2, 1, 1), omi = c(0.5, 0.5, 0.2, 0))
@@ -46,6 +46,9 @@ make_kobeplot <- function(Kobe.Out, Slim = c(0, 6), Flim = c(0, 1.6)) {
     # Plot the trajactory
     lines(x, y, type = "o", col = "black", lwd = 1.25, pch = 19, cex = 0.75)
     points(x[length(x)], y[length(x)], pch = 19, cex = 1.5, col = "steelblue1")  # Plot the terminal point
+    arrows(x[length(x)] - 2 * sd_b * x[length(x)], y[length(x)], x[length(x)] + 2 * sd_b * x[length(x)], y[length(x)], angle=90, code = 3, length= 0.05, lwd=2)
+    arrows(x[length(x)], y[length(x)] - 2 * sd_f * y[length(x)], x[length(x)], y[length(x)] + 2 * sd_f * y[length(x)], angle=90, code = 3, length= 0.05, lwd=2)
+    
     points(x[1], y[1], pch = 25, cex = 1.5, col = "blue", bg = "blue")  # Plot the initial point
     
     title(xlab = "Spawning stock size relative to MSY", cex.lab = 1.25, line = 2.5)
@@ -91,6 +94,9 @@ make_kobeplot <- function(Kobe.Out, Slim = c(0, 6), Flim = c(0, 1.6)) {
     # Plot the trajactory
     lines(x, y, type = "o", col = "black", lwd = 1.25, pch = 19, cex = 0.75)
     points(x[length(x)], y[length(x)], pch = 19, cex = 1.5, col = "steelblue1")  # Plot the terminal point
+    arrows(x[length(x)] - 2 * sd_b * x[length(x)], y[length(x)], x[length(x)] + 2 * sd_b * x[length(x)], y[length(x)], angle=90, code = 3, length= 0.05, lwd=2)
+    arrows(x[length(x)], y[length(x)] - 2 * sd_f * y[length(x)], x[length(x)], y[length(x)] + 2 * sd_f * y[length(x)], angle=90, code = 3, length= 0.05, lwd=2)
+    
     points(x[1], y[1], pch = 25, cex = 1.5, col = "blue", bg = "blue")  # Plot the terminal point
     
     title(xlab = "Total stock size relative to MSY", cex.lab = 1.25, line = 2.5)
