@@ -6,9 +6,9 @@
 
 plot_R = function(SS_Dir, lyear, Save_Dir) {
     
-    cor_mat <- read.table(paste0(SS_Dir, "ss3.cor"), skip = 1, fill = NA, header = TRUE)
+    cor_mat <- read.table(paste0(SS_Dir, "ss.cor"), skip = 1, fill = NA, header = TRUE)
     R_est <- cor_mat$value[which(cor_mat$name == "recr_std")[3:((lyear - 1974) * 4 + 2)]]
-    R_std <- cor_mat$std_dev[which(cor_mat$name == "recr_std")[3:((lyear - 1974) * 4 + 2)]]
+    R_std <- cor_mat$std.dev[which(cor_mat$name == "recr_std")[3:((lyear - 1974) * 4 + 2)]]
     R <- data.frame(est = R_est, std = R_std, year = rep(1975:lyear, each = 4), yq = seq(1975, lyear + 0.75, 0.25))
     R_annual <- R %>% group_by(year) %>% summarise(Est = sum(est), Std = NA)
     # cov_mat <- matrix(NA, nrow = length(R_est), ncol = 4)
