@@ -4,7 +4,7 @@
 \alias{make_kobeplot}
 \title{Make Kobe plot}
 \usage{
-make_kobeplot(Kobe.Out, Slim = c(0, 6), Flim = c(0, 1.6))
+make_kobeplot(Kobe.Out, Slim = c(0, 6), Flim = c(0, 1.6), sd_f, sd_b)
 }
 \description{
 \code{make_kobeplot} This function makes kobe plot
