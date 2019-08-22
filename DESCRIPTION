@@ -1,7 +1,7 @@
 Package: IATTCassessment
 Type: Package
 Title: Code for IATTC Stock Assessments
-Version: 0.0.4
+Version: 0.0.5
 Author: Haikun Xu
 Maintainer: Haikun Xu <hkxu@iattc.org>
 Description: More about what it does (maybe more than one line)
