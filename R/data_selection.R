@@ -18,10 +18,10 @@ select_data <- function(data,c1,c2,c3,c4) {
   
 # Generate the quantities for data selection
 Data <- data %>% 
-  group_by(Vessel) %>% mutate(setsbyvessel=n(), # total number of sets per area per vessel
-                                quartersbyvessel=length(unique(YQ))) %>% # total number of quarters fished per area per vessel
+  group_by(Vessel) %>% mutate(setsbyvessel=n(), # total number of sets per vessel
+                                quartersbyvessel=length(unique(Year))) %>% # total number of quarters fished per vessel
   group_by(Lat,Lon) %>% mutate(setsbygrid=n(), # total number of sets per grid cell
-                               quartersbygrid=length(unique(YQ))) # # total number of quarters per grid cell
+                               quartersbygrid=length(unique(Year))) # # total number of quarters per grid cell
 
 # Data selection
 data_selected <- Data %>% filter(setsbyvessel>=c1, # select vessel
