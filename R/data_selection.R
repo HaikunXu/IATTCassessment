@@ -2,10 +2,10 @@
 #' 
 #' \code{data_selection} This function filter the data for LL CPUE standardization
 #' 
-#' @param c1 minimal setsbyvessel
-#' @param c2 minimal quartersbyvessel
-#' @param c3 minimal setsbygrid
-#' @param c4 minimal quartersbygrid
+#' @param c1 minimal sets by vessel
+#' @param c2 minimal quarters by vessel
+#' @param c3 minimal sets by grid
+#' @param c4 minimal quarters by grid
 
 #' @export
 

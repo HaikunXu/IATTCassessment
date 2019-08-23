@@ -7,13 +7,13 @@
 select_data(data, c1, c2, c3, c4)
 }
 \arguments{
-\item{c1}{minimal setsbyvessel}
+\item{c1}{minimal sets by vessel}
 
-\item{c2}{minimal quartersbyvessel}
+\item{c2}{minimal quarters by vessel}
 
-\item{c3}{minimal setsbygrid}
+\item{c3}{minimal sets by grid}
 
-\item{c4}{minimal quartersbygrid}
+\item{c4}{minimal quarters by grid}
 }
 \description{
 \code{data_selection} This function filter the data for LL CPUE standardization
