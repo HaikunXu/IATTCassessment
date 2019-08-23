@@ -2,6 +2,11 @@
 #' 
 #' \code{data_selection} This function filter the data for LL CPUE standardization
 #' 
+#' @param c1 minimal setsbyvessel
+#' @param c2 minimal quartersbyvessel
+#' @param c3 minimal setsbygrid
+#' @param c4 minimal quartersbygrid
+
 #' @export
 
 # Data selection criterion for JPN operational LL data in the EPO
@@ -9,12 +14,6 @@
 # Haikun Xu; 1/30/2019
 
 select_data <- function(data,c1,c2,c3,c4) {
-
-# c1: minimal setsbyvessel
-# c2: minimal quartersbyvessel
-# c3: minimal setsbygrid
-# c4: minimal quartersbygrid
-
   
 # Generate the quantities for data selection
 Data <- data %>% 
