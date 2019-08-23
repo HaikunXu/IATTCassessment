@@ -6,6 +6,15 @@
 \usage{
 select_data(data, c1, c2, c3, c4)
 }
+\arguments{
+\item{c1}{minimal setsbyvessel}
+
+\item{c2}{minimal quartersbyvessel}
+
+\item{c3}{minimal setsbygrid}
+
+\item{c4}{minimal quartersbygrid}
+}
 \description{
 \code{data_selection} This function filter the data for LL CPUE standardization
 }
