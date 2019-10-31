@@ -10,3 +10,6 @@ FSR_Catch <- data.frame(FSR_Catch)
 dir_output <- "C:/Users/hkxu/OneDrive - IATTC/IATTC/stock assessment/Spatial Model/LL Catch/2/"
 # allocate longline catch for BET
 LLcatch = ll_catch(Grid_Catch=Grid_Catch, FSR_Catch=FSR_Catch, Species="BET",last_year=2017.75, dir=dir_output)
+
+dir_output <- "C:/Users/hkxu/OneDrive - IATTC/IATTC/2019/YFT benchmark/LL Catch/"
+LLcatch = ll_catch(Grid_Catch=Grid_Catch, FSR_Catch=FSR_Catch, Species="YFT",last_year=2017.75, dir=dir_output)
