@@ -239,7 +239,10 @@ ll_catch = function(Grid_Catch, FSR_Catch, Species, last_year, dir) {
     if (Species == "BET") 
         Area_Flag <- c(6, 3, 3, 4, 3, 3, 6, 4, 3)
     if (Species == "YFT")
-        Area_Flag <- c(3, 3, 3, 3, 3, 3, 3, 3, 3)
+        Area_Flag <- c(2, 3, 2, 2, 2, 3, 2, 2, 2, 3, 2, 2, 3)
+    
+    print(Coastal_Countries)
+    print(Area_Flag)
     
     Coastal_Catch <- matrix(0, nrow = nrow(LL_Catch), ncol = n_areas)
     Coastal_Catch <- cbind(floor(LL_Catch$YQ), Coastal_Catch)
