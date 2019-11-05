@@ -29,8 +29,8 @@ make_kobeplot <- function(Kobe.Out, Slim = c(0, 6), Flim = c(0, 1.6), sd_f, sd_b
         ylim <- Flim
     }
     
-    plot(0, 0, xlim = xlim, ylim = ylim, axes = T, xaxs = "i", yaxs = "i", type = "o", col = "black", 
-        ylab = "", xlab = "", lwd = 1.25, pch = 19, cex = 0.75, las = 1)
+    plot(0, 0, xlim = xlim, ylim = ylim, axes = T, xaxs = "i", yaxs = "i", type = "o", col = "black", ylab = "", 
+        xlab = "", lwd = 1.25, pch = 19, cex = 0.75, las = 1)
     
     # Polygons for quadrants
     polygon(c(0, 1, 1, 0), c(1, 1, 1.6, 1.6), col = "red", border = NA)  # GIVE ACTUAL DIMENSIONS
@@ -46,10 +46,10 @@ make_kobeplot <- function(Kobe.Out, Slim = c(0, 6), Flim = c(0, 1.6), sd_f, sd_b
     # Plot the trajactory
     lines(x, y, type = "o", col = "black", lwd = 1.25, pch = 19, cex = 0.75)
     points(x[length(x)], y[length(x)], pch = 19, cex = 1.5, col = "steelblue1")  # Plot the terminal point
-    arrows(x[length(x)] - 2 * sd_b * x[length(x)], y[length(x)], x[length(x)] + 2 * sd_b * x[length(x)], 
-        y[length(x)], angle = 90, code = 3, length = 0.05, lwd = 2)
-    arrows(x[length(x)], y[length(x)] - 2 * sd_f * y[length(x)], x[length(x)], y[length(x)] + 
-        2 * sd_f * y[length(x)], angle = 90, code = 3, length = 0.05, lwd = 2)
+    arrows(x[length(x)] - 2 * sd_b * x[length(x)], y[length(x)], x[length(x)] + 2 * sd_b * x[length(x)], y[length(x)], 
+        angle = 90, code = 3, length = 0.05, lwd = 2)
+    arrows(x[length(x)], y[length(x)] - 2 * sd_f * y[length(x)], x[length(x)], y[length(x)] + 2 * sd_f * y[length(x)], 
+        angle = 90, code = 3, length = 0.05, lwd = 2)
     
     points(x[1], y[1], pch = 25, cex = 1.5, col = "blue", bg = "blue")  # Plot the initial point
     
@@ -79,8 +79,8 @@ make_kobeplot <- function(Kobe.Out, Slim = c(0, 6), Flim = c(0, 1.6), sd_f, sd_b
         ylim <- Flim
     }
     
-    plot(0, 0, xlim = xlim, ylim = ylim, axes = T, xaxs = "i", yaxs = "i", type = "o", col = "black", 
-        ylab = "", xlab = "", lwd = 1.25, pch = 19, cex = 0.75, las = 1)
+    plot(0, 0, xlim = xlim, ylim = ylim, axes = T, xaxs = "i", yaxs = "i", type = "o", col = "black", ylab = "", 
+        xlab = "", lwd = 1.25, pch = 19, cex = 0.75, las = 1)
     
     # Polygons for quadrants
     polygon(c(0, 1, 1, 0), c(1, 1, 1.6, 1.6), col = "red", border = NA)  # GIVE ACTUAL DIMENSIONS
@@ -96,10 +96,10 @@ make_kobeplot <- function(Kobe.Out, Slim = c(0, 6), Flim = c(0, 1.6), sd_f, sd_b
     # Plot the trajactory
     lines(x, y, type = "o", col = "black", lwd = 1.25, pch = 19, cex = 0.75)
     points(x[length(x)], y[length(x)], pch = 19, cex = 1.5, col = "steelblue1")  # Plot the terminal point
-    arrows(x[length(x)] - 2 * sd_b * x[length(x)], y[length(x)], x[length(x)] + 2 * sd_b * x[length(x)], 
-        y[length(x)], angle = 90, code = 3, length = 0.05, lwd = 2)
-    arrows(x[length(x)], y[length(x)] - 2 * sd_f * y[length(x)], x[length(x)], y[length(x)] + 
-        2 * sd_f * y[length(x)], angle = 90, code = 3, length = 0.05, lwd = 2)
+    arrows(x[length(x)] - 2 * sd_b * x[length(x)], y[length(x)], x[length(x)] + 2 * sd_b * x[length(x)], y[length(x)], 
+        angle = 90, code = 3, length = 0.05, lwd = 2)
+    arrows(x[length(x)], y[length(x)] - 2 * sd_f * y[length(x)], x[length(x)], y[length(x)] + 2 * sd_f * y[length(x)], 
+        angle = 90, code = 3, length = 0.05, lwd = 2)
     
     points(x[1], y[1], pch = 25, cex = 1.5, col = "blue", bg = "blue")  # Plot the terminal point
     

@@ -22,8 +22,7 @@ impact_plot = function(Dir, n_year, BaseName, n_fishery) {
     Line <- match("#_NOTE:  catch data is ignored for survey fleets", CtrlFile)
     Catch0 <- read.table(file = CtrlDir, nrows = (n_year + 1) * n_fishery + 1, skip = Line)
     names(Catch0) <- c("year", "seas", "fleet", "catch", "catch_se")
-    Catch0 <- Catch0 %>% filter(year > 0, fleet > 0) %>% select(year, fleet, catch) %>% spread(fleet, 
-        catch)
+    Catch0 <- Catch0 %>% filter(year > 0, fleet > 0) %>% select(year, fleet, catch) %>% spread(fleet, catch)
     
     ### for SS3.30
     
@@ -40,9 +39,9 @@ impact_plot = function(Dir, n_year, BaseName, n_fishery) {
         print(paste0("step: ", step_name[step]))
         unlink(paste0(Dir, step_name[step]), recursive = TRUE)
         dir.create(paste0(Dir, step_name[step]))
-        files = c(paste0(Dir, BaseName, "/ss.par"), paste0(Dir, BaseName, "/go_nohess.bat"), paste0(Dir, 
-            BaseName, "/starter.ss"), paste0(Dir, BaseName, "/forecast.ss"), paste0(Dir, BaseName, 
-            "/BET-EPO.ctl"), paste0(Dir, BaseName, "/BET-EPO.dat"), paste0(Dir, BaseName, "/ss.exe"))
+        files = c(paste0(Dir, BaseName, "/ss.par"), paste0(Dir, BaseName, "/go_nohess.bat"), paste0(Dir, BaseName, 
+            "/starter.ss"), paste0(Dir, BaseName, "/forecast.ss"), paste0(Dir, BaseName, "/BET-EPO.ctl"), paste0(Dir, 
+            BaseName, "/BET-EPO.dat"), paste0(Dir, BaseName, "/ss.exe"))
         file.copy(from = files, to = paste0(Dir, step_name[step]))
         
         CtrlDir <- paste0(paste0(Dir, step_name[step]), "/BET-EPO.dat")
@@ -60,14 +59,13 @@ impact_plot = function(Dir, n_year, BaseName, n_fishery) {
         if (step == 4) 
             fishery <- fishery4
         
-        Catch1 <- Catch %>% filter(fleet %in% fishery) %>% mutate(catch = ifelse(year > 0, 0, 
-            catch))  # change catch to 0
+        Catch1 <- Catch %>% filter(fleet %in% fishery) %>% mutate(catch = ifelse(year > 0, 0, catch))  # change catch to 0
         Catch2 <- Catch %>% filter((fleet %in% fishery) == FALSE)
         
         Catch_combined <- rbind(Catch1, Catch2)
         
-        Catch <- Catch_combined %>% filter(year > 0, fleet > 0) %>% select(year, fleet, catch) %>% 
-            spread(fleet, catch)
+        Catch <- Catch_combined %>% filter(year > 0, fleet > 0) %>% select(year, fleet, catch) %>% spread(fleet, 
+            catch)
         
         for (line in 1:((n_year + 1) * n_fishery + 1)) {
             CtrlFile[Line + line] <- gsub(",", "", toString(Catch_combined[line, ]))
@@ -105,25 +103,21 @@ impact_plot = function(Dir, n_year, BaseName, n_fishery) {
     myreplist5 = r4ss::SS_output(dir = Dir5, ncols = 400, covar = F, printstats = F)
     
     SB_dif <- data.frame(Year = myreplist1$timeseries$Yr[1:n_year + 2], SB = myreplist1$timeseries$SpawnBio[1:n_year + 
-        2], noDisc = myreplist2$timeseries$SpawnBio[1:n_year + 2] - myreplist1$timeseries$SpawnBio[1:n_year + 
-        2], noPS = myreplist3$timeseries$SpawnBio[1:n_year + 2] - myreplist1$timeseries$SpawnBio[1:n_year + 
-        2], noLL = myreplist4$timeseries$SpawnBio[1:n_year + 2] - myreplist1$timeseries$SpawnBio[1:n_year + 
-        2])
+        2], noDisc = myreplist2$timeseries$SpawnBio[1:n_year + 2] - myreplist1$timeseries$SpawnBio[1:n_year + 2], 
+        noPS = myreplist3$timeseries$SpawnBio[1:n_year + 2] - myreplist1$timeseries$SpawnBio[1:n_year + 2], noLL = myreplist4$timeseries$SpawnBio[1:n_year + 
+            2] - myreplist1$timeseries$SpawnBio[1:n_year + 2])
     
     SB_dif$noDisc_dif <- SB_dif$noDisc/apply(SB_dif[, 2:4], c(1), sum) * (myreplist5$timeseries$SpawnBio[3:174] - 
         myreplist1$timeseries$SpawnBio[3:174])
-    SB_dif$noPS_dif <- SB_dif$noPS/apply(SB_dif[, 2:4], c(1), sum) * (myreplist5$timeseries$SpawnBio[3:174] - 
-        myreplist1$timeseries$SpawnBio[3:174])
-    SB_dif$noDLL_dif <- SB_dif$noLL/apply(SB_dif[, 2:4], c(1), sum) * (myreplist5$timeseries$SpawnBio[3:174] - 
-        myreplist1$timeseries$SpawnBio[3:174])
+    SB_dif$noPS_dif <- SB_dif$noPS/apply(SB_dif[, 2:4], c(1), sum) * (myreplist5$timeseries$SpawnBio[3:174] - myreplist1$timeseries$SpawnBio[3:174])
+    SB_dif$noDLL_dif <- SB_dif$noLL/apply(SB_dif[, 2:4], c(1), sum) * (myreplist5$timeseries$SpawnBio[3:174] - myreplist1$timeseries$SpawnBio[3:174])
     
     write.csv(SB_dif, file = paste0(Dir, "SB.csv"), row.names = FALSE)
     
     ggplot(data = SB_dif) + geom_ribbon(aes(x = Year, ymin = 0, ymax = SB), fill = "red") + geom_ribbon(aes(x = Year, 
-        ymin = SB, ymax = SB + noDisc_dif), fill = "green") + geom_ribbon(aes(x = Year, ymin = SB + 
-        noDisc_dif, ymax = SB + noDisc_dif + noPS_dif), fill = "purple") + geom_ribbon(aes(x = Year, 
-        ymin = SB + noDisc_dif + noPS_dif, ymax = SB + noDisc_dif + noPS_dif + noDLL_dif), fill = "blue") + 
-        theme_bw() + ylab("Spawning biomass (mt)")
+        ymin = SB, ymax = SB + noDisc_dif), fill = "green") + geom_ribbon(aes(x = Year, ymin = SB + noDisc_dif, ymax = SB + 
+        noDisc_dif + noPS_dif), fill = "purple") + geom_ribbon(aes(x = Year, ymin = SB + noDisc_dif + noPS_dif, ymax = SB + 
+        noDisc_dif + noPS_dif + noDLL_dif), fill = "blue") + theme_bw() + ylab("Spawning biomass (mt)")
     
     ggsave(file = paste0(Dir, "impact_plot.png"), width = 8, height = 6)
     ggsave(file = paste0(Dir, "impact_plot.eps"), width = 8, height = 6)
