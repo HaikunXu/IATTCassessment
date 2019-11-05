@@ -15,7 +15,7 @@ ll_catch = function(Grid_Catch, FSR_Catch, Species, last_year, dir) {
         aes(long, lat, group = group), fill = "black", colour = "white", alpha = 1, lwd = 0.5) + coord_quickmap(ylim = c(-40, 
         40), xlim = c(-150, -70)) + theme_bw(8)
     
-    ggsave(filename = "Areas.png", dpi = 300, width = 5, height = 5)
+    ggsave(filename = paste0(dir,"Areas.png"), dpi = 300, width = 5, height = 5)
     
     # specify the countries to be analyzed in the LL catch allocation
     Countries <- as.character(unique(Grid_Catch$FlagAbv))
@@ -223,7 +223,7 @@ ll_catch = function(Grid_Catch, FSR_Catch, Species, last_year, dir) {
     if (Species == "BET") 
         Area_Flag <- c(6, 3, 3, 4, 3, 3, 6, 4, 3)
     if (Species == "YFT") 
-        Area_Flag <- c(2, 3, 2, 2, 2, 3, 2, 2, 2, 3, 2, 2, 3)
+        Area_Flag <- c(1, 3, 3, 3, 3, 2, 2, 3, 3, 3, 2, 3, 3)
     
     print(Coastal_Countries)
     print(Area_Flag)

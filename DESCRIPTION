@@ -1,11 +1,10 @@
 Package: IATTCassessment
 Type: Package
-Title: Code for IATTC Stock Assessments
-Version: 0.0.6
+Title: Codes for IATTC Stock Assessments
+Version: 1.0.0
 Author: Haikun Xu
 Maintainer: Haikun Xu <hkxu@iattc.org>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Description: This package provides some codes to automate data precessing and result visualization
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true

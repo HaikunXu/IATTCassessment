@@ -21,9 +21,9 @@ area_code = function(Lat, Lon, Species) {
     }
     
     if (Species == "YFT") {
-        i2 <- which(Lon > -110 & Lat > -5)
+        i2 <- which(Lon > -120 & Lon < -90)
         Areas[i2] <- 2
-        i3 <- which(Lat < -5)
+        i3 <- which(Lon > -90)
         Areas[i3] <- 3
     }
     
