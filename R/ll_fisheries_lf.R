@@ -23,6 +23,13 @@ ll_fisheries_lf = function(JPN_size, JPN_ce, Grid_Catch, Species, last_year, dir
     sample_size <- size_data0 %>% group_by(Area,Year) %>%
         summarise(n = n()) # sample size
     
+    ggplot(data=sample_size) +
+        geom_point(aes(x=Year,y=n,color=factor(Area))) +
+        theme_bw(12) +
+        ylab("Sample size")
+    ggsave(filename = paste0(dir,"Sample size.png"), dpi = 300, width = 8, height = 5)
+    
+    
     ####
     # count data
     size_data <- JPN_size %>%
@@ -126,8 +133,10 @@ ll_fisheries_lf = function(JPN_size, JPN_ce, Grid_Catch, Species, last_year, dir
         summarise(lf_mean=mean(lf))
     
     ggplot(data=data_plot) +
-        geom_line(aes(x=length,y=lf_mean,color=factor(Area))) +
-        theme_bw(12)
+        geom_smooth(aes(x=length,y=lf_mean,color=factor(Area)),span = 0.2,se = FALSE) +
+        geom_line(aes(x=length,y=lf_mean,color=factor(Area)),alpha=0.5) +
+        theme_bw(12) +
+        ylab("Average LF")
     ggsave(filename = paste0(dir,"LL Fisheries LF.png"), dpi = 300, width = 8, height = 5)
     
     return(data_area_final)
