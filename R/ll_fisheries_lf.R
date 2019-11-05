@@ -19,7 +19,7 @@ ll_fisheries_lf = function(JPN_size, JPN_ce, Grid_Catch, Species, last_year, dir
                M_unit %in% c(6,7)) %>% #1/2cm resolution data
         mutate(Year = (YY - 1975) * 4 + ceiling(MM / 3))
     
-    size_data0$Area <- area_code(size_data0$Y, size_data0$X, "YFT")
+    size_data0$Area <- area_code(size_data0$Y, size_data0$X, Species)
     sample_size <- size_data0 %>% group_by(Area,Year) %>%
         summarise(n = n()) # sample size
     
