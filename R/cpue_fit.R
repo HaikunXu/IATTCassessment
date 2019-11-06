@@ -5,7 +5,7 @@
 #' @export
 #' 
 
-cpue_fit <- function(Path) {
+cpue_fit <- function(Path, s) {
     myreplist = SS_output(dir = Path, ncols = 400, covar = F, printstats = F, verbose = F)
     cpue <- myreplist$cpue
     n_fleet <- length(unique(cpue$Fleet))
@@ -13,16 +13,15 @@ cpue_fit <- function(Path) {
     rmse <- cpue %>% group_by(Fleet) %>% summarise(RMSE = sqrt(mean(Dev^2)))
     
     f <- ggplot(data = cpue) + geom_point(aes(x = Time, y = Dev, color = factor(Fleet))) + geom_text(aes(x = -Inf, 
-        y = -Inf, label = round(RMSE, 2)), data = rmse, hjust = -0.5, vjust = -1) + geom_smooth(aes(x = Time, y = Dev, 
-        color = factor(Fleet), fill = factor(Fleet)), span = 0.25) + facet_wrap(~Fleet, nrow = n_fleet) + ylim(c(-1, 
-        1)) + geom_hline(yintercept = 0) + theme_bw(12) + ylab("CPUE residuals")
+        y = -Inf, label = paste0("RMSE = ",round(RMSE, 2))), data = rmse, hjust = -0.5, vjust = -1) + geom_smooth(aes(x = Time, y = Dev, 
+        color = factor(Fleet), fill = factor(Fleet)), span = s, se = FALSE) + facet_wrap(~Fleet, nrow = n_fleet) + geom_hline(yintercept = 0) + theme_bw(12) + ylab("CPUE residuals")
     
-    ggsave(f, file = paste0(Path, "CPUE_Fit1.png"), width = 6, height = 10)
+    ggsave(f, file = paste0(Path, "CPUE_Fit1.png"), width = 6, height = 6)
     
     cpue <- cpue %>% mutate(Quarter = (Time - 1.5)%%4 + 1)
     
     f <- ggplot(data = cpue) + geom_boxplot(aes(x = factor(Fleet), y = Dev, color = factor(Quarter))) + geom_hline(yintercept = 0) + 
-        theme_bw(12) + ylab("CPUE residuals") + ylim(c(-1, 1))
+        theme_bw(12) + ylab("CPUE residuals")
     
     ggsave(f, file = paste0(Path, "CPUE_Fit2.png"), width = 6, height = 6)
     
