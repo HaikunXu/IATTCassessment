@@ -251,7 +251,13 @@ ll_catch = function(Grid_Catch, FSR_Catch, Species, last_year, dir) {
     # total catch
     LL_Catch[, paste0("W", seq(1, n_areas))] <- LL_Catch[, paste0("W", seq(1, n_areas))] + Coastal_Catch[, 2:(n_areas + 
         1)]
+    
+    LL_Catch_SS <- data.frame(LL_Catch) %>%
+        gather(c(paste0("N", seq(1, n_areas)), paste0("W", seq(1, n_areas))), key = "Fishery",value = "Catch") %>%
+        mutate(Year=(YQ-1975)*4+1,seas=1,Catch_CE=0.01) %>% select(Year,seas,Fishery,Catch,Catch_CE)
+                                                                        
     write.csv(LL_Catch, paste0(dir, "LL_Catch.csv"), row.names = FALSE)
+    write.csv(LL_Catch_SS, paste0(dir, "LL_Catch_SS.csv"), row.names = FALSE)
     
     return(LL_Catch)
 }
