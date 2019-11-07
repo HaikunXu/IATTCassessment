@@ -24,7 +24,7 @@ cpue_fit <- function(Path, s) {
     cpue <- cpue %>% mutate(Quarter = (Time - 1)%%4 + 1)
     
     f <- ggplot(data = cpue) + geom_boxplot(aes(x = factor(Fleet), y = Dev, color = factor(Quarter))) + geom_hline(yintercept = 0) + 
-        theme_bw(12) + ylab("CPUE residuals")
+        theme_bw(12) + ylab("CPUE residual")
     
     ggsave(f, file = paste0(Path, "CPUE_Fit2.png"), width = 6, height = 6)
     
