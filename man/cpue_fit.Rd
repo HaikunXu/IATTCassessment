@@ -4,7 +4,7 @@
 \alias{cpue_fit}
 \title{Diagnostics for SS cpue fit}
 \usage{
-cpue_fit(Path)
+cpue_fit(Path, s)
 }
 \description{
 \code{cpue_fit} This function provides cue diagnotics
