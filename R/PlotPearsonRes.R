@@ -4,13 +4,14 @@
 #' 
 #' @export
 
-PlotPearsonRes<-function(Rep=Rep, myFleet=myFleet){
+PlotPearsonRes<-function(Rep=Rep, myFleet=myFleet, Path=Path){
   
   lendat <- Rep$lendbase
   tmp<- lendat %>% filter(Kind=="LEN",Fleet==myFleet)
   boxplot(split(tmp$Pearson, tmp$Bin), xlab="Length class (quarter)", ylab="Pearson residuals",ylim=c(-4,4))
   boxplot(split(tmp$Pearson, tmp$Yr), xlab="Length class (quarter)", ylab="Pearson residuals",ylim=c(-4,4))
   
+  png(paste0(Path,"PearsonRes.png"), width = 500, height = 500)
   par(mfrow=c(2,2), mar=c(4,4,2,2))
   layout(matrix(c(1,1,2,3), 2, 2, byrow = TRUE), 
          widths=c(3,1), heights=c(1,1))
@@ -38,4 +39,5 @@ PlotPearsonRes<-function(Rep=Rep, myFleet=myFleet){
   q1 <- quantile(tmp$Pearson,0.95)
   lines(c(-5,5), rep(q1,2), lty=2)
   
+  dev.off()
 }
