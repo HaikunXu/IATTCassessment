@@ -4,7 +4,7 @@
 #' 
 #' @export
 
-PlotPearsonRes<-function(Rep=Rep){
+R_shift <- function(Rep = Rep){
   
   R <- Rep$recruit
   R_med <- R %>% filter(era == "Main") %>%
