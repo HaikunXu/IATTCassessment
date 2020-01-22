@@ -5,7 +5,7 @@
 #' @export
 #' 
 
-plotSelex <- function(replist, FleetNums, numRows, numCols)
+plotSelex <- function(Path, replist, FleetNums, numRows, numCols)
 {
     # Get quantities from replist
     startYr <- replist$startyr
@@ -20,20 +20,21 @@ plotSelex <- function(replist, FleetNums, numRows, numCols)
     FleetNames <- replist$FleetNames
     
     # Plot
-    windows(8,6)
-    par(mfrow=c(numRows,numCols), mar=c(2,2,2,1), omi=c(.5,.5,.2,0))
+    tiff(paste0(Path,"Size_Selex.tif"),width = 1200, height = 1200, units = "px")
+    par(mfrow=c(numRows,numCols), mar=c(3,3,3,3), omi=c(1,1,1,1))
     for(ifleet in 1:numFleets)
     {
         if(ifleet%in%FleetNums)
         {
-            plot(SizeBins, SizeSelex[ifleet,6:dim(SizeSelex)[2]], type="l", ylim=c(0,1), ylab="",xlab="", col="black", lwd=1.25, cex.axis=.75, mgp=c(2,0.5,0), tcl=-.3, las=1)
+            plot(SizeBins, SizeSelex[ifleet,6:dim(SizeSelex)[2]], type="l", ylim=c(0,1), ylab="",xlab="", col="black", lwd=2, cex.axis=1.5, mgp=c(2,0.5,0), tcl=-.3, las=1)
             leg <- FleetNames[ifleet]
             #leg <- paste("Fishery ", ifleet," - Pescaria ", ifleet, sep="")
-            title(main=leg, cex.main=1)
+            title(main=leg, cex.main=2)
         }
     }
     
     #legend(5,0.95,lwd=2, col=c("black", "slate grey"), legend=c("SS3"))
-    mtext(side=1, outer=T, "Length (cm)-Talla (cm)", line=1.5, cex=1.25)
-    mtext(side=2, outer=T, "Selectivity and retention - Selectividad e retencion", line=1.5, cex=1.25)
+    mtext(side=1, outer=T, "Length (cm)-Talla (cm)", line=2, cex=2.5)
+    mtext(side=2, outer=T, "Selectivity and retention - Selectividad e retencion", line=2, cex=2.5)
+    dev.off()
 }
