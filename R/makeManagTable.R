@@ -4,11 +4,11 @@
 #' 
 #' @export
 
-makeManagTable <- function(replist, Path) {
+makeManagTable <- function(replist, Path, FFleets) {
     # replist <- myreplist0 Path <- Path0 Get quantities from replist
     TimeSeries <- replist$timeseries
     # numFleets <- replist$nfleets # all fleets including surveys
-    numFleets <- replist$nfishfleets  # only fisheries fleets <>< Change 15 March 2016
+    # numFleets <- replist$nfishfleets  # only fisheries fleets <>< Change 15 March 2016
     endYr <- replist$endyr
     
     # Make forecast management report name
@@ -24,9 +24,9 @@ makeManagTable <- function(replist, Path) {
     ForeDat <- as.data.frame(ForeDat)
     
     # Make catch headers to subset
-    HeadersC <- rep(NA, numFleets)
-    for (ifleet in 1:numFleets) {
-        headerTemp <- paste("sel(B):_", ifleet, sep = "")
+    HeadersC <- rep(NA, length(FFleets))
+    for (ifleet in 1:length(HeadersC)) {
+        headerTemp <- paste("sel(B):_", FFleets[ifleet], sep = "")
         HeadersC[ifleet] <- headerTemp
     }
     # Make table with forecast time series
