@@ -4,7 +4,7 @@
 \alias{plotSelex}
 \title{Plot size selectivity for SS runs}
 \usage{
-plotSelex(Path, replist, FleetNums, numRows, numCols)
+plotSelex(Path, replist, FleetNums, numRows, numCols, w, h)
 }
 \description{
 \code{cpue_fit} This function plot estimated selectivity curves for specified fleets

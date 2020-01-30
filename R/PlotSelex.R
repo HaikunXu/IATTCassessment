@@ -5,7 +5,7 @@
 #' @export
 #' 
 
-plotSelex <- function(Path, replist, FleetNums, numRows, numCols)
+plotSelex <- function(Path, replist, FleetNums, numRows, numCols, w, h)
 {
     # Get quantities from replist
     startYr <- replist$startyr
@@ -20,7 +20,7 @@ plotSelex <- function(Path, replist, FleetNums, numRows, numCols)
     FleetNames <- replist$FleetNames
     
     # Plot
-    tiff(paste0(Path,"Size_Selex.tif"),width = 1200, height = 1200, units = "px")
+    tiff(paste0(Path,"Size_Selex.tif"),width = w, height = h, units = "px")
     par(mfrow=c(numRows,numCols), mar=c(3,3,3,3), omi=c(1,1,1,1))
     for(ifleet in 1:numFleets)
     {

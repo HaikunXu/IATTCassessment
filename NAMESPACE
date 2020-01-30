@@ -3,6 +3,7 @@
 export(PlotPearsonRes)
 export(R_shift)
 export(area_code)
+export(cpue_compare)
 export(cpue_fit)
 export(faa)
 export(impact_plot)
