@@ -16,7 +16,8 @@
 select_data <- function(data,c1,c2,c3,c4) {
   
 # Generate the quantities for data selection
-Data <- data %>% 
+Data <- data %>%
+  mutate(Year=ceiling(Year/4)+1974) %>%
   group_by(Vessel) %>% mutate(setsbyvessel=n(), # total number of sets per vessel
                                 quartersbyvessel=length(unique(Year))) %>% # total number of quarters fished per vessel
   group_by(Lat,Lon) %>% mutate(setsbygrid=n(), # total number of sets per grid cell
