@@ -19,7 +19,7 @@ PlotPearsonRes<-function(Rep=Rep, myFleet=myFleet, Path=Path){
   boxplot(split(tmp$Pearson, tmp$Yr), xlab="Quarter", ylab="Pearson residuals")
   lines(range(tmp$Bin,-1,50), rep(0,2), lty=3, col=2)
   
-  boxplot(split(tmp$Pearson, tmp$Bin), xlab="Length class (quarter)", ylab="Pearson residuals")
+  boxplot(split(tmp$Pearson, tmp$Bin), xlab="Length class (cm)", ylab="Pearson residuals")
   lines(range(tmp$Bin,-1,50), rep(0,2), lty=3, col=2)
   #boxplot(split(tmp$Pearson, tmp$YearClass), xlab="Year class", ylab="Pearson residuals")
   #lines(range(tmp$Bin,-1,150), rep(0,2), lty=3, col=2)

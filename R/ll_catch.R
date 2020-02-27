@@ -107,8 +107,9 @@ ll_catch = function(Grid_Catch, FSR_Catch, Species, last_year, dir) {
         for (i in 1:length(FSR_annual$Year)) {
             # do the allocation for each year
             
+            # print(i)
             year <- FSR_annual$Year[i]
-            
+  
             # if FSR does not exist for last year, use the previous year's value
             if (is.na(as.numeric(FSR_annual[which(FSR_annual$Year == year), "mt"])) == FALSE) 
                 FSR <- as.numeric(FSR_annual[which(FSR_annual$Year == year), "mt"]) else FSR <- as.numeric(FSR_annual[which(FSR_annual$Year == (year - 1)), "mt"])
