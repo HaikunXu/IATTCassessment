@@ -7,17 +7,17 @@
 plot_R = function(SS_Dir, lyear, Save_Dir) {
     
     cor_mat <- read.table(paste0(SS_Dir, "ss.cor"), skip = 1, fill = NA, header = TRUE)
-    R_est <- cor_mat$value[which(cor_mat$name == "recr_std")[3:((lyear - 1974) * 4 + 2)]]
-    R_std <- cor_mat$std.dev[which(cor_mat$name == "recr_std")[3:((lyear - 1974) * 4 + 2)]]
-    R <- data.frame(est = R_est, std = R_std, year = rep(1975:lyear, each = 4), yq = seq(1975, lyear + 0.75, 0.25))
+    R_est <- cor_mat$value[which(cor_mat$name == "recr_std")[3:((lyear - 1978) * 4 + 2)]]
+    R_std <- cor_mat$std.dev[which(cor_mat$name == "recr_std")[3:((lyear - 1978) * 4 + 2)]]
+    R <- data.frame(est = R_est, std = R_std, year = rep(1979:lyear, each = 4), yq = seq(1979, lyear + 0.75, 0.25))
     R_annual <- R %>% group_by(year) %>% summarise(Est = sum(est), Std = NA)
     # cov_mat <- matrix(NA, nrow = length(R_est), ncol = 4)
     index_init <- which(cor_mat$name == "recr_std")[3]
     
-    for (y in 1975:lyear) {
-        index_year <- 0:3 + index_init + (y - 1975) * 4
+    for (y in 1979:lyear) {
+        index_year <- 0:3 + index_init + (y - 1979) * 4
         cor_y <- cor_mat[index_year, index_year + 4]
-        var_y <- R$std[((y - 1975) * 4 + 1):((y - 1974) * 4)] %*% t(R$std[((y - 1975) * 4 + 1):((y - 1974) * 4)]) * 
+        var_y <- R$std[((y - 1979) * 4 + 1):((y - 1978) * 4)] %*% t(R$std[((y - 1979) * 4 + 1):((y - 1978) * 4)]) * 
             cor_y
         var_y[1, 2:4] <- var_y[2:4, 1]
         var_y[2, 3:4] <- var_y[3:4, 2]
