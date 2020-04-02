@@ -4,7 +4,7 @@
 #' 
 #' @export
 
-plot_R = function(SS_Dir, lyear, Save_Dir) {
+plot_R = function(SS_Dir, lyear) {
     
     cor_mat <- read.table(paste0(SS_Dir, "ss.cor"), skip = 1, fill = NA, header = TRUE)
     R_est <- cor_mat$value[which(cor_mat$name == "recr_std")[3:((lyear - 1978) * 4 + 2)]]
@@ -40,7 +40,7 @@ plot_R = function(SS_Dir, lyear, Save_Dir) {
         xlab("") + ylab("") + geom_hline(yintercept = 1, linetype = "dashed")
     
     f_all <- gridExtra::grid.arrange(f1, f2, nrow = 2)
-    ggsave(f_all, file = paste0(Save_Dir, "R.png"), width = 6, height = 8)
-    ggsave(f_all, file = paste0(Save_Dir, "R.eps"), width = 6, height = 8)
+    ggsave(f_all, file = paste0(SS_Dir, "R.png"), width = 6, height = 8)
+    ggsave(f_all, file = paste0(SS_Dir, "R.eps"), width = 6, height = 8)
     
 }

@@ -9,10 +9,10 @@ impact_plot = function(Dir, n_year, BaseName, n_fishery) {
     step_name <- c("noDisc", "noPS", "noLL", "noF")
     n_step <- length(step_name)
     
-    fishery1 <- seq(8, 11)
-    fishery2 <- seq(1, 11)
-    fishery3 <- seq(12, 19)
-    fishery4 <- seq(1, 19)
+    fishery1 <- 30
+    fishery2 <- seq(25,35)
+    fishery3 <- seq(1,24)
+    fishery4 <- seq(1,35)
     
     print("change starter file (use par and do not estimate) before this section!!!")
     
@@ -20,7 +20,8 @@ impact_plot = function(Dir, n_year, BaseName, n_fishery) {
     CtrlDir <- paste0(paste0(Dir, BaseName), "/BET-EPO.dat")
     CtrlFile <- readLines(CtrlDir, warn = F)
     Line <- match("#_NOTE:  catch data is ignored for survey fleets", CtrlFile)
-    Catch0 <- read.table(file = CtrlDir, nrows = (n_year + 1) * n_fishery + 1, skip = Line)
+    Catch0 <- read.table(file = CtrlDir, nrows = (n_year + 1) * n_fishery + 1, skip = Line +3600)
+    # Catch0 <- read.table(file = CtrlDir, nrows = 1, skip = Line)
     names(Catch0) <- c("year", "seas", "fleet", "catch", "catch_se")
     Catch0 <- Catch0 %>% filter(year > 0, fleet > 0) %>% select(year, fleet, catch) %>% spread(fleet, catch)
     

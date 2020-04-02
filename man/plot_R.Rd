@@ -4,7 +4,7 @@
 \alias{plot_R}
 \title{Plot quarterly and annual recruitment}
 \usage{
-plot_R(SS_Dir, lyear, Save_Dir)
+plot_R(SS_Dir, lyear)
 }
 \description{
 \code{plot_R} This function plot quarterly and annual recruitment for the stock assessment report

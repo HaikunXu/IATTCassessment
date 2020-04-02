@@ -94,6 +94,7 @@ ll_catch = function(Grid_Catch, FSR_Catch, Species, last_year, dir) {
         }
         # a quick look at the allocation flag vector plot(FSR_annual$Year,allocation_flag,main=Countries[c])
         print(Countries[c])
+        print(FSR_annual$Year[flag_id])
         print(allocation_flag)
         
         # create a new data.frame to store the allocation values
@@ -107,7 +108,7 @@ ll_catch = function(Grid_Catch, FSR_Catch, Species, last_year, dir) {
         for (i in 1:length(FSR_annual$Year)) {
             # do the allocation for each year
             
-            # print(i)
+            # print(FSR_annual$Year[i])
             year <- FSR_annual$Year[i]
   
             # if FSR does not exist for last year, use the previous year's value
@@ -205,7 +206,7 @@ ll_catch = function(Grid_Catch, FSR_Catch, Species, last_year, dir) {
         save[, paste0("", seq(1, n_areas))] <- save[, paste0("", seq(1, n_areas))] * ifelse(is.na(save[, paste0("W", 
             seq(1, n_areas))]), 1, NA)
         
-        write.csv(save, paste0(dir, Countries[c], ".csv"), row.names = FALSE)
+        write.csv(save, paste0(dir, Countries[c], toString(last_year+0.25), ".csv"), row.names = FALSE)
         
         save_all <- rbind(save_all, data.matrix(save))
     }
@@ -222,7 +223,7 @@ ll_catch = function(Grid_Catch, FSR_Catch, Species, last_year, dir) {
     Coastal_Countries <- sort(Coastal_Countries)
     
     if (Species == "BET") 
-        Area_Flag <- c(6, 3, 3, 4, 3, 3, 6, 4, 3)
+        Area_Flag <- c(6, 3, 3, 3, 4, 3, 3, 6, 4, 3)
     if (Species == "YFT") 
         Area_Flag <- c(1, 3, 3, 3, 3, 2, 2, 3, 3, 3, 2, 3, 3)
     
