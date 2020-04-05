@@ -11,22 +11,22 @@ PlotPearsonRes<-function(Rep=Rep, myFleet=myFleet, Path=Path){
   boxplot(split(tmp$Pearson, tmp$Bin), xlab="Length class (quarter)", ylab="Pearson residuals",ylim=c(-4,4))
   boxplot(split(tmp$Pearson, tmp$Yr), xlab="Length class (quarter)", ylab="Pearson residuals",ylim=c(-4,4))
   
-  png(paste0(Path,"PearsonRes.png"), width = 1000, height = 800, res = 100)
+  png(paste0(Path,"PearsonRes.png"), width = 5000, height = 4000, res = 600)
   par(mfrow=c(2,2), mar=c(4,4,2,2))
   layout(matrix(c(1,1,2,3), 2, 2, byrow = TRUE), 
          widths=c(3,1), heights=c(1,1))
   
-  boxplot(split(tmp$Pearson, tmp$Yr), xlab="Quarter", ylab="Pearson residuals")
+  boxplot(split(tmp$Pearson, tmp$Yr), xlab="Quarter", ylab="Pearson residuals",ylim=c(-1,3))
   lines(range(tmp$Bin,-1,50), rep(0,2), lty=3, col=2)
   
-  boxplot(split(tmp$Pearson, tmp$Bin), xlab="Length class (cm)", ylab="Pearson residuals")
+  boxplot(split(tmp$Pearson, tmp$Bin), xlab="Length class (cm)", ylab="Pearson residuals",ylim=c(-1,3))
   lines(range(tmp$Bin,-1,50), rep(0,2), lty=3, col=2)
   #boxplot(split(tmp$Pearson, tmp$YearClass), xlab="Year class", ylab="Pearson residuals")
   #lines(range(tmp$Bin,-1,150), rep(0,2), lty=3, col=2)
   
   #Bottom panel is the normal quantile-quantile plot for residuals, with
   #the 1:1 line, horizontal lines give the 5, 25, 50, 75, and 95 percentiles.
-  qqnorm(y=tmp$Pearson, main="")
+  qqnorm(y=tmp$Pearson, main="",ylim=c(-1,3))
   qqline(y=tmp$Pearson)
   q1 <- quantile(tmp$Pearson,0.05)
   lines(c(-5,5), rep(q1,2), lty=2)
@@ -41,3 +41,4 @@ PlotPearsonRes<-function(Rep=Rep, myFleet=myFleet, Path=Path){
   
   dev.off()
 }
+
