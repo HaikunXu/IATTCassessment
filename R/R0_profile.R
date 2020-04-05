@@ -18,7 +18,7 @@ R0_profile = function(Path,R0) {
   for(f in 1:length(comps)) NLL_comp <- cbind(NLL_comp, rep(NA,N))
 
   for (n in 1:N) {
-    myreplist = SS_output(dir = paste0(Path,toString(R0[n])),ncols = 400,covar = F,verbose = FALSE, printstats = FALSE)
+    myreplist = r4ss::SS_output(dir = paste0(Path,toString(R0[n])),ncols = 400,covar = F,verbose = FALSE, printstats = FALSE)
     NLL_a[n,1:5] <- myreplist$likelihoods_used$values[c(1,4,5,6,7)]
     
     NLL_temp <- myreplist$likelihoods_by_fleet
