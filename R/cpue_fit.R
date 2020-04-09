@@ -13,8 +13,8 @@ cpue_fit <- function(Path, myreplist, s) {
     
     ggplot(data = cpue) +
         # geom_errorbar(aes(x = Time, ymin = -SE, ymax = SE), color = "black", alpha= 0.5) +
-        geom_point(aes(x = Time, y = Dev/SE, color = factor(Fleet))) + geom_text(aes(x = -Inf, 
-        y = -Inf, label = paste0("RMSE = ",round(RMSE, 2))), data = rmse, hjust = -0.5, vjust = -1) + geom_smooth(aes(x = Time, y = Dev/SE, 
+        geom_point(aes(x = Time/4+1974.75, y = Dev/SE, color = factor(Fleet))) + geom_text(aes(x = -Inf, 
+        y = -Inf, label = paste0("RMSE = ",round(RMSE, 2))), data = rmse, hjust = -0.5, vjust = -1) + geom_smooth(aes(x = Time/4+1974.75, y = Dev/SE, 
         color = factor(Fleet), fill = factor(Fleet)), span = s, se = FALSE) + facet_wrap(~Fleet, nrow = n_fleet) + geom_hline(yintercept = 0) +
         theme_bw(12) + ylab("CPUE residual / CPUE std error") + xlab("Year")
     
