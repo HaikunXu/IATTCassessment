@@ -90,6 +90,6 @@ makeManagTable <- function(replist, Path, FFleets) {
     ManagTable[11, 2] <- format(R_shift(replist), digits = 2, nsmall = 2)
     
     Out <- list(Fvector = Fvector, FmultScale = FmultScale, ManagTable = ManagTable)
-    # print(Out)
+
     return(Out)
 }
