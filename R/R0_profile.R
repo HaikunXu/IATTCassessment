@@ -1,4 +1,4 @@
-#' Generate area code for longline
+#' Generate R0 likelihoood profile figure
 #' 
 #' /code{R0_profile} This function makes R0 profile plot for BET SAC11 assessments
 #' 

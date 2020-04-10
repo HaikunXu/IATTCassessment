@@ -1,4 +1,4 @@
-#' Plot quarterly and annual recruitment
+#' Plot quarterly SBR
 #' 
 #' \code{plot_SB} This function plots quarterly SBR for the stock assessment report 
 #' 
