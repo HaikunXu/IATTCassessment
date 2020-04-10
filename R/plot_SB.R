@@ -4,7 +4,8 @@
 #' 
 #' @export
 
-plot_SB = function(SS_Dir, lyear, fyear, legend, Save_Dir) {
+plot_SB = function(SS_Dir, lyear, fyear, legend, Save_Dir, ymax) {
+    print("rename ss3.cor to ss.cor for runs not using SS 3.30!")
     for (i in 1:length(lyear)) {
         cor_mat <- read.table(paste0(SS_Dir[i], "ss.cor"), skip = 1, fill = NA, header = TRUE)
         SB_est <- cor_mat$value[which(cor_mat$name == "depletion")[1:((lyear[i] - (fyear[i]-1)) * 4)]]
@@ -18,12 +19,12 @@ plot_SB = function(SS_Dir, lyear, fyear, legend, Save_Dir) {
     
     SB_A <- SB_A %>% data.frame() %>% mutate(Model=factor(Model))
     
-    f <- ggplot(data = SB_A) + geom_ribbon(aes(x = yq, ymin = est * exp(-1.96 * std), ymax = est * exp(1.96 * std), fill = Model), alpha=0.2) + 
+    f <- ggplot(data = SB_A) + geom_ribbon(aes(x = yq, ymin = est * exp(-1.96 * std), ymax = est * exp(1.96 * std), fill = Model), alpha=0.1) + 
         geom_line(aes(x = yq, y = est, color = Model), size = 1) + 
         theme_bw(20) + xlab("") + ylab("") + geom_hline(yintercept = 1, linetype = "dashed") +
-        coord_cartesian(ylim = c(0,1.2))
+        coord_cartesian(ylim = c(0,ymax))
 
-    ggsave(f, file = paste0(Save_Dir, "SB.png"), width = 12, height = 15)
+    ggsave(f, file = paste0(Save_Dir, "SB.png"), width = 12, height = 8)
     # ggsave(f_all, file = paste0(Save_Dir, "R.eps"), width = 6, height = 8)
     
 }
