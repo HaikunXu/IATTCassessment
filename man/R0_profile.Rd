@@ -2,7 +2,7 @@
 % Please edit documentation in R/R0_profile.R
 \name{R0_profile}
 \alias{R0_profile}
-\title{Generate area code for longline}
+\title{Generate R0 likelihoood profile figure}
 \usage{
 R0_profile(Path, R0)
 }
