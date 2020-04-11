@@ -21,6 +21,7 @@ plot_SB = function(SS_Dir, lyear, fyear, legend, Save_Dir, ymax) {
     
     f <- ggplot(data = SB_A) + geom_ribbon(aes(x = yq, ymin = est * exp(-1.96 * std), ymax = est * exp(1.96 * std), fill = Model), alpha=0.1) + 
         geom_line(aes(x = yq, y = est, color = Model), size = 1) + 
+        geom_point(aes(x = yq, y = est, color = Model), size = 2,data = SB_A %>% filter(yq==year)) + 
         theme_bw(20) + xlab("") + ylab("") + geom_hline(yintercept = 1, linetype = "dashed") +
         coord_cartesian(ylim = c(0,ymax))
 

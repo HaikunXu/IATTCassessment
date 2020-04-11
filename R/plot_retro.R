@@ -20,7 +20,7 @@ plot_retro = function(SS_Dir, lyear, fyear, Save_Dir) {
     
     f <- ggplot(data=SBR %>% filter(label1==1)) +
         geom_line(aes(x=Year,y=SBR,color=Assess_Year)) +
-        geom_point(aes(x=Year,y=SBR,color=Assess_Year),data = SBR %>% filter(label2==1),size=2) +
+        geom_point(aes(x=Year,y=SBR,color=Assess_Year),data = SBR %>% filter(label2==1),size=3) +
         # coord_cartesian(ylim=c(0.15,0.3)) +
         labs(x = "", y = "Spawning biomass") +
         theme_bw(16)
