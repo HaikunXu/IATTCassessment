@@ -25,6 +25,6 @@ plot_retro = function(SS_Dir, lyear, fyear, Save_Dir) {
         labs(x = "", y = "Spawning biomass") +
         theme_bw(16)
     
-    ggsave(f, file = paste0(Save_Dir, "Retro.png"), width = 12, height = 8)
+    ggsave(f, file = paste0(Save_Dir, "Retro.png"), width = 8, height = 6)
     
 }

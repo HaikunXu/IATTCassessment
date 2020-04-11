@@ -3,7 +3,7 @@
 export(PlotPearsonRes)
 export(PlotSplines)
 export(R0_profile)
-export(R_shift)
+export(R_diagnostics)
 export(area_code)
 export(cpue_compare)
 export(cpue_fit)
