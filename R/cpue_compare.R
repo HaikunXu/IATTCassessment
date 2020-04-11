@@ -5,24 +5,32 @@
 #' @export
 #' 
 
-cpue_compare <- function(Path, Legend, Save_Path) {
+cpue_compare <- function(Path, Legend, Save_Path, rescale, ylabel, ylim) {
     index <- read.csv(paste0(Path[1],"Table_for_SS3.csv"))
-    Index <- data.frame(matrix(NA,nrow=nrow(index),ncol=length(Path)+1))
-    names(Index) <- c("Year",Legend)
-    Index$Year <- index$Year
-    Index[,2] <- index$Estimate_metric_tons
+    Index <- data.frame("Year"=index$Year/4+1974.75,"Index"=index$Estimate_metric_tons,"Legend"=Legend[1],"CV"=index$SD_log)
+
+    if(length(Legend)>1) {
+        for (i in 2:length(Path)) {
+            index <- read.csv(paste0(Path[i],"Table_for_SS3.csv"))
+            Index <- rbind(Index,data.frame("Year"=index$Year/4+1974.75,"Index"=index$Estimate_metric_tons,"Legend"=Legend[i],"CV"=index$SD_log))
+        }
+        }
     
-    for (i in 2:length(Path)) {
-        index <- read.csv(paste0(Path[i],"Table_for_SS3.csv"))
-        Index[,i+1] <- index$Estimate_metric_tons
-    }  
+    Index <- Index %>% mutate(Legend=factor(Legend))
     
-    Index <- Index %>% gather(Legend,key=Model,value=cpue) %>% mutate(Model=factor(Model)) %>%
-        group_by(factor(Model)) %>%
-        mutate(CPUE=cpue/mean(cpue))
+    if(rescale==TRUE) Index <- Index %>% group_by(Legend) %>% mutate(Index=Index/mean(Index))
     
-    f <- ggplot(data = Index) + geom_line(aes(x = Year, y = CPUE, color = Model)) +
-        theme_bw(12) + geom_hline(yintercept=1)
+    f <- ggplot(data = Index) + geom_line(aes(x = Year, y = Index, color = Legend)) + coord_cartesian(ylim = ylim) +
+        theme_bw(15) + ylab(ylabel) + geom_point(aes(x = Year, y = Index, color = Legend)) +
+        geom_ribbon(aes(x = Year, ymin = Index * exp(-1.96 * CV), ymax = Index * exp(1.96 * CV), fill = Legend), alpha=0.2)
+        
     
-    ggsave(f, file = paste0(Save_Path, "CPUE_Compare.png"), width = 12, height = 6)
+    if(rescale==TRUE) {
+        f <- ggplot(data = Index) + geom_line(aes(x = Year, y = Index, color = Legend)) +
+            theme_bw(15) + geom_hline(yintercept=1) + ylab(ylabel) + coord_cartesian(ylim = ylim) +
+            geom_point(aes(x = Year, y = Index, color = Legend)) +
+            geom_ribbon(aes(x = Year, ymin = Index * exp(-1.96 * CV), ymax = Index * exp(1.96 * CV), fill = Legend), alpha=0.2)
+    }
+    
+    ggsave(f, file = paste0(Save_Path, "CPUE_Compare.png"), width = 15, height = 6)
 }
