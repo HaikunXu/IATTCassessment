@@ -7,12 +7,12 @@
 R_diagnostics <- function(Rep = Rep){
   
   R <- Rep$recruit
-  R_med <- R %>% filter(era %in% c("Main","Late")) %>%
+  R_med <- R %>% filter(era=="Main") %>%
     mutate(Period=ifelse(Yr<77,"Early","Late")) %>%
     group_by(Period) %>% summarise(med=median(pred_recr))
   R_shift <- R_med$med[2]/R_med$med[1]
   
-  R0 <- exp(Myreplist$parameters$Value[which(Myreplist$parameters$Label=="SR_LN(R0)")])
+  R0 <- exp(Rep$parameters$Value[which(Rep$parameters$Label=="SR_LN(R0)")])
   R_mean <- mean(R$pred_recr[which(R$era=="Main")])
   R_ratio <- R_mean/R0
   
