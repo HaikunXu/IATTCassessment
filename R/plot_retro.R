@@ -16,7 +16,7 @@ plot_retro = function(SS_Dir, lyear, fyear, Save_Dir) {
     }
     
     SBR <- SBR %>% mutate(label1 = ifelse(Year>=fyear&Year<(Assess_Year+1),1,0), label2 = ifelse(Year==Assess_Year+0.75,1,0))
-    SBR$Assess_Year <- as.factor(SBR$Assess_Year)
+    SBR$Assess_Year <- as.factor(SBR$Assess_Year+1)
     
     f <- ggplot(data=SBR %>% filter(label1==1)) +
         geom_line(aes(x=Year,y=SBR,color=Assess_Year)) +
