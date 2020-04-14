@@ -63,19 +63,19 @@ make_kobetable <- function(fyear, lyear, BasePath, KobePath, FFleets, STD_only =
     Fmult_scale <- Table$FmultScale
     STD_Table <- data.frame(read.table(file = paste0(BasePath,"ss.std"),header = TRUE))
     f_index <- which(STD_Table$name=="Mgmt_quant"&STD_Table$value>0)
-    F_mult <- STD_Table$value[f_index[14]]
-    F_mult_SD <- STD_Table$std.dev[f_index[14]]
-    F_mult_recentSD <- sqrt(F_mult_SD^2*(1/Fmult_scale)^2)
+    F_last <- STD_Table$value[f_index[14]]
+    F_last_SD <- STD_Table$std.dev[f_index[14]]
+    F_mult_recentSD <- Fmult_scale*F_last_SD/F_last^2
     F_mult_last <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="Fmultiplier")])
-    F_recent_high <- 1/(F_mult_last-2*F_mult_last*F_mult_recentSD)
-    F_recent_low <- 1/(F_mult_last+2*F_mult_last*F_mult_recentSD)
+    F_mult_low <- F_mult_last-1.96*F_mult_recentSD
+    F_mult_high <- F_mult_last+1.96*F_mult_recentSD
     
     SBR_last <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="Srecent/Smsy")])
     SBR_SE <- STD_Table$std.dev[which(STD_Table$name=="depletion")[(lyear-fyear+1)*4]]
-    SBR_recent_low <- SBR_last-2*SBR_last*SBR_SE
-    SBR_recent_high <- SBR_last+2*SBR_last*SBR_SE
+    SBR_recent_low <- SBR_last-1.96*SBR_last*SBR_SE
+    SBR_recent_high <- SBR_last+1.96*SBR_last*SBR_SE
     
-    STD <- data.frame("F"=c(F_recent_low,1/F_mult_last,F_recent_high),
+    STD <- data.frame("Fmultiplier"=c(F_mult_low,F_mult_last,F_mult_high),
                       "SB"=c(SBR_recent_low,SBR_last,SBR_recent_high))
     
     ################################################################################################# STEP 2 - Do the interative Kobe runs
@@ -107,6 +107,7 @@ make_kobetable <- function(fyear, lyear, BasePath, KobePath, FFleets, STD_only =
         }
     }
     
+    QrtsMat <- 
     # Create the two qrt forecaset definition tables that will actually be used to define the forecast file
     BmarkTable <- cbind(matrix(QrtsMat[, 3], dim(QrtsMat)[1], 4), QrtsMat[, 2:3], 1, QrtsMat[, 3], 1, QrtsMat[, 
         3])
