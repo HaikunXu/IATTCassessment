@@ -4,7 +4,7 @@
 #' 
 #' @export
 
-R0_profile = function(Path,R0) {
+R0_profile = function(Path,R0,title) {
   N = length(R0)
   comps <- c(2:6,13:17,24:25)
   NLL_a <- data.frame("Total"=rep(NA,N),
@@ -37,7 +37,8 @@ R0_profile = function(Path,R0) {
 geom_line(aes(x=R0,y=NLL,color=Component),data=NLL_amin %>% filter(Component!="Total")) +
     theme_bw(12) +
     xlab("") +
-    ylab("NLL - min(NLL)")
+    ylab("NLL - min(NLL)") +
+    ggtitle(title)
   
   # ggsave(f1, file = paste0(Path, "R0_1.png"), width = 8, height = 6)
   
@@ -57,12 +58,15 @@ geom_line(aes(x=R0,y=NLL,color=Component),data=NLL_amin %>% filter(Component!="T
     theme_bw(12) +
     # geom_vline(xintercept = mean(R0),linetype="dashed") +
     xlab("ln(R0)") +
-    ylab("NLL - min(NLL)")
+    ylab("NLL - min(NLL)") +
+    ggtitle(title)
   
   # ggsave(f2, file = paste0(Path, "R0_2.png"), width = 8, height = 6)
   
   f_all <- gridExtra::grid.arrange(f1, f2, nrow = 2)
   
   ggsave(f_all, file = paste0(Path, "R0.png"), width = 6, height = 10)
+  
+  return(f_all)
   
 }

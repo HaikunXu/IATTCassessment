@@ -71,7 +71,7 @@ makeManagTable <- function(replist, Path, FFleets) {
     
     # Make table with management quantities
     RowNames <- c("msy", "Bmsy", "Smsy", "Bmsy/Bzero", "Smsy/Szero", "Crecent/msy", "Brecent/Bmsy", "Srecent/Smsy", 
-        "Fmultiplier","NLL","R_shift")
+        "Fmultiplier")
     ManagTable <- matrix(NA, length(RowNames), 2)
     ManagTable <- data.frame(ManagTable)
     names(ManagTable) <- c("quant", "val")
@@ -86,9 +86,8 @@ makeManagTable <- function(replist, Path, FFleets) {
     ManagTable[7, 2] <- format(BrecentBmsy, digits = 2, nsmall = 2)
     ManagTable[8, 2] <- format(SrecentSmsy, digits = 2, nsmall = 2)
     ManagTable[9, 2] <- format(Fmult, digits = 2, nsmall = 2)
-    ManagTable[10, 2] <- format(replist$likelihoods_used$values[1], digits = 2, nsmall = 2)
-    ManagTable[11, 2] <- format(R_shift(replist), digits = 2, nsmall = 2)
-    
+    # ManagTable[10, 2] <- format(replist$likelihoods_used$values[1], digits = 2, nsmall = 2)
+
     Out <- list(Fvector = Fvector, FmultScale = FmultScale, ManagTable = ManagTable)
 
     return(Out)

@@ -4,7 +4,7 @@
 \alias{plot_SB}
 \title{Plot quarterly SBR}
 \usage{
-plot_SB(SS_Dir, lyear, fyear, legend, Save_Dir, ymax)
+plot_SB(SS_Dir, lyear, fyear, legend, Save_Dir, ymax, figure_name, title)
 }
 \description{
 \code{plot_SB} This function plots quarterly SBR for the stock assessment report

@@ -4,13 +4,13 @@
 #' 
 #' @export
 
-make_kobetable <- function(year1, BasePath, KobePath) {
+make_kobetable <- function(fyear, lyear, BasePath, KobePath, FFleets, STD_only = TRUE) {
     ##################################################################################################################### STEP 1 - Get time series of BioSmr and SBR from the base case run
-    print("change starter file (use par and do not estimate) before this section!!!")
+    print("change starter file (use par and do not estimate) in KobePath before this section!!!")
     
     # Get the base case rep list
     print(c("Getting the base case rep list"))
-    BaseCase.rep <- r4ss::SS_output(dir = BasePath, ncols = 215, covar = F, verbose = F, printstats = F)  # Need base case BaseCase.rep to extract endyr
+    BaseCase.rep <- r4ss::SS_output(dir = BasePath, ncols = 400, covar = F, verbose = F, printstats = F)  # Need base case BaseCase.rep to extract endyr
     print(c("Base case rep list was read"))
     
     # Get BioSmr series
@@ -26,12 +26,12 @@ make_kobetable <- function(year1, BasePath, KobePath) {
     # Subset Years and Total Biomass quantities for plot
     YearsRaw <- TSdat$Yr
     numYears <- length(YearsRaw) - 2  # Get number of years (drop VIRG and INIT)
-    if (year1 == 1) {
+    if (fyear == 1) {
         Years <- TSdat$Yr
     }
-    if (year1 != 1) 
+    if (fyear != 1) 
         {
-            Years <- year1 + 0:(numYears - 1)/4
+            Years <- fyear + 0:(numYears - 1)/4
         }  # Convert from quarters (EPO models) to year values
     BioSmry <- TSdat$Bio_smry
     x <- Years
@@ -46,7 +46,7 @@ make_kobetable <- function(year1, BasePath, KobePath) {
     # Get SBR series
     
     SPBdat <- BaseCase.rep$timeseries
-    SPBdat$Yr2 <- year1 + (SPBdat$Y/4) - 0.25
+    SPBdat$Yr2 <- fyear + (SPBdat$Y/4) - 0.25
     x <- SPBdat$Yr2[3:(length(SPBdat$Yr2))]
     y <- SPBdat$SpawnBio[3:(length(SPBdat$SpawnBio))]
     x2 <- unique(floor(x))
@@ -58,12 +58,32 @@ make_kobetable <- function(year1, BasePath, KobePath) {
     
     # Get the std vales
     
-    ################################################################################################# STEP 2 - Do the interative Kobe runs
+    Table <- makeManagTable(BaseCase.rep, BasePath, FFleets = FFleets)
     
+    Fmult_scale <- Table$FmultScale
+    STD_Table <- data.frame(read.table(file = paste0(BasePath,"ss.std"),header = TRUE))
+    f_index <- which(STD_Table$name=="Mgmt_quant"&STD_Table$value>0)
+    F_mult <- STD_Table$value[f_index[14]]
+    F_mult_SD <- STD_Table$std.dev[f_index[14]]
+    F_mult_recentSD <- sqrt(F_mult_SD^2*(1/Fmult_scale)^2)
+    F_mult_last <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="Fmultiplier")])
+    F_recent_high <- 1/(F_mult_last-2*F_mult_last*F_mult_recentSD)
+    F_recent_low <- 1/(F_mult_last+2*F_mult_last*F_mult_recentSD)
+    
+    SBR_last <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="Srecent/Smsy")])
+    SBR_SE <- STD_Table$std.dev[which(STD_Table$name=="depletion")[(lyear-fyear+1)*4]]
+    SBR_recent_low <- SBR_last-2*SBR_last*SBR_SE
+    SBR_recent_high <- SBR_last+2*SBR_last*SBR_SE
+    
+    STD <- data.frame("Fmult"=c(F_recent_low,F_mult_last,F_recent_high),
+                      "SB"=c(SBR_recent_low,SBR_last,SBR_recent_high))
+    
+    ################################################################################################# STEP 2 - Do the interative Kobe runs
+    if (STD_only==FALSE) {
     ## 2.1 - Get replist from the Kobe run and create the forecast file qrt definition tables
     
     # Get the replist to extract some quantities
-    Kobe.rep <- r4ss::SS_output(dir = KobePath, ncols = 215, forecast = F, covar = F, verbose = F, printstats = F)  # Need base case replist to extract endyr
+    Kobe.rep <- r4ss::SS_output(dir = KobePath, ncols = 400, forecast = F, covar = F, verbose = F, printstats = F)  # Need base case replist to extract endyr
     QrtsMat <- matrix(0, 0, 3)  # Output table
     vecTemp <- rep(0, 3)
     
@@ -135,7 +155,7 @@ make_kobetable <- function(year1, BasePath, KobePath) {
         
         # Read in the management quantities
         Kobe.rep <- r4ss::SS_output(dir = KobePath, ncols = 215, covar = F, verbose = F, printstats = F)
-        MSYtableTemp <- makeManagTable(replist = Kobe.rep, Path = KobePath)
+        MSYtableTemp <- makeManagTable(replist = Kobe.rep, Path = KobePath, FFleets = FFleets)
         MSYtableTemp <- as.numeric(MSYtableTemp$ManagTable[, 2])
         # cbind the management table
         MSYtableOut <- cbind(MSYtableOut, MSYtableTemp)
@@ -143,7 +163,7 @@ make_kobetable <- function(year1, BasePath, KobePath) {
     }
     
     # NEED TO GET A VECTOR OF YEAR LabelS Get the years corresponding to the 3-yr averages YearsAvg <-
-    # seq(year1+2,1,dim(MSYtableOut)[2]-1) for(i in 1:length(YearsAvg)){YearsAvg[i]<-yearStart+4 year1
+    # seq(fyear+2,1,dim(MSYtableOut)[2]-1) for(i in 1:length(YearsAvg)){YearsAvg[i]<-yearStart+4 fyear
     
     # Add row labes to MSYtableOut Make table with management quantities
     RowNames <- c("msy", "Bmsy", "Smsy", "Bmsy/Bzero", "Smsy/Szero", "Crecent/msy", "Brecent/Bmsy", "Srecent/Smsy", 
@@ -169,6 +189,8 @@ make_kobetable <- function(year1, BasePath, KobePath) {
     FmultInv <- 1/as.numeric(MSYtableOut[9, 2:dim(MSYtableOut)[2]])
     
     Kobe.Out <- list(BioSmryYr.Out = BioSmryYr.Out, SpawnBioYr.Out = SpawnBioYr.Out, MSYtableOut = MSYtableOut, 
-        SoverSmsy = SoverSmsy, BoverBmsy = BoverBmsy, FmultInv = FmultInv)
+        SoverSmsy = SoverSmsy, BoverBmsy = BoverBmsy, FmultInv = FmultInv, STD=STD)
+    }
+    else Kobe.Out <- list(STD=STD)
     return(Kobe.Out)
 }
