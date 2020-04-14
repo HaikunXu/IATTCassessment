@@ -75,7 +75,7 @@ make_kobetable <- function(fyear, lyear, BasePath, KobePath, FFleets, STD_only =
     SBR_recent_low <- SBR_last-2*SBR_last*SBR_SE
     SBR_recent_high <- SBR_last+2*SBR_last*SBR_SE
     
-    STD <- data.frame("Fmult"=c(F_recent_low,1/F_mult_last,F_recent_high),
+    STD <- data.frame("F"=c(F_recent_low,1/F_mult_last,F_recent_high),
                       "SB"=c(SBR_recent_low,SBR_last,SBR_recent_high))
     
     ################################################################################################# STEP 2 - Do the interative Kobe runs
