@@ -6,7 +6,7 @@
 
 make_kobetable <- function(fyear, lyear, BasePath, KobePath, FFleets, STD_only = TRUE) {
     ##################################################################################################################### STEP 1 - Get time series of BioSmr and SBR from the base case run
-    print("change starter file (use par and do not estimate) in KobePath before this section!!!")
+    if(STD_only==FALSE) print("change starter file (use par and do not estimate) in KobePath before this section!!!")
     
     # Get the base case rep list
     print(c("Getting the base case rep list"))
@@ -71,9 +71,9 @@ make_kobetable <- function(fyear, lyear, BasePath, KobePath, FFleets, STD_only =
     F_mult_high <- F_mult_last+1.96*F_mult_recentSD
     
     SBR_last <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="Srecent/Smsy")])
-    SBR_SE <- STD_Table$std.dev[which(STD_Table$name=="depletion")[(lyear-fyear+1)*4]]
-    SBR_recent_low <- SBR_last-1.96*SBR_last*SBR_SE
-    SBR_recent_high <- SBR_last+1.96*SBR_last*SBR_SE
+    SBR_CV <- STD_Table$std.dev[which(STD_Table$name=="depletion")[(lyear-fyear+1)*4]]/STD_Table$value[which(STD_Table$name=="depletion")[(lyear-fyear+1)*4]]
+    SBR_recent_low <- SBR_last-1.96*SBR_last*SBR_CV
+    SBR_recent_high <- SBR_last+1.96*SBR_last*SBR_CV
     
     STD <- data.frame("Fmultiplier"=c(F_mult_low,F_mult_last,F_mult_high),
                       "SB"=c(SBR_recent_low,SBR_last,SBR_recent_high))
@@ -107,7 +107,10 @@ make_kobetable <- function(fyear, lyear, BasePath, KobePath, FFleets, STD_only =
         }
     }
     
-    QrtsMat <- 
+    QrtsMat <- QrtsMat[(fyear-1975+1):nrow(QrtsMat),]
+    QrtsMat[,1] <- QrtsMat[,1] - fyear + 1975
+    
+    
     # Create the two qrt forecaset definition tables that will actually be used to define the forecast file
     BmarkTable <- cbind(matrix(QrtsMat[, 3], dim(QrtsMat)[1], 4), QrtsMat[, 2:3], 1, QrtsMat[, 3], 1, QrtsMat[, 
         3])
