@@ -113,6 +113,7 @@ impact_plot = function(Dir, n_year, BaseName, n_fishery, title) {
         myreplist1$timeseries$SpawnBio[3:(n_year+2)])
     SB_dif$noPS_dif <- SB_dif$noPS/apply(SB_dif[, 2:4], c(1), sum) * (myreplist5$timeseries$SpawnBio[3:(n_year+2)] - myreplist1$timeseries$SpawnBio[3:(n_year+2)])
     SB_dif$noLL_dif <- SB_dif$noLL/apply(SB_dif[, 2:4], c(1), sum) * (myreplist5$timeseries$SpawnBio[3:(n_year+2)] - myreplist1$timeseries$SpawnBio[3:(n_year+2)])
+    SB_dif$Year <- SB_dif$Year/4 + 1974.75
     
     write.csv(SB_dif, file = paste0(Dir, "SB.csv"), row.names = FALSE)
     

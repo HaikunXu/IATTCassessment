@@ -38,7 +38,7 @@ geom_line(aes(x=R0,y=NLL,color=Component),data=NLL_amin %>% filter(Component!="T
     theme_bw(12) +
     xlab("") +
     ylab("NLL - min(NLL)") +
-    ggtitle(title)
+    ggtitle(title) + ggeasy::easy_center_title()
   
   # ggsave(f1, file = paste0(Path, "R0_1.png"), width = 8, height = 6)
   
@@ -46,20 +46,18 @@ geom_line(aes(x=R0,y=NLL,color=Component),data=NLL_amin %>% filter(Component!="T
   NLL_comp_amin <- NLL_comp %>% gather(names(NLL_temp)[comps+2],value="nll",key="Component") %>%
     group_by(Component) %>% mutate(NLL=nll-min(nll))
   
-  NLL_comp_amin$Fishery <- c(rep("LL-Fishery",N*5),rep("OBJ-Fishery",N*5),rep("LL-Survey",N*2))
+  NLL_comp_amin$Fleet <- c(rep("Fishery-LL",N*5),rep("Fishery-OBJ",N*5),rep("Survey-Early",N),rep("Survey-Late",N))
   NLL_comp_amin$Area <- c(rep(c("A2","A3","A4","A5","A6"),each=N),
                           rep(c("A2","A3","A4","A5","A6"),each=N),
-                          rep("EPO-early",N),
-                          rep("EPO-late",N))
+                          rep("EPO",2*N))
   
   f2 <- ggplot() +
-    geom_line(aes(x=R0,y=NLL,color=Area,linetype=Fishery),data=NLL_comp_amin) +
-    # geom_point(aes(x=R0,y=NLL,shape=Fishery),data=NLL_comp_amin) +
+    geom_line(aes(x=R0,y=NLL,color=Area,linetype=Fleet),data=NLL_comp_amin) +
+    # geom_point(aes(x=R0,y=NLL,color=Area,shape=Fleet),data=NLL_comp_amin) +
     theme_bw(12) +
     # geom_vline(xintercept = mean(R0),linetype="dashed") +
     xlab("ln(R0)") +
-    ylab("NLL - min(NLL)") +
-    ggtitle(title)
+    ylab("NLL - min(NLL)")
   
   # ggsave(f2, file = paste0(Path, "R0_2.png"), width = 8, height = 6)
   

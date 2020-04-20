@@ -24,7 +24,7 @@ PlotSplines<-function(Rep=Rep,Path=Path){
                       ]
     tt<-tt[1,]
     
-    plot(seq(2,220,2),tt[,6:115],main = FleetNames[i])
+    plot(seq(20,198,2),tt[,15:104],main = FleetNames[i])
     
     tt2 <- Rep$lendbase[Rep$lendbase$Fleet %in% fleets & 
                           Rep$lendbase$Sex %in% c(1), 

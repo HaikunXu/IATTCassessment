@@ -60,6 +60,6 @@ plot_R = function(SS_Dir, lyear, fyear, legend, Save_Dir, ymax, figure_name, tit
     ggsave(f_all, file = paste0(Save_Dir, figure_name, "-R.png"), width = 12, height = 15)
     # ggsave(f_all, file = paste0(Save_Dir, "R.eps"), width = 6, height = 8)
     
-    return(f1,f2)
+    return(f2)
     
 }

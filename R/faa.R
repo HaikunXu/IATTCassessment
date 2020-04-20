@@ -4,12 +4,12 @@
 #' 
 #' @export
 
-faa = function(Dir, myreplist, Last_Year) {
+faa = function(Dir, myreplist, Last_Year, M) {
     
     # myreplist = r4ss::SS_output(dir = Dir, ncols = 500, covar = F)
     
     Z <- myreplist$Z_at_age
-    M_Matrix <- rbind(matrix(rep(data.matrix(BET_M[1, ]), nrow(Z)/2), nrow = nrow(Z)/2, byrow = T), matrix(rep(data.matrix(BET_M[2, 
+    M_Matrix <- rbind(matrix(rep(data.matrix(M[1, ]), nrow(Z)/2), nrow = nrow(Z)/2, byrow = T), matrix(rep(data.matrix(M[2, 
         ]), nrow(Z)/2), nrow = nrow(Z)/2, byrow = T))
     
     F_M <- Z
@@ -33,10 +33,12 @@ faa = function(Dir, myreplist, Last_Year) {
     
     # spread(key = Group, value = F_group)
     
-    ggplot(data = F_vector %>% filter(Year2 <= Last_Year)) + geom_line(aes(x = Year2, y = F_group)) + facet_wrap(~Group, 
+    f <- ggplot(data = F_vector %>% filter(Year2 <= Last_Year)) + geom_line(aes(x = Year2, y = F_group)) + facet_wrap(~Group, 
         nrow = 5) + theme_bw(12) + ylab("Average annual F") + xlab("Year")
     
-    ggsave(file = paste0(Dir, "faa.png"), width = 6, height = 10)
-    ggsave(file = paste0(Dir, "faa.eps"), width = 6, height = 10)
+    ggsave(f,file = paste0(Dir, "faa.png"), width = 6, height = 10)
+    ggsave(f,file = paste0(Dir, "faa.eps"), width = 6, height = 10)
+    
+    return(f)
     
 }
