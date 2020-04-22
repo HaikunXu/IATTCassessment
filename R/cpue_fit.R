@@ -28,5 +28,5 @@ cpue_fit <- function(Path, myreplist, s, title) {
     
     ggsave(f2, file = paste0(Path, "CPUE_Fit2.png"), width = 6, height = 6)
     
-    return(f1)
+    return(rmse)
 }
