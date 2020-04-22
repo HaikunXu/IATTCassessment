@@ -4,7 +4,7 @@
 \alias{plot_retro}
 \title{Plot retrospective pattern}
 \usage{
-plot_retro(SS_Dir, lyear, fyear, Save_Dir, title)
+plot_retro(SS_Dir, lyear, fyear, Save_Dir, title, xlim, ylim)
 }
 \description{
 \code{plot_retro} This function plot retrospective SB and R for the stock assessment report

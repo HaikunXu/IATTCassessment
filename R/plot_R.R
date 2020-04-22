@@ -49,16 +49,16 @@ plot_R = function(SS_Dir, lyear, fyear, legend, Save_Dir, ymax, figure_name, tit
     f1 <- ggplot(data = R_Q) + geom_ribbon(aes(x = yq, ymin = R * exp(-1.96 * STD), ymax = R * exp(1.96 * STD), fill = Model), alpha=0.1) + 
         geom_line(aes(x = yq, y = R, color = Model), size = 1) + geom_point(aes(x = yq, y = R, color = Model),size=3,data = R_Q %>% filter(yq==year)) +
         theme_bw(20) + xlab("") + ylab("") + geom_hline(yintercept = 1, linetype = "dashed") +
-        coord_cartesian(ylim = c(0,ymax[1])) + ggtitle(title)
+        coord_cartesian(ylim = c(0,ymax[1]),expand = FALSE) + ggtitle(title)
     
     f2 <- ggplot(data = R_A) + geom_ribbon(aes(x = year, ymin = R * exp(-1.96 * STD), ymax = R * exp(1.96 * STD), fill = Model), alpha=0.1) +
         geom_line(aes(x = year, y = R, color = Model), size = 1) + geom_point(aes(x = year, y = R, color = Model),size=3) +
         theme_bw(20) + xlab("") + ylab("") + geom_hline(yintercept = 1, linetype = "dashed") +
-        coord_cartesian(ylim = c(0,ymax[2])) + ggtitle(title)
+        coord_cartesian(ylim = c(0,ymax[2]),expand = FALSE) + ggtitle(title)
     
     f_all <- gridExtra::grid.arrange(f1, f2, nrow = 2)
     ggsave(f_all, file = paste0(Save_Dir, figure_name, "-R.png"), width = 12, height = 15)
-    # ggsave(f_all, file = paste0(Save_Dir, "R.eps"), width = 6, height = 8)
+    ggsave(f_all, file = paste0(Save_Dir, figure_name, "-R.eps"), width = 12, height = 15)
     
     return(f2)
     

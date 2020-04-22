@@ -4,9 +4,10 @@
 #' 
 #' @export
 
-R0_profile = function(Path,R0,title) {
+R0_profile = function(Path,R0,title,LO) {
   N = length(R0)
-  comps <- c(2:6,13:17,24:25)
+  if(LO==FALSE) comps <- c(2:6,13:17,24:25)
+  else comps <- c(2:6,13:17,24)
   NLL_a <- data.frame("Total"=rep(NA,N),
                       "Index"=rep(NA,N),
                       "Fcomps"=rep(NA,N),
@@ -46,10 +47,19 @@ geom_line(aes(x=R0,y=NLL,color=Component),data=NLL_amin %>% filter(Component!="T
   NLL_comp_amin <- NLL_comp %>% gather(names(NLL_temp)[comps+2],value="nll",key="Component") %>%
     group_by(Component) %>% mutate(NLL=nll-min(nll))
   
-  NLL_comp_amin$Fleet <- c(rep("Fishery-LL",N*5),rep("Fishery-OBJ",N*5),rep("Survey-Early",N),rep("Survey-Late",N))
+  if(LO==FALSE) {
+      NLL_comp_amin$Fleet <- c(rep("Fishery-LL",N*5),rep("Fishery-OBJ",N*5),rep("Survey-Early",N),rep("Survey-Late",N))
   NLL_comp_amin$Area <- c(rep(c("A2","A3","A4","A5","A6"),each=N),
                           rep(c("A2","A3","A4","A5","A6"),each=N),
                           rep("EPO",2*N))
+  }
+  else {
+    NLL_comp_amin$Fleet <- c(rep("Fishery-LL",N*5),rep("Fishery-OBJ",N*5),rep("Survey-Late",N))
+    NLL_comp_amin$Area <- c(rep(c("A2","A3","A4","A5","A6"),each=N),
+                            rep(c("A2","A3","A4","A5","A6"),each=N),
+                            rep("EPO",N))
+  }
+
   
   f2 <- ggplot() +
     geom_line(aes(x=R0,y=NLL,color=Area,linetype=Fleet),data=NLL_comp_amin) +

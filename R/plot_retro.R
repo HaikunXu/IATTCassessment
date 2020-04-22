@@ -4,7 +4,7 @@
 #' 
 #' @export
 
-plot_retro = function(SS_Dir, lyear, fyear, Save_Dir, title) {
+plot_retro = function(SS_Dir, lyear, fyear, Save_Dir, title, xlim, ylim) {
     # spawning biomass ratio
     for (i in 1:length(lyear)) {
         Myreplist = SS_output(dir=SS_Dir[i],ncols=400,covar=F,forecast=FALSE,verbose = FALSE,printstats = FALSE)
@@ -22,7 +22,7 @@ plot_retro = function(SS_Dir, lyear, fyear, Save_Dir, title) {
     f1 <- ggplot(data=SBR %>% filter(label1==1)) +
         geom_line(aes(x=Year,y=SBR,color=Assess_Year)) +
         geom_point(aes(x=Year,y=SBR,color=Assess_Year),data = SBR %>% filter(label2==1),size=3) +
-        coord_cartesian(ylim=c(0,1.2)) +
+        coord_cartesian(ylim=ylim,xlim=xlim) +
         labs(x = "", y = "Spawning biomass ratio") +
         theme_bw(16) + ggtitle(title)
         
