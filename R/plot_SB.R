@@ -26,7 +26,7 @@ plot_SB = function(SS_Dir, lyear, fyear, legend, Save_Dir, ymax, figure_name, ti
         coord_cartesian(ylim = c(0,ymax),expand = FALSE)+ ggtitle(title)
 
     ggsave(f, file = paste0(Save_Dir, figure_name, "-SB.png"), width = 12, height = 8)
-    ggsave(f, file = paste0(Save_Dir, figure_name, "-SB.eps"), width = 12, height = 8)
+    ggsave(f, file = paste0(Save_Dir, figure_name, "-SB.eps"), width = 12, height = 8,device=cairo_ps)
     
     return(f)
     

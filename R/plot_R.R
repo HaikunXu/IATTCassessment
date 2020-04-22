@@ -57,8 +57,8 @@ plot_R = function(SS_Dir, lyear, fyear, legend, Save_Dir, ymax, figure_name, tit
         coord_cartesian(ylim = c(0,ymax[2]),expand = FALSE) + ggtitle(title)
     
     f_all <- gridExtra::grid.arrange(f1, f2, nrow = 2)
-    ggsave(f_all, file = paste0(Save_Dir, figure_name, "-R.png"), width = 12, height = 15)
-    ggsave(f_all, file = paste0(Save_Dir, figure_name, "-R.eps"), width = 12, height = 15)
+    ggsave(f_all, file = paste0(Save_Dir, figure_name, "-R.png"), width = 12, height = 15,device=cairo_ps)
+    ggsave(f_all, file = paste0(Save_Dir, figure_name, "-R.eps"), width = 12, height = 15,device=cairo_ps)
     
     return(f2)
     
