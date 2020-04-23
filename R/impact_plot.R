@@ -69,6 +69,8 @@ impact_plot = function(Dir, n_year, BaseName, n_fishery, title) {
         Catch <- Catch_combined %>% filter(year > 0, fleet > 0) %>% select(year, fleet, catch) %>% spread(fleet, 
             catch)
         
+        # plot(Catch$year,Catch$fleet,xlim=c(1,200),main=title)
+        
         for (line in 1:((n_year + 1) * n_fishery + 1)) {
             CtrlFile[Line + line] <- gsub(",", "", toString(Catch_combined[line, ]))
         }

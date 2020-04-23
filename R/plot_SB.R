@@ -4,7 +4,7 @@
 #' 
 #' @export
 
-plot_SB = function(SS_Dir, lyear, fyear, legend, Save_Dir, ymax, figure_name, title) {
+plot_SB = function(SS_Dir, lyear, fyear, legend, Save_Dir, ymax, figure_name, title, xlim) {
     print("rename ss3.cor to ss.cor for runs not using SS 3.30!")
     for (i in 1:length(lyear)) {
         cor_mat <- read.table(paste0(SS_Dir[i], "ss.cor"), skip = 1, fill = NA, header = TRUE)
@@ -23,7 +23,7 @@ plot_SB = function(SS_Dir, lyear, fyear, legend, Save_Dir, ymax, figure_name, ti
         geom_line(aes(x = yq, y = est, color = Model), size = 1) + 
         geom_point(aes(x = yq, y = est, color = Model), size = 2,data = SB_A %>% filter(yq==year)) + 
         theme_bw(20) + xlab("") + ylab("") + geom_hline(yintercept = 1, linetype = "dashed") +
-        coord_cartesian(ylim = c(0,ymax),expand = FALSE)+ ggtitle(title)
+        coord_cartesian(ylim = c(0,ymax),xlim=xlim,expand = FALSE)+ ggtitle(title)
 
     ggsave(f, file = paste0(Save_Dir, figure_name, "-SB.png"), width = 12, height = 8)
     ggsave(f, file = paste0(Save_Dir, figure_name, "-SB.eps"), width = 12, height = 8,device=cairo_ps)

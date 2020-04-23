@@ -11,7 +11,8 @@ PlotSplines<-function(Rep=Rep,Path=Path){
   Allfleets<-c(1:6,13:17,19:20,22)
   FleetNames <- Rep$FleetNames
   
-  tiff(paste0(Path,"Selex.tif"),width = 2000, height =2000, res=300)
+  setEPS()
+  postscript(paste0(Path,"Selex.eps"),width = 2000, height =2000)
   
   par(mfrow = c(4, 4),mar=c(2, 2, 2, 2) + 0.1)           #par(mfrow = c(6, 5),mar=c(5, 4, 4, 2) + 0.1)
   
