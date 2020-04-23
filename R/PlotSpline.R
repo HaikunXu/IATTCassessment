@@ -5,14 +5,13 @@
 #' @export
 #' 
 
-PlotSpline<-function(Path,Save_Path,Fleet,model){
+PlotSpline<-function(Path,Save_Path,Fleet,model,model_name){
   ###Mark's code
   # ****** Use this *******
   # AllFleet<-c(1:6,13:17,19:20,22)
   # FleetNames <- Rep$FleetNames
   
-  postscript(paste0(Save_Path,"Fleet",toString(Fleet)," Selex.eps"),width=6,height=12)
-  
+  postscript(paste0(Save_Path,"Fleet",toString(Fleet)," Selex.eps"),width=9,height=9)
   par(mfrow = c(4, 2),mar=c(2, 2, 2, 2) + 0.1)           #par(mfrow = c(6, 5),mar=c(5, 4, 4, 2) + 0.1)
   
   for(m in 1:length(model))
@@ -25,7 +24,7 @@ PlotSpline<-function(Path,Save_Path,Fleet,model){
                       ]
     tt<-tt[1,]
     
-    plot(seq(20,198,2),tt[,15:104],main = model[m])
+    plot(seq(20,198,2),tt[,15:104],main = model_name[m])
     
     tt2 <- Rep$lendbase[Rep$lendbase$Fleet %in% Fleet & 
                           Rep$lendbase$Sex %in% c(1), 
@@ -45,8 +44,7 @@ PlotSpline<-function(Path,Save_Path,Fleet,model){
   dev.off()
   
   
-  png(paste0(Save_Path,"Fleet",toString(Fleet)," Selex.eps"),width=500,height=800)
-  
+  tiff(paste0(Save_Path,"Fleet",toString(Fleet)," Selex.tif"),width = 2000, height =2000, res=300)  
   par(mfrow = c(4, 2),mar=c(2, 2, 2, 2) + 0.1)           #par(mfrow = c(6, 5),mar=c(5, 4, 4, 2) + 0.1)
   
   for(m in 1:length(model))
@@ -59,7 +57,7 @@ PlotSpline<-function(Path,Save_Path,Fleet,model){
                       ]
     tt<-tt[1,]
     
-    plot(seq(20,198,2),tt[,15:104],main = model[m])
+    plot(seq(20,198,2),tt[,15:104],main = model_name[m])
     
     tt2 <- Rep$lendbase[Rep$lendbase$Fleet %in% Fleet & 
                           Rep$lendbase$Sex %in% c(1), 

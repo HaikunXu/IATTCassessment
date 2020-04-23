@@ -4,7 +4,7 @@
 \alias{PlotSpline}
 \title{Plot size selectivity for SS runs}
 \usage{
-PlotSpline(Path, Save_Path, Fleet, model)
+PlotSpline(Path, Save_Path, Fleet, model, model_name)
 }
 \description{
 \code{PlotSpline} This function comapres estimated and emperical selectivity curves for specified Fleet

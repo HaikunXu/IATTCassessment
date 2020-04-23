@@ -1,6 +1,6 @@
 library(IATTCassessment)
 
-Path <- "C:/Users/hkxu/OneDrive - IATTC/IATTC/2019/External Review/Recruit/Base - SAC9/"
-replist = r4ss::SS_output(dir=Path,ncols=400,covar=F)
+Path <- "C:/Users/hkxu/OneDrive - IATTC/IATTC/2020/BET assessment/SS Model/R-1/"
+Dynamic_Path <- "C:/Users/hkxu/OneDrive - IATTC/IATTC/2020/BET assessment/SS Model/Impact Plot/R-1/noF/"
 
-makeManagTable(replist, Path)
+makeManagTable(Path, FFleets = 1:23, dynamicS0 = TRUE, Dynamic_Path = Dynamic_Path)
