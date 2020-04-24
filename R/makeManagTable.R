@@ -4,7 +4,7 @@
 #' 
 #' @export
 
-makeManagTable <- function(Path, FFleets, dynamicS0, Dynamic_Path) {
+makeManagTable <- function(Path, FFleets) {
     replist <- r4ss::SS_output(dir = Path, ncols = 400, covar = T, printstats = F, verbose = FALSE)
     TimeSeries <- replist$timeseries
     # numFleets <- replist$nfleets # all fleets including surveys
@@ -69,10 +69,25 @@ makeManagTable <- function(Path, FFleets, dynamicS0, Dynamic_Path) {
     Fmult <- as.numeric(ForeDat[ForeDat[, 1] == c("Fmult"), 2])[3]
     Fmult <- Fmult/FmultScale
     
-    if(dynamicS0==FALSE) {
+    ### carolina's code to add S0_dynamic
+    RepName <- paste0(Path, "Report.sso")
+    RepStart <- grep("Spawning_Biomass_Report_1 No_fishery_for_Z=M_and_dynamic_Bzero", readLines(RepName))
+    RepStart<- RepStart+2
+    RepEnd <- grep("NUMBERS_AT_AGE_Annual_1 No_fishery_for_Z=M_and_dynamic_Bzero", readLines(RepName))
+    RepEnd<- RepEnd -2
+    #RepDat<-readr::read_table2(RepName,col_names=FALSE,skip=RepStart,
+    #                          n_max = (RepEnd - RepStart),skip_empty_rows=FALSE)
+    RepDat<-read.table(RepName,header=FALSE,skip=RepStart,
+                       nrows = (RepEnd - RepStart),blank.lines.skip=FALSE)
+    names(RepDat) = c("Yrr","type","S")
+    S0_d<-as.numeric(RepDat$S[RepDat$Yrr==endYr+1])
+    
+    SrecentSlim <- Srecent/(0.077*Szero)
+    ###
+    
     # Make table with management quantities
     RowNames <- c("msy", "Bmsy", "Smsy", "Bmsy/Bzero", "Smsy/Szero", "Crecent/msy", "Brecent/Bmsy", "Srecent/Smsy", 
-        "Fmultiplier")
+                     "Fmultiplier","Srecent/dSmsy","Srecent/Slim")
     ManagTable <- matrix(NA, length(RowNames), 2)
     ManagTable <- data.frame(ManagTable)
     names(ManagTable) <- c("quant", "val")
@@ -86,47 +101,9 @@ makeManagTable <- function(Path, FFleets, dynamicS0, Dynamic_Path) {
     ManagTable[6, 2] <- format(CrecentMsy, digits = 2, nsmall = 2)
     ManagTable[7, 2] <- format(BrecentBmsy, digits = 2, nsmall = 2)
     ManagTable[8, 2] <- format(SrecentSmsy, digits = 2, nsmall = 2)
-    ManagTable[9, 2] <- format(Fmult, digits = 2, nsmall = 2) }
-    if(dynamicS0==TRUE) {### dynamic S0
-        replist_d <- r4ss::SS_output(dir = Dynamic_Path, ncols = 400, covar = F, printstats = F, verbose = FALSE)
-        TimeSeries_d <- replist_d$timeseries
-        
-        # Make forecast management report name
-        ForeRepName_d <- paste(Dynamic_Path, "Forecast-report.SSO", sep = "")
-        # Get management report
-        ForeRepStart_d <- grep("Management_report", readLines(ForeRepName_d))
-        ForeRepEnd_d <- grep("THIS FORECAST FOR PURPOSES", readLines(ForeRepName_d))[1]
-        
-        # ForeDat <- read.table(file=ForeRepName,col.names=c(seq(1,10,by=1)),fill=T,quote='',colClasses='character',
-        # nrows=45, skip = ForeRepStart-1)
-        ForeDat_d <- read.table(file = ForeRepName_d, col.names = c(seq(1, 10, by = 1)), fill = T, quote = "", colClasses = "character", 
-                              nrows = ForeRepEnd_d - ForeRepStart_d, skip = ForeRepStart_d - 1)
-        ForeDat_d <- as.data.frame(ForeDat_d)
-        
-        # Make table with forecast time series
-        ForeTS_d <- subset(TimeSeries_d, select = c("Yr", "Era", "Bio_smry", "SpawnBio", HeadersC))
- 
-        S0_d <- ForeTS_d[ForeTS_d$Yr == endYr + 1, 4]
-        
-        # Make table with management quantities
-        RowNames <- c("msy", "Bmsy", "Smsy", "Bmsy/Bzero", "Smsy/Szero", "Crecent/msy", "Brecent/Bmsy", "Srecent/Smsy", 
-                      "Fmultiplier","Srecent/dSmsy")
-        ManagTable <- matrix(NA, length(RowNames), 2)
-        ManagTable <- data.frame(ManagTable)
-        names(ManagTable) <- c("quant", "val")
-        # Populate table with quantities
-        ManagTable[, 1] <- RowNames
-        ManagTable[1, 2] <- format(msy, digits = 1)
-        ManagTable[2, 2] <- format(Bmsy, digits = 1)
-        ManagTable[3, 2] <- format(Smsy, digits = 1)
-        ManagTable[4, 2] <- format(BmsyBzero, digits = 2, nsmall = 2)
-        ManagTable[5, 2] <- format(SmsySzero, digits = 2, nsmall = 2)
-        ManagTable[6, 2] <- format(CrecentMsy, digits = 2, nsmall = 2)
-        ManagTable[7, 2] <- format(BrecentBmsy, digits = 2, nsmall = 2)
-        ManagTable[8, 2] <- format(SrecentSmsy, digits = 2, nsmall = 2)
-        ManagTable[9, 2] <- format(Fmult, digits = 2, nsmall = 2)
-        ManagTable[10, 2] <- format(Srecent/(S0_d*SmsySzero), digits = 2, nsmall = 2)
-    }
+    ManagTable[9, 2] <- format(Fmult, digits = 2, nsmall = 2)
+    ManagTable[10, 2] <- format(Srecent/(S0_d*SmsySzero), digits = 2, nsmall = 2)
+    ManagTable[11, 2] <- format(SrecentSlim, digits = 2, nsmall = 2)
     
     Out <- list(Fvector = Fvector, FmultScale = FmultScale, ManagTable = ManagTable)
     
