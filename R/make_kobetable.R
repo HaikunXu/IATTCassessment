@@ -26,12 +26,11 @@ make_kobetable <- function(fyear, lyear, BasePath, KobePath, FFleets, STD_only =
     # Subset Years and Total Biomass quantities for plot
     YearsRaw <- TSdat$Yr
     numYears <- length(YearsRaw) - 2  # Get number of years (drop VIRG and INIT)
-    if (fyear == 1) {
+    if (fyear == 1975) {
         Years <- TSdat$Yr
     }
-    if (fyear != 1) 
-        {
-            Years <- fyear + 0:(numYears - 1)/4
+    if (fyear != 1975) {
+        Years <- fyear + 0:(numYears - 1)/4
         }  # Convert from quarters (EPO models) to year values
     BioSmry <- TSdat$Bio_smry
     x <- Years
@@ -58,7 +57,7 @@ make_kobetable <- function(fyear, lyear, BasePath, KobePath, FFleets, STD_only =
     
     # Get the std vales
     
-    Table <- makeManagTable(BaseCase.rep, BasePath, FFleets = FFleets)
+    Table <- makeManagTable(BasePath, FFleets = FFleets)
     
     Fmult_scale <- Table$FmultScale
     STD_Table <- data.frame(read.table(file = paste0(BasePath,"ss.std"),header = TRUE))
@@ -158,9 +157,9 @@ make_kobetable <- function(fyear, lyear, BasePath, KobePath, FFleets, STD_only =
         x <- shell(cmd = command, intern = T, wait = T)
         
         # Read in the management quantities
-        Kobe.rep <- r4ss::SS_output(dir = KobePath, ncols = 215, covar = F, verbose = F, printstats = F)
-        MSYtableTemp <- makeManagTable(replist = Kobe.rep, Path = KobePath, FFleets = FFleets)
-        MSYtableTemp <- as.numeric(MSYtableTemp$ManagTable[, 2])
+        # Kobe.rep <- r4ss::SS_output(dir = KobePath, ncols = 215, covar = F, verbose = F, printstats = F)
+        MSYtableTemp <- makeManagTable(Path = KobePath, FFleets = FFleets)
+        MSYtableTemp <- as.numeric(MSYtableTemp$ManagTable[1:9, 2])
         # cbind the management table
         MSYtableOut <- cbind(MSYtableOut, MSYtableTemp)
         names(MSYtableOut)[i] <- paste("run", i)

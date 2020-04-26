@@ -4,7 +4,7 @@
 #' 
 #' @export
 
-faa = function(Dir, myreplist, Last_Year, M, xlim) {
+faa = function(Dir, myreplist, Last_Year, M, xlim, ylim) {
     
     # myreplist = r4ss::SS_output(dir = Dir, ncols = 500, covar = F)
     
@@ -34,7 +34,7 @@ faa = function(Dir, myreplist, Last_Year, M, xlim) {
     # spread(key = Group, value = F_group)
     
     f <- ggplot(data = F_vector %>% filter(Year2 <= Last_Year)) + geom_line(aes(x = Year2, y = F_group)) + facet_wrap(~Group, 
-        nrow = 5) + theme_bw(12) + ylab("Average annual F") + xlab("Year") + coord_cartesian(xlim=xlim)
+        nrow = 5) + theme_bw(12) + ylab("Average annual F") + xlab("Year") + coord_cartesian(xlim=xlim,ylim=ylim,expand=FALSE)
     
     ggsave(f,file = paste0(Dir, "faa.png"), width = 6, height = 10)
     ggsave(f,file = paste0(Dir, "faa.eps"), width = 6, height = 10)

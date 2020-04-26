@@ -5,7 +5,7 @@
 #' @export
 #' 
 
-PlotSpline<-function(Path,Save_Path,Fleet,model,model_name){
+PlotSpline<-function(Path,Save_Path,Fleet,model,model_name,f){
   ###Mark's code
   # ****** Use this *******
   # AllFleet<-c(1:6,13:17,19:20,22)
@@ -39,7 +39,7 @@ PlotSpline<-function(Path,Save_Path,Fleet,model,model_name){
     
     tt4<-tt2/tt3[10:99]
     
-    lines(seq(20,196,2),tt4[1:89]/max(tt4[1:89]),col="red")
+    lines(seq(20,196,2),lowess(tt4[1:89],f=f)$y/max(lowess(tt4[1:89],f=f)$y),col="red")
   }
   dev.off()
   
@@ -72,7 +72,7 @@ PlotSpline<-function(Path,Save_Path,Fleet,model,model_name){
     
     tt4<-tt2/tt3[10:99]
     
-    lines(seq(20,196,2),tt4[1:89]/max(tt4[1:89]),col="red")
+    lines(seq(20,196,2),lowess(tt4[1:89],f=f)$y/max(lowess(tt4[1:89],f=f)$y),col="red")
   }
   dev.off()
 }

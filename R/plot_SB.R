@@ -31,4 +31,3 @@ plot_SB = function(SS_Dir, lyear, fyear, legend, Save_Dir, ymax, figure_name, ti
     return(f)
     
 }
-

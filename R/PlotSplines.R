@@ -5,10 +5,10 @@
 #' @export
 #' 
 
-PlotSplines<-function(Rep=Rep,Path=Path){
+PlotSplines<-function(Rep=Rep,Path=Path,Allfleets=c(1:6,13:17,19:20),f){
   ###Mark's code
   # ****** Use this *******
-  Allfleets<-c(1:6,13:17,19:20,22)
+  
   FleetNames <- Rep$FleetNames
   
   postscript(paste0(Path,"Selex.eps"),width = 2000, height =2000)
@@ -38,7 +38,7 @@ PlotSplines<-function(Rep=Rep,Path=Path){
     
     tt4<-tt2/tt3[10:99]
     
-    lines(seq(20,196,2),tt4[1:89]/max(tt4[1:89]),col="red")
+    lines(seq(20,196,2),lowess(tt4[1:89],f=f)$y/max(lowess(tt4[1:89],f=f)$y),col="red")
   }
   dev.off()
   
@@ -71,7 +71,7 @@ PlotSplines<-function(Rep=Rep,Path=Path){
     
     tt4<-tt2/tt3[10:99]
     
-    lines(seq(20,196,2),tt4[1:89]/max(tt4[1:89]),col="red")
+    lines(seq(20,196,2),lowess(tt4[1:89],f=f)$y/max(lowess(tt4[1:89],f=f)$y),col="red")
   }
   dev.off()
 }
