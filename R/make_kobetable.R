@@ -4,7 +4,7 @@
 #' 
 #' @export
 
-make_kobetable <- function(fyear, lyear, BasePath, KobePath, FFleets, STD_only = TRUE) {
+make_kobetable <- function(fyear, lyear, BasePath, KobePath, FFleets, STD_only = TRUE, newSS, stdPath, nyears) {
     ##################################################################################################################### STEP 1 - Get time series of BioSmr and SBR from the base case run
     if(STD_only==FALSE) print("change starter file (use par and do not estimate) in KobePath before this section!!!")
     
@@ -56,8 +56,8 @@ make_kobetable <- function(fyear, lyear, BasePath, KobePath, FFleets, STD_only =
     names(SpawnBioYr.Out) <- c("Year", "SB", "SBR")
     
     # Get the std vales
-    
-    Table <- makeManagTable(BasePath, FFleets = FFleets)
+    if(newSS==FALSE) Table <- makeManagTable(BasePath, FFleets = FFleets)
+    else Table <- makeManagTable.new(BasePath, FFleets = FFleets, stdPath, nyears)
     
     Fmult_scale <- Table$FmultScale
     STD_Table <- data.frame(read.table(file = paste0(BasePath,"ss.std"),header = TRUE))

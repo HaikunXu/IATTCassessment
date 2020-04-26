@@ -1,10 +1,10 @@
 #' Make the management table based on SS output
 #' 
-#' \code{makeManagTable} This code make the mangament table for IATTC stock assessments
+#' \code{makeManagTable.new} This code make the mangament table for IATTC stock assessments
 #' 
 #' @export
 
-makeManagTable <- function(Path, FFleets) {
+makeManagTable.new <- function(Path, FFleets, stdPath, nyears) {
     replist <- r4ss::SS_output(dir = Path, ncols = 400, covar = T, printstats = F, verbose = FALSE)
     TimeSeries <- replist$timeseries
     # numFleets <- replist$nfleets # all fleets including surveys
@@ -66,10 +66,21 @@ makeManagTable <- function(Path, FFleets) {
     Fvector <- read.table(file = ForeRepName, nrows = 1, skip = FvectorRepStart[1] + 1)
     Fvector <- Fvector[3:length(Fvector)]
     FmultScale <- sum(Fvector)
-    # Fmultiplier
-    Fmult <- as.numeric(ForeDat[ForeDat[, 1] == c("Fmult"), 2])[3]
-    Fmult <- Fmult/FmultScale
+    # # Fmultiplier
+    # Fmult <- as.numeric(ForeDat[ForeDat[, 1] == c("Fmult"), 2])[3]
+    # Fmult <- Fmult/FmultScale
     
+    # new code to extract the std of F multiplier using the new ss; 04/26/2020
+    
+    STD <- read.table(file = paste0(stdPath,"ss.std"),skip = 1)
+    names(STD) <- c("index", "name", "value", "std")
+    
+    FrecentFmsy_line <- which(STD$name=="F_std")[nyears] # the last 12 quarters
+    FrecentFmsy <- STD$value[FrecentFmsy_line]
+    FrecentFmsy_std <- STD$std[FrecentFmsy_line]
+    
+    Fmult <- 1/FrecentFmsy
+        
     ### carolina's code to add S0_dynamic
     RepName <- paste0(Path, "Report.sso")
     RepStart <- grep("Spawning_Biomass_Report_1 No_fishery_for_Z=M_and_dynamic_Bzero", readLines(RepName))
