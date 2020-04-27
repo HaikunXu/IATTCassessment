@@ -12,7 +12,7 @@ makeManagTable <- function(Path, FFleets) {
     endYr <- replist$endyr
     
     # Make forecast management report name
-    ForeRepName <- paste(stdPath, "Forecast-report.SSO", sep = "")
+    ForeRepName <- paste(Path, "Forecast-report.SSO", sep = "")
     # Get management report
     ForeRepStart <- grep("Management_report", readLines(ForeRepName))
     ForeRepEnd <- grep("THIS FORECAST FOR PURPOSES", readLines(ForeRepName))[1]

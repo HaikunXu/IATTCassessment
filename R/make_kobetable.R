@@ -4,7 +4,7 @@
 #' 
 #' @export
 
-make_kobetable <- function(fyear, lyear, BasePath, KobePath, FFleets, STD_only = TRUE, newSS, stdPath, nyears) {
+make_kobetable <- function(fyear, lyear, BasePath, KobePath, FFleets, STD_only = TRUE, newSS, stdPath) {
     ##################################################################################################################### STEP 1 - Get time series of BioSmr and SBR from the base case run
     if(STD_only==FALSE) print("change starter file (use par and do not estimate) in KobePath before this section!!!")
     
@@ -56,18 +56,28 @@ make_kobetable <- function(fyear, lyear, BasePath, KobePath, FFleets, STD_only =
     names(SpawnBioYr.Out) <- c("Year", "SB", "SBR")
     
     # Get the std vales
-    if(newSS==FALSE) Table <- makeManagTable(BasePath, FFleets = FFleets)
-    else Table <- makeManagTable.new(BasePath, FFleets = FFleets, stdPath, nyears)
-    
-    Fmult_scale <- Table$FmultScale
-    STD_Table <- data.frame(read.table(file = paste0(BasePath,"ss.std"),header = TRUE))
-    f_index <- which(STD_Table$name=="Mgmt_quant"&STD_Table$value>0)
-    F_last <- STD_Table$value[f_index[14]]
-    F_last_SD <- STD_Table$std.dev[f_index[14]]
-    F_mult_recentSD <- Fmult_scale*F_last_SD/F_last^2
-    F_mult_last <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="Fmultiplier")])
-    F_mult_low <- F_mult_last-1.96*F_mult_recentSD
-    F_mult_high <- F_mult_last+1.96*F_mult_recentSD
+    if(newSS==FALSE) {
+        Table <- makeManagTable(BasePath, FFleets = FFleets)
+        print("do not use the new ss")
+        Fmult_scale <- Table$FmultScale
+        STD_Table <- data.frame(read.table(file = paste0(BasePath,"ss.std"),header = TRUE))
+        f_index <- which(STD_Table$name=="Mgmt_quant"&STD_Table$value>0)
+        F_last <- STD_Table$value[f_index[14]]
+        F_last_SD <- STD_Table$std.dev[f_index[14]]
+        F_mult_recentSD <- Fmult_scale*F_last_SD/F_last^2
+        F_mult_last <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="Fmultiplier")])
+        F_mult_low <- F_mult_last-1.96*F_mult_recentSD
+        F_mult_high <- F_mult_last+1.96*F_mult_recentSD
+    }
+    else {
+        Table <- makeManagTable.new(BasePath, FFleets = FFleets, stdPath)
+        STD_Table <- data.frame(read.table(file = paste0(BasePath,"ss.std"),header = TRUE))
+        print("use the new ss")
+        F_mult_last <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="Fmultiplier")])
+        Fmultiplier_std <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="Fmultiplier_std")])
+        F_mult_low <- F_mult_last-1.96*Fmultiplier_std
+        F_mult_high <- F_mult_last+1.96*Fmultiplier_std
+    }
     
     SBR_last <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="Srecent/Smsy")])
     SBR_CV <- STD_Table$std.dev[which(STD_Table$name=="depletion")[(lyear-fyear+1)*4]]/STD_Table$value[which(STD_Table$name=="depletion")[(lyear-fyear+1)*4]]
