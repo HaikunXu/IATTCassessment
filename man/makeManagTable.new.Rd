@@ -4,7 +4,7 @@
 \alias{makeManagTable.new}
 \title{Make the management table based on SS output}
 \usage{
-makeManagTable.new(Path, FFleets, stdPath, nyears)
+makeManagTable.new(Path, FFleets, stdPath)
 }
 \description{
 \code{makeManagTable.new} This code make the mangament table for IATTC stock assessments
