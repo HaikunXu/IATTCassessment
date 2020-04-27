@@ -4,41 +4,58 @@
 #' 
 #' @export
 
-PlotPearsonRes<-function(Rep=Rep, myFleet=myFleet, Path=Path){
+PlotPearsonRes <- function(Path, myFleet, fishery, title, ylim){
   
-  lendat <- Rep$lendbase
-  tmp<- lendat %>% filter(Kind=="LEN",Fleet==myFleet)
-  boxplot(split(tmp$Pearson, tmp$Bin), xlab="Length class (quarter)", ylab="Pearson residuals",ylim=c(-4,4))
-  boxplot(split(tmp$Pearson, tmp$Yr), xlab="Length class (quarter)", ylab="Pearson residuals",ylim=c(-4,4))
+  Rep <- r4ss::SS_output(dir = Path,ncols = 400,covar = F,verbose = FALSE, printstats = FALSE)
   
-  png(paste0(Path,"PearsonRes.png"), width = 5000, height = 4000, res = 600)
-  # par(mfrow=c(2,2), mar=c(4,4,2,2))
-  # layout(matrix(c(1,1,2,3), 2, 2, byrow = TRUE), 
-  #        widths=c(3,1), heights=c(1,1))
+  if(sum(fishery)==length(fishery)) { # all fleets are fishery fleets
+    dat <- Rep$lendbase
+    tmp <- dat %>% filter(Kind=="LEN",Fleet %in% myFleet) %>%
+      select(Yr,Fleet,Pearson,Bin)
+  }
   
-  # boxplot(split(tmp$Pearson, tmp$Yr/4+1974.75), xlab="Year", range = 0.000001, ylab="Pearson residuals",ylim=c(-0.5,0.5), outline = FALSE)
-  # lines(range(tmp$Bin,-1,50), rep(0,2), lty=3, col=2)
+  if(sum(fishery)==0) { # all fleets are survey fleets
+    dat <- Rep$sizedbase
+    tmp <- dat %>% filter(Kind=="SIZE",Fleet %in% myFleet) %>%
+      select(Yr,Fleet,Pearson,Bin)
+  }
   
-  boxplot(split(tmp$Pearson, tmp$Bin), xlab="Length class (cm)", range = 0.000001, ylab="Pearson residuals",ylim=c(-0.5,0.5), outline = FALSE)
-  lines(range(tmp$Bin,-1,50), rep(0,2), lty=3, col=2)
-  #boxplot(split(tmp$Pearson, tmp$YearClass), xlab="Year class", ylab="Pearson residuals")
-  #lines(range(tmp$Bin,-1,150), rep(0,2), lty=3, col=2)
-  # 
-  # #Bottom panel is the normal quantile-quantile plot for residuals, with
-  # #the 1:1 line, horizontal lines give the 5, 25, 50, 75, and 95 percentiles.
-  # qqnorm(y=tmp$Pearson, main="")
-  # qqline(y=tmp$Pearson)
-  # q1 <- quantile(tmp$Pearson,0.05)
-  # lines(c(-5,5), rep(q1,2), lty=2)
-  # q1 <- quantile(tmp$Pearson,0.25)
-  # lines(c(-5,5), rep(q1,2), lty=2)
-  # q1 <- quantile(tmp$Pearson,0.5)
-  # lines(c(-5,5), rep(q1,2), lty=2)
-  # q1 <- quantile(tmp$Pearson,0.75)
-  # lines(c(-5,5), rep(q1,2), lty=2)
-  # q1 <- quantile(tmp$Pearson,0.95)
-  # lines(c(-5,5), rep(q1,2), lty=2)
+  if(sum(fishery)>0&sum(fishery)<length(fishery)) { # both fishery adn survey fleets
+    dat1 <- Rep$lendbase
+    tmp1 <- dat1 %>% filter(Kind=="LEN",Fleet %in% myFleet[which(fishery==TRUE)]) %>%
+      select(Yr,Fleet,Pearson,Bin)
+    dat2 <- Rep$sizedbase
+    tmp2 <- dat2 %>% filter(Kind=="SIZE",Fleet %in% myFleet[which(fishery==FALSE)]) %>%
+      select(Yr,Fleet,Pearson,Bin)
+    
+    tmp <- rbind(tmp1,tmp2)
+  }
   
-  dev.off()
+  tmp <- tmp %>% mutate(Fleet=factor(Fleet),Yr=ceiling(Yr/4)+1974)
+  
+  tmp_y <- tmp %>% group_by(Fleet,Yr) %>% summarise(med=mean(Pearson))
+  tmp_l <- tmp %>% group_by(Fleet,Bin) %>% summarise(med=mean(Pearson))
+  
+  f1 <- ggplot(data=tmp_y) +
+    geom_line(aes(x=Yr,y=med,color=Fleet)) +
+    geom_point(aes(x=Yr,y=med,color=Fleet)) +
+    theme_bw(15) +
+    xlab("Year") +ylab("Pearson residual") +
+    geom_hline(yintercept = 0,linetype="dashed") +
+    coord_cartesian(ylim=ylim) + ggtitle(title) + ggeasy::easy_center_title()
+
+  
+  f2 <- ggplot(data=tmp_l) +
+    geom_line(aes(x=Bin,y=med,color=Fleet)) +
+    geom_point(aes(x=Bin,y=med,color=Fleet)) +
+    theme_bw(15) +
+    xlab("Length (cm)") +ylab("Pearson residual") +
+    geom_hline(yintercept = 0,linetype="dashed") +
+    coord_cartesian(ylim=ylim) + ggtitle(title) + ggeasy::easy_center_title()
+  
+  f_all <- gridExtra::grid.arrange(f1,f2, nrow = 2)
+  
+  return(f_all)
+  
 }
 
