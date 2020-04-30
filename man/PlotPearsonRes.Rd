@@ -4,7 +4,7 @@
 \alias{PlotPearsonRes}
 \title{Plot Pearson residuals for SS runs}
 \usage{
-PlotPearsonRes(Path, myFleet, fishery, title, ylim)
+PlotPearsonRes(Path, myFleet, fishery, binsize, title, xlim, ylim, alpha)
 }
 \description{
 \code{PlotPearsonRes} This function makes Pearson residual plots for a specified fishery
