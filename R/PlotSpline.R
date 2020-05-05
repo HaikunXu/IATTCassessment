@@ -5,7 +5,7 @@
 #' @export
 #' 
 
-PlotSpline<-function(Path,Save_Path,Fleet,model,model_name,f){
+PlotSpline<-function(Path,Save_Path,Fleet,model,model_name,f,fyear,lyear){
   ###Mark's code
   # ****** Use this *******
   # AllFleet<-c(1:6,13:17,19:20,22)
@@ -34,7 +34,7 @@ PlotSpline<-function(Path,Save_Path,Fleet,model,model_name,f){
     tt3<-Rep$natlen[Rep$natlen$Sex %in% c(1,2) &                                              #average oiver both sexes
                       Rep$natlen$"Beg/Mid" %in% c("B") &
                       Rep$natlen$Era %in% c("TIME"),
-                    ]
+                    ] %>% filter(Yr>=fyear,Yr<=lyear)
     tt3<-apply(tt3[,13:122], 2,mean)
     
     tt4<-tt2/tt3[10:99]
@@ -67,7 +67,7 @@ PlotSpline<-function(Path,Save_Path,Fleet,model,model_name,f){
     tt3<-Rep$natlen[Rep$natlen$Sex %in% c(1,2) &                                              #average oiver both sexes
                       Rep$natlen$"Beg/Mid" %in% c("B") &
                       Rep$natlen$Era %in% c("TIME"),
-                    ]
+                    ] %>% filter(Yr>=fyear,Yr<=lyear)
     tt3<-apply(tt3[,13:122], 2,mean)
     
     tt4<-tt2/tt3[10:99]

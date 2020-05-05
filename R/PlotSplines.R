@@ -5,25 +5,26 @@
 #' @export
 #' 
 
-PlotSplines<-function(Rep=Rep,Path=Path,Allfleets=c(1:6,13:17,19:20),f){
+PlotSplines<-function(Path=Path,Allfleets=c(1:6,13:17,19:20),f,fyears,lyears){
   ###Mark's code
   # ****** Use this *******
+  Rep = r4ss::SS_output(dir = Path,ncols = 400,covar = F,verbose = FALSE, printstats = FALSE)
   
   FleetNames <- Rep$FleetNames
   
   postscript(paste0(Path,"Selex.eps"),width = 2000, height =2000)
   par(mfrow = c(4, 4),mar=c(2, 2, 2, 2) + 0.1)           #par(mfrow = c(6, 5),mar=c(5, 4, 4, 2) + 0.1)
   
-  for(i in Allfleets)
+  for(i in 1:length(Allfleets))
   {
-    fleets<-i
+    fleets<-Allfleets[i]
     tt<-Rep$sizeselex[Rep$sizeselex$Factor == "Lsel" & 
                         Rep$sizeselex$Fleet %in% fleets & 
                         Rep$sizeselex$Sex %in% c(1), 
                       ]
     tt<-tt[1,]
     
-    plot(seq(20,198,2),tt[,15:104],main = FleetNames[i])
+    plot(seq(20,198,2),tt[,15:104],main = FleetNames[Allfleets[i]])
     
     tt2 <- Rep$lendbase[Rep$lendbase$Fleet %in% fleets & 
                           Rep$lendbase$Sex %in% c(1), 
@@ -33,7 +34,7 @@ PlotSplines<-function(Rep=Rep,Path=Path,Allfleets=c(1:6,13:17,19:20),f){
     tt3<-Rep$natlen[Rep$natlen$Sex %in% c(1,2) &                                              #average oiver both sexes
                       Rep$natlen$"Beg/Mid" %in% c("B") &
                       Rep$natlen$Era %in% c("TIME"),
-                    ]
+                    ] %>% filter(Yr>=fyears[i],Yr<=lyears[i])
     tt3<-apply(tt3[,13:122], 2,mean)
     
     tt4<-tt2/tt3[10:99]
@@ -47,26 +48,27 @@ PlotSplines<-function(Rep=Rep,Path=Path,Allfleets=c(1:6,13:17,19:20),f){
   
   par(mfrow = c(4, 4),mar=c(2, 2, 2, 2) + 0.1)           #par(mfrow = c(6, 5),mar=c(5, 4, 4, 2) + 0.1)
   
-  for(i in Allfleets)
+  for(i in 1:length(Allfleets))
   {
-    fleets<-i
+    fleets<-Allfleets[i]
     tt<-Rep$sizeselex[Rep$sizeselex$Factor == "Lsel" & 
                         Rep$sizeselex$Fleet %in% fleets & 
                         Rep$sizeselex$Sex %in% c(1), 
                       ]
     tt<-tt[1,]
     
-    plot(seq(20,198,2),tt[,15:104],main = FleetNames[i])
+    plot(seq(20,198,2),tt[,15:104],main = FleetNames[Allfleets[i]])
     
     tt2 <- Rep$lendbase[Rep$lendbase$Fleet %in% fleets & 
                           Rep$lendbase$Sex %in% c(1), 
                         ]
     tt2<-tapply(tt2$Obs, tt2$Bin,FUN =mean)
     
-    tt3<-Rep$natlen[Rep$natlen$Sex %in% c(1,2) &                                              #average oiver both sexes
+    tt3<-Rep$natlen[Rep$natlen$Sex %in% c(1,2) &            #average oiver both sexes
                       Rep$natlen$"Beg/Mid" %in% c("B") &
                       Rep$natlen$Era %in% c("TIME"),
-                    ]
+                    ] %>% filter(Yr>=fyears[i],Yr<=lyears[i])
+
     tt3<-apply(tt3[,13:122], 2,mean)
     
     tt4<-tt2/tt3[10:99]

@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_SB.R
 \name{plot_SB}
 \alias{plot_SB}
-\title{Plot quarterly SBR}
+\title{Plot quarterly SB}
 \usage{
 plot_SB(SS_Dir, lyear, fyear, legend, Save_Dir, ymax, figure_name, title,
   xlim)

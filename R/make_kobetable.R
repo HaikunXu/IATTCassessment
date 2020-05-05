@@ -9,9 +9,9 @@ make_kobetable <- function(fyear, lyear, BasePath, KobePath, FFleets, STD_only =
     if(STD_only==FALSE) print("change starter file (use par and do not estimate) in KobePath before this section!!!")
     
     # Get the base case rep list
-    print(c("Getting the base case rep list"))
+    # print(c("Getting the base case rep list"))
     BaseCase.rep <- r4ss::SS_output(dir = BasePath, ncols = 400, covar = F, verbose = F, printstats = F)  # Need base case BaseCase.rep to extract endyr
-    print(c("Base case rep list was read"))
+    # print(c("Base case rep list was read"))
     
     # Get BioSmr series
     startYr <- BaseCase.rep$startyr
@@ -58,7 +58,7 @@ make_kobetable <- function(fyear, lyear, BasePath, KobePath, FFleets, STD_only =
     # Get the std vales
     if(newSS==FALSE) {
         Table <- makeManagTable(BasePath, FFleets = FFleets)
-        print("do not use the new ss")
+        print("************do not use the new ss************")
         Fmult_scale <- Table$FmultScale
         STD_Table <- data.frame(read.table(file = paste0(BasePath,"ss.std"),header = TRUE))
         f_index <- which(STD_Table$name=="Mgmt_quant"&STD_Table$value>0)
@@ -72,11 +72,11 @@ make_kobetable <- function(fyear, lyear, BasePath, KobePath, FFleets, STD_only =
     else {
         Table <- makeManagTable.new(BasePath, FFleets = FFleets, stdPath)
         STD_Table <- data.frame(read.table(file = paste0(BasePath,"ss.std"),header = TRUE))
-        print("use the new ss")
-        F_mult_last <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="Fmultiplier")])
-        Fmultiplier_std <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="Fmultiplier_std")])
-        F_mult_low <- F_mult_last-1.96*Fmultiplier_std
-        F_mult_high <- F_mult_last+1.96*Fmultiplier_std
+        print("************do use the new ss************")
+        FrecentFmsy <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="FrecentFmsy")])
+        FrecentFmsy_std <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="FrecentFmsy_sd")])
+        FrecentFmsy_low <- FrecentFmsy-1.96*FrecentFmsy_std
+        FrecentFmsy_high <- FrecentFmsy+1.96*FrecentFmsy_std
     }
     
     SBR_last <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="Srecent/Smsy")])
@@ -84,7 +84,9 @@ make_kobetable <- function(fyear, lyear, BasePath, KobePath, FFleets, STD_only =
     SBR_recent_low <- SBR_last-1.96*SBR_last*SBR_CV
     SBR_recent_high <- SBR_last+1.96*SBR_last*SBR_CV
     
-    STD <- data.frame("Fmultiplier"=c(F_mult_low,F_mult_last,F_mult_high),
+    if(newSS==FALSE) STD <- data.frame("Fmultiplier"=c(F_mult_low,F_mult_last,F_mult_high),
+                                       "SB"=c(SBR_recent_low,SBR_last,SBR_recent_high))
+    else STD <- data.frame("FrecentFmsy"=c(FrecentFmsy_low,FrecentFmsy,FrecentFmsy_high),
                       "SB"=c(SBR_recent_low,SBR_last,SBR_recent_high))
     
     ################################################################################################# STEP 2 - Do the interative Kobe runs
