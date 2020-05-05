@@ -4,16 +4,16 @@
 #' 
 #' @export
 
-makeManagTable.new <- function(Path, FFleets, stdPath) {
+makeManagTable.new <- function(Path, FFleets, FstdPath, FlimitPath) {
     replist <- r4ss::SS_output(dir = Path, ncols = 400, covar = T, printstats = F, verbose = FALSE)
     TimeSeries <- replist$timeseries
     # numFleets <- replist$nfleets # all fleets including surveys
     # numFleets <- replist$nfishfleets  # only fisheries fleets <>< Change 15 March 2016
     endYr <- replist$endyr
     startYr <- replist$startyr
-
+    
     # Make forecast management report name
-    ForeRepName <- paste(stdPath, "Forecast-report.SSO", sep = "")
+    ForeRepName <- paste(FstdPath, "Forecast-report.SSO", sep = "")
     # Get management report
     ForeRepStart <- grep("Management_report", readLines(ForeRepName))
     ForeRepEnd <- grep("THIS FORECAST FOR PURPOSES", readLines(ForeRepName))[1]
@@ -21,7 +21,7 @@ makeManagTable.new <- function(Path, FFleets, stdPath) {
     # ForeDat <- read.table(file=ForeRepName,col.names=c(seq(1,10,by=1)),fill=T,quote='',colClasses='character',
     # nrows=45, skip = ForeRepStart-1)
     ForeDat <- read.table(file = ForeRepName, col.names = c(seq(1, 10, by = 1)), fill = T, quote = "", colClasses = "character", 
-        nrows = ForeRepEnd - ForeRepStart, skip = ForeRepStart - 1)
+                          nrows = ForeRepEnd - ForeRepStart, skip = ForeRepStart - 1)
     ForeDat <- as.data.frame(ForeDat)
     
     # Make catch headers to subset
@@ -73,7 +73,7 @@ makeManagTable.new <- function(Path, FFleets, stdPath) {
     
     # new code to extract the std of F multiplier using the new ss; 04/26/2020
     
-    STD <- read.table(file = paste0(stdPath,"ss.std"),skip = 1)
+    STD <- read.table(file = paste0(FstdPath,"ss.std"),skip = 1)
     names(STD) <- c("index", "name", "value", "std")
     
     FrecentFmsy_line <- which(STD$name=="F_std")[endYr-startYr+1] # the last 12 quarters
@@ -81,8 +81,9 @@ makeManagTable.new <- function(Path, FFleets, stdPath) {
     FrecentFmsy_std <- STD$std[FrecentFmsy_line]
     
     Fmult <- 1/FrecentFmsy
-    Fmult_std <- FrecentFmsy_std / FrecentFmsy ^2 # std(1/x) = std(x)/x^2
-        
+    
+    # Fmult_std <- FrecentFmsy_std / FrecentFmsy ^2 # std(1/x) = std(x)/x^2
+    
     ### carolina's code to add S0_dynamic
     RepName <- paste0(Path, "Report.sso")
     RepStart <- grep("Spawning_Biomass_Report_1 No_fishery_for_Z=M_and_dynamic_Bzero", readLines(RepName))
@@ -96,13 +97,46 @@ makeManagTable.new <- function(Path, FFleets, stdPath) {
     names(RepDat) = c("Yrr","type","S")
     S0_d<-as.numeric(RepDat$S[RepDat$Yrr==endYr+1])
     
-    SrecentSlim <- Srecent/(0.077*Szero)
-    ###
+    # get Srecent/Slimit (5/5/2020)
+    cor_mat <- read.table(paste0(Path, "ss.std"), skip = 1, fill = NA, header = FALSE)
+    names(cor_mat) <- c("index","name","value","std.dev")
+    SrecentSlim <- cor_mat$value[max(which(cor_mat$name == "depletion"))]/0.077
+    SrecentSlim_std <- cor_mat$std.dev[max(which(cor_mat$name == "depletion"))]/0.077 # std(x/c)=std(x)/c
+    
+    png(paste0(Path,"SrecentSlim.png"),width = 500, height =500)  
+    plot(seq(0,3*SrecentSlim,0.01),pnorm(seq(0,3*SrecentSlim,0.01),SrecentSlim,SrecentSlim_std),
+         main = "SrecentSlim(+-std)",xlab="Srecent/Slim",ylab="P(Scur<Slimit)")
+    abline(v=SrecentSlim)
+    abline(v=SrecentSlim-SrecentSlim_std,lty="dashed")
+    abline(v=SrecentSlim+SrecentSlim_std,lty="dashed")
+    dev.off()
+    
+    Prob_S <- pnorm(1,SrecentSlim,SrecentSlim_std) # P(Scur<Slimit)
+    
+    # Get Frecent/Flimit (5/5/2020)
+    STD <- read.table(file = paste0(FstdPath,"ss.std"),skip = 1)
+    names(STD) <- c("index", "name", "value", "std")
+    
+    FrecentFlim_line <- which(STD$name=="F_std")[endYr-startYr+1] # the last 12 quarters
+    FrecentFlim <- STD$value[FrecentFlim_line]
+    FrecentFlim_std <- STD$std[FrecentFlim_line]
+    
+    png(paste0(Path,"FrecentFlim.png"),width = 500, height =500)  
+    plot(seq(0,2*FrecentFlim,0.1),pnorm(seq(0,2*FrecentFlim,0.1),FrecentFlim,FrecentFlim_std),
+         main = "FrecentFlim(+-std)",xlab="Frecent/Flim",ylab="P(Fcur>Flimit)")
+    abline(v=FrecentFlim)
+    abline(v=FrecentFlim-FrecentFlim_std,lty="dashed")
+    abline(v=FrecentFlim+FrecentFlim_std,lty="dashed")
+    dev.off()
+    
+    Prob_F <- 1- pnorm(1,FrecentFlim,FrecentFlim_std) # P(Scur<Slimit)
     
     # Make table with management quantities
-    RowNames <- c("msy", "Bmsy", "Smsy", "Bmsy/Bzero", "Smsy/Szero", "Crecent/msy", "Brecent/Bmsy", "Srecent/Smsy", 
-                     "Fmultiplier","Szero","Szero_dynamic","Srecent/dSmsy","Srecent/Slim","Fmultiplier_std",
-                  "FrecentFmsy","FrecentFmsy_sd")
+    RowNames <- c("msy", "Bmsy", "Smsy", "Bmsy/Bzero", "Smsy/Szero",
+                  "Crecent/msy", "Brecent/Bmsy", "Srecent/Smsy", "Fmultiplier","Szero",
+                  "Szero_dynamic","Srecent/dSmsy","Srecent/Slim","P(Srecent/Slim)", "FrecentFmsy",
+                  "FrecentFmsy_std","P(Srecent<Slim)","Frecent/Flim","P(Frecent>Flim)")
+    
     ManagTable <- matrix(NA, length(RowNames), 2)
     ManagTable <- data.frame(ManagTable)
     names(ManagTable) <- c("quant", "val")
@@ -121,10 +155,12 @@ makeManagTable.new <- function(Path, FFleets, stdPath) {
     ManagTable[11, 2] <- format(S0_d, digits = 4, nsmall = 4)
     ManagTable[12, 2] <- format(Srecent/(S0_d*SmsySzero), digits = 4, nsmall = 4)
     ManagTable[13, 2] <- format(SrecentSlim, digits = 4, nsmall = 4)
-    ManagTable[14, 2] <- format(Fmult_std, digits = 4, nsmall = 4)
+    ManagTable[14, 2] <- format(Prob_S, digits = 4, nsmall = 4)
     ManagTable[15, 2] <- format(FrecentFmsy, digits = 4, nsmall = 4)
     ManagTable[16, 2] <- format(FrecentFmsy_std, digits = 4, nsmall = 4)
-    
+    ManagTable[17, 2] <- format(Prob_S, digits = 4, nsmall = 4)
+    ManagTable[18, 2] <- format(FrecentFlim, digits = 4, nsmall = 4)
+    ManagTable[19, 2] <- format(Prob_F, digits = 4, nsmall = 4)
     Out <- list(Fvector = Fvector, FmultScale = FmultScale, ManagTable = ManagTable)
     
     return(Out)
