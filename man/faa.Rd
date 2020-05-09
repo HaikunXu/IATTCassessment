@@ -4,7 +4,7 @@
 \alias{faa}
 \title{Fishing mortality by age group}
 \usage{
-faa(Dir, myreplist, Last_Year, M, xlim, ylim)
+faa(Dir, Last_Year, xlim, ylim)
 }
 \description{
 \code{faa} This function computes the fishing mortality by age group for the stock assessment report

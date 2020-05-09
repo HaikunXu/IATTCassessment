@@ -4,7 +4,7 @@
 #' 
 #' @export
 
-make_kobetable <- function(fyear, lyear, BasePath, KobePath, FFleets, STD_only = TRUE, newSS, stdPath) {
+make_kobetable <- function(fyear, lyear, BasePath, KobePath, FFleets, STD_only = TRUE, newSS, FstdPath, FlimitPath) {
     ##################################################################################################################### STEP 1 - Get time series of BioSmr and SBR from the base case run
     if(STD_only==FALSE) print("change starter file (use par and do not estimate) in KobePath before this section!!!")
     
@@ -56,7 +56,8 @@ make_kobetable <- function(fyear, lyear, BasePath, KobePath, FFleets, STD_only =
     names(SpawnBioYr.Out) <- c("Year", "SB", "SBR")
     
     # Get the std vales
-    if(newSS==FALSE) {
+    if(STD_only==TRUE) {
+        if(newSS==FALSE) {
         Table <- makeManagTable(BasePath, FFleets = FFleets)
         print("************do not use the new ss************")
         Fmult_scale <- Table$FmultScale
@@ -70,11 +71,11 @@ make_kobetable <- function(fyear, lyear, BasePath, KobePath, FFleets, STD_only =
         F_mult_high <- F_mult_last+1.96*F_mult_recentSD
     }
     else {
-        Table <- makeManagTable.new(BasePath, FFleets = FFleets, stdPath)
+        Table <- makeManagTable.new(BasePath, FFleets = FFleets, FstdPath, FstdPath)
         STD_Table <- data.frame(read.table(file = paste0(BasePath,"ss.std"),header = TRUE))
         print("************do use the new ss************")
         FrecentFmsy <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="FrecentFmsy")])
-        FrecentFmsy_std <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="FrecentFmsy_sd")])
+        FrecentFmsy_std <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="FrecentFmsy_std")])
         FrecentFmsy_low <- FrecentFmsy-1.96*FrecentFmsy_std
         FrecentFmsy_high <- FrecentFmsy+1.96*FrecentFmsy_std
     }
@@ -89,8 +90,11 @@ make_kobetable <- function(fyear, lyear, BasePath, KobePath, FFleets, STD_only =
     else STD <- data.frame("FrecentFmsy"=c(FrecentFmsy_low,FrecentFmsy,FrecentFmsy_high),
                       "SB"=c(SBR_recent_low,SBR_last,SBR_recent_high))
     
+    Kobe.Out <- list(STD=STD)
+    }
+    
     ################################################################################################# STEP 2 - Do the interative Kobe runs
-    if (STD_only==FALSE) {
+    else {
     ## 2.1 - Get replist from the Kobe run and create the forecast file qrt definition tables
     
     # Get the replist to extract some quantities
@@ -206,6 +210,6 @@ make_kobetable <- function(fyear, lyear, BasePath, KobePath, FFleets, STD_only =
     Kobe.Out <- list(BioSmryYr.Out = BioSmryYr.Out, SpawnBioYr.Out = SpawnBioYr.Out, MSYtableOut = MSYtableOut, 
         SoverSmsy = SoverSmsy, BoverBmsy = BoverBmsy, FmultInv = FmultInv, STD=STD)
     }
-    else Kobe.Out <- list(STD=STD)
+    
     return(Kobe.Out)
 }

@@ -103,18 +103,22 @@ makeManagTable.new <- function(Path, FFleets, FstdPath, FlimitPath) {
     SrecentSlim <- cor_mat$value[max(which(cor_mat$name == "depletion"))]/0.077
     SrecentSlim_std <- cor_mat$std.dev[max(which(cor_mat$name == "depletion"))]/0.077 # std(x/c)=std(x)/c
     
+    SrecentS0 <- cor_mat$value[max(which(cor_mat$name == "depletion"))]
+    SrecentS0_std <- cor_mat$std.dev[max(which(cor_mat$name == "depletion"))]
+    
     png(paste0(Path,"SrecentSlim.png"),width = 500, height =500)  
     plot(seq(0,3*SrecentSlim,0.01),pnorm(seq(0,3*SrecentSlim,0.01),SrecentSlim,SrecentSlim_std),
          main = "SrecentSlim(+-std)",xlab="Srecent/Slim",ylab="P(Scur<Slimit)")
     abline(v=SrecentSlim)
     abline(v=SrecentSlim-SrecentSlim_std,lty="dashed")
     abline(v=SrecentSlim+SrecentSlim_std,lty="dashed")
+    abline(v=1,col="red")
     dev.off()
     
     Prob_S <- pnorm(1,SrecentSlim,SrecentSlim_std) # P(Scur<Slimit)
     
     # Get Frecent/Flimit (5/5/2020)
-    STD <- read.table(file = paste0(FstdPath,"ss.std"),skip = 1)
+    STD <- read.table(file = paste0(FlimitPath,"ss.std"),skip = 1)
     names(STD) <- c("index", "name", "value", "std")
     
     FrecentFlim_line <- which(STD$name=="F_std")[endYr-startYr+1] # the last 12 quarters
@@ -122,11 +126,12 @@ makeManagTable.new <- function(Path, FFleets, FstdPath, FlimitPath) {
     FrecentFlim_std <- STD$std[FrecentFlim_line]
     
     png(paste0(Path,"FrecentFlim.png"),width = 500, height =500)  
-    plot(seq(0,2*FrecentFlim,0.1),pnorm(seq(0,2*FrecentFlim,0.1),FrecentFlim,FrecentFlim_std),
+    plot(seq(0,2*FrecentFlim,0.01),pnorm(seq(0,2*FrecentFlim,0.01),FrecentFlim,FrecentFlim_std),
          main = "FrecentFlim(+-std)",xlab="Frecent/Flim",ylab="P(Fcur>Flimit)")
     abline(v=FrecentFlim)
     abline(v=FrecentFlim-FrecentFlim_std,lty="dashed")
     abline(v=FrecentFlim+FrecentFlim_std,lty="dashed")
+    abline(v=1,col="red")
     dev.off()
     
     Prob_F <- 1- pnorm(1,FrecentFlim,FrecentFlim_std) # P(Scur<Slimit)
@@ -134,8 +139,8 @@ makeManagTable.new <- function(Path, FFleets, FstdPath, FlimitPath) {
     # Make table with management quantities
     RowNames <- c("msy", "Bmsy", "Smsy", "Bmsy/Bzero", "Smsy/Szero",
                   "Crecent/msy", "Brecent/Bmsy", "Srecent/Smsy", "Fmultiplier","Szero",
-                  "Szero_dynamic","Srecent/dSmsy","Srecent/Slim","P(Srecent/Slim)", "FrecentFmsy",
-                  "FrecentFmsy_std","P(Srecent<Slim)","Frecent/Flim","P(Frecent>Flim)")
+                  "Szero_dynamic","Srecent/dSmsy","Srecent/Slim","P(Srecent<Slim)", "FrecentFmsy",
+                  "FrecentFmsy_std","Frecent/Flim","P(Frecent>Flim)")
     
     ManagTable <- matrix(NA, length(RowNames), 2)
     ManagTable <- data.frame(ManagTable)
@@ -158,9 +163,8 @@ makeManagTable.new <- function(Path, FFleets, FstdPath, FlimitPath) {
     ManagTable[14, 2] <- format(Prob_S, digits = 4, nsmall = 4)
     ManagTable[15, 2] <- format(FrecentFmsy, digits = 4, nsmall = 4)
     ManagTable[16, 2] <- format(FrecentFmsy_std, digits = 4, nsmall = 4)
-    ManagTable[17, 2] <- format(Prob_S, digits = 4, nsmall = 4)
-    ManagTable[18, 2] <- format(FrecentFlim, digits = 4, nsmall = 4)
-    ManagTable[19, 2] <- format(Prob_F, digits = 4, nsmall = 4)
+    ManagTable[17, 2] <- format(FrecentFlim, digits = 4, nsmall = 4)
+    ManagTable[18, 2] <- format(Prob_F, digits = 4, nsmall = 4)
     Out <- list(Fvector = Fvector, FmultScale = FmultScale, ManagTable = ManagTable)
     
     return(Out)

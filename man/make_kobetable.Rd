@@ -5,7 +5,7 @@
 \title{Make Kobe table}
 \usage{
 make_kobetable(fyear, lyear, BasePath, KobePath, FFleets,
-  STD_only = TRUE, newSS, stdPath)
+  STD_only = TRUE, newSS, FstdPath, FlimitPath)
 }
 \description{
 \code{make_kobetable} This function automayically generates the table for kobe plot
