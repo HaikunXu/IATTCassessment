@@ -2,6 +2,11 @@
 ### VAST model for BET LL early (1979-1992) index of abundance for the IATTC SAC 11-06 BET document
 ### R code writen by Haikun Xu (hkxu@iattc.org); LL data provided by Keisuke Satoh (kstu21@fra.affrc.go.jp) 
 ### Last modified ion 5/8/2020
+###
+### More technical details can be found in:
+### Thorson, J.T., and Barnett, L.A.K. 2017. Comparing estimates of abundance trends and distribution shifts using single- and multispecies models of fishes and biogenic habitat. ICES Journal of Marine Science 74(5): 1311-1321.
+### Xu, H., Lennert-Cody, C.E., Maunder, M.N., and Minte-Vera, C.V. 2019. Spatiotemporal dynamics of the dolphin-associated purse-seine fishery for yellowfin tuna (Thunnus albacares) in the eastern Pacific Ocean. Fisheries research 213: 121-131
+### Maunder, M.N., Thorson, J.T., Xu, H., Oliveros-Ramos, R., Hoyle, S.D., Tremblay-Boyer, L., Lee, H.H., Kai, M., Chang, S.-K., and Kitakado, T. 2020. The need for spatio-temporal modeling to determine catch-per-unit effort based indices of abundance and associated composition data for inclusion in stock assessment models. Fisheries Research 229: 105594.
 #############################################################
 
 Dir <- "C:/Users/hkxu/OneDrive - IATTC/IATTC/2020/BET assessment/SS data/LL CPUE/"
