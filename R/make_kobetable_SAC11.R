@@ -185,20 +185,26 @@ make_kobetable_SAC11 <- function(fyear, lyear, Path, KobePath, FFleets, STD_only
       # Read in the management quantities
       # Kobe.rep <- r4ss::SS_output(dir = KobePath, ncols = 215, covar = F, verbose = F, printstats = F)
       MSYtableTemp <- makeManagTable(Path = KobePath, FFleets = FFleets)
+      dS0 <- as.numeric(MSYtableTemp$ManagTable[10,2])
       MSYtableTemp <- as.numeric(MSYtableTemp$ManagTable[1:9,2])
       # cbind the management table
       MSYtableOut <- cbind(MSYtableOut, MSYtableTemp)
       names(MSYtableOut)[i] <- paste("run", i)
-    }
+      
+      MSYtableOut[8,i] <- SpawnBioYr.Out[i + 2, 2]/dSpawnBioYr.Out[i + 2, 2] # new SB/SBmsy late
+      MSYtableOut[5,i] <- (SpawnBioYr.Out[i + 2, 2]/dS0)/MSYtableOut[5,i] # new SB/SBmsy early: S/Smsy = (S/dS0)/(Smsy/S0)
+      p <- (i - 1) / (dim(QrtsMat)[1] - 1)
+      MSYtableOut[4,i] <- p
+      MSYtableOut[3,i] <- (1 - p) * MSYtableOut[5,i] + p * MSYtableOut[8,i]
+      }
     
     # NEED TO GET A VECTOR OF YEAR LabelS Get the years corresponding to the 3-yr averages YearsAvg <-
     # seq(fyear+2,1,dim(MSYtableOut)[2]-1) for(i in 1:length(YearsAvg)){YearsAvg[i]<-yearStart+4 fyear
     
     # Add row labes to MSYtableOut Make table with management quantities
-    RowNames <- c("msy", "Bmsy", "Smsy", "Bmsy/Bzero", "Smsy/Szero", "Crecent/msy", "Brecent/Bmsy", "Srecent/Smsy", 
+    RowNames <- c("msy", "Bmsy", "Srecent/dSmsy", "p", "Srecent/dSmsy1", "Crecent/msy", "Brecent/Bmsy", "Srecent/dSmsy2", 
                   "Fmultiplier")
     MSYtableOut <- cbind(RowNames, MSYtableOut)
-    MSYtableOut[9,i+1] <- SpawnBioYr.Out[i + 3, 3]/dSpawnBioYr.Out[i + 3, 3]
     write.csv(MSYtableOut, paste0(KobePath, "KobePlotOut.csv"), row.names = FALSE)
     # For debugging MSYtableOut <-
     # read.table('C:/Users/alexdasilva/Documents/IATTC/IATTC_2012/MEETINGS/SAC3/SS_work/BET/KOBE_PLOT/BET_KobePlotOut.csv',
@@ -224,4 +230,3 @@ make_kobetable_SAC11 <- function(fyear, lyear, Path, KobePath, FFleets, STD_only
   
   return(Kobe.Out)
 }
-

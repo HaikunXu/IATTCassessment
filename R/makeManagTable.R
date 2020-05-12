@@ -88,7 +88,7 @@ makeManagTable <- function(Path, FFleets) {
     
     # Make table with management quantities
     RowNames <- c("msy", "Bmsy", "Smsy", "Bmsy/Bzero", "Smsy/Szero", "Crecent/msy", "Brecent/Bmsy", "Srecent/Smsy", 
-                     "Fmultiplier")
+                     "Fmultiplier","dS0")
     ManagTable <- matrix(NA, length(RowNames), 2)
     ManagTable <- data.frame(ManagTable)
     names(ManagTable) <- c("quant", "val")
@@ -103,6 +103,7 @@ makeManagTable <- function(Path, FFleets) {
     ManagTable[7, 2] <- format(BrecentBmsy, digits = 4, nsmall = 4)
     ManagTable[8, 2] <- format(SrecentSmsy, digits = 4, nsmall = 4)
     ManagTable[9, 2] <- format(Fmult, digits = 4, nsmall = 4)
+    ManagTable[10, 2] <- format(S0_d, digits = 4, nsmall = 4)
     
     Out <- list(Fvector = Fvector, FmultScale = FmultScale, ManagTable = ManagTable)
     
