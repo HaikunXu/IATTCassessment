@@ -159,7 +159,7 @@ makeManagTable.new <- function(Path, FFleets, FstdPath, FlimitPath, dMSYPath, dS
     # get Ccurrent
     Cdat <- TimeSeries
     Cdat$Yr2 <- 1975 + (Cdat$Y/4) - 0.25
-    Ccol <- which(substr(names(dMSY),start=1,stop=7)=="dead(B)")
+    Ccol <- which(substr(names(Cdat),start=1,stop=7)=="dead(B)")
     x <- Cdat$Yr2[3:(length(Cdat$Yr2))]
     y <- Cdat[3:nrow(Cdat),Ccol]
     x2 <- unique(floor(x))
