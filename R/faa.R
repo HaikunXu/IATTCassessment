@@ -24,18 +24,17 @@ faa = function(Dir, Last_Year, xlim, ylim) {
     
     # F_Matrix <- na.omit(F_Matrix %>% mutate('Group'=cut(Age, breaks = c(-1,4,8,12,20,39))))
     
-    F_vector <- F_Matrix %>% group_by(Sex, Year2, Age) %>% summarise(F_annual = sum(FAA)) %>% mutate(Age_Group = cut(Age, 
-        breaks = c(0, 4, 8, 12, 19, 40), labels = c("1-4 quarters", "5-8 quarters", "9-12 quarters", "13-19 quarters", 
-            "20+ quarters")))
+    F_vector <- F_Matrix %>% group_by(Sex, Year2, Age) %>% summarise(F_annual = sum(FAA)) %>% mutate(Age = cut(Age, 
+        breaks = c(0, 4, 8, 12, 19, 40), labels = c("1-4", "5-8", "9-12", "13-19", "20+")))
     
     F_vector <- na.omit(F_vector)
     
-    F_vector <- F_vector %>% group_by(Age_Group, Year2) %>% summarise(F_group = mean(F_annual))
+    F_vector <- F_vector %>% group_by(Age, Year2) %>% summarise(F_group = mean(F_annual))
     
     # spread(key = Group, value = F_group)
     
-    f <- ggplot(data = F_vector %>% filter(Year2 <= Last_Year)) + geom_line(aes(x = Year2, y = F_group, color=Age_Group)) + 
-    theme_bw(12) + ylab("Average annual F") + xlab("Year") + coord_cartesian(xlim=xlim,ylim=ylim,expand=FALSE)
+    f <- ggplot(data = F_vector %>% filter(Year2 <= Last_Year)) + geom_line(aes(x = Year2, y = F_group, color=Age)) + 
+    theme_bw(20) + ylab("Average annual F") + xlab("Year") + coord_cartesian(xlim=xlim,ylim=ylim,expand=FALSE)
     
     ggsave(f,file = paste0(Dir, "faa.png"), width = 6, height = 4)
     ggsave(f,file = paste0(Dir, "faa.eps"), width = 6, height = 4)

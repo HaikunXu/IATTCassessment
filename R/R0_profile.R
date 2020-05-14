@@ -36,9 +36,9 @@ R0_profile = function(Path,R0,title,L) {
   f1 <- ggplot() +
         geom_line(aes(x=R0,y=NLL,color=Component),data=NLL_amin %>% filter(Component=="Total"),size=1.5) +
 geom_line(aes(x=R0,y=NLL,color=Component),data=NLL_amin %>% filter(Component!="Total")) +
-    theme_bw(12) +
+    theme_bw(20) +
     xlab("") +
-    ylab("NLL - min(NLL)") +
+    ylab("") +
     ggtitle(title) + ggeasy::easy_center_title()
   
   # ggsave(f1, file = paste0(Path, "R0_1.png"), width = 8, height = 6)
