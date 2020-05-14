@@ -4,12 +4,12 @@
 #' 
 #' @export
 
-R0_profile = function(Path,R0,title,LO) {
+R0_profile = function(Path,R0,title,L) {
   N = length(R0)
-  if(LO==FALSE) comps <- c(2:6,13:17,24:25)
+  if(L==FALSE) comps <- c(2:6,13:17,24:25)
   else comps <- c(2:6,13:17,24)
   NLL_a <- data.frame("Total"=rep(NA,N),
-                      "Index"=rep(NA,N),
+                      "Indices"=rep(NA,N),
                       "Fcomps"=rep(NA,N),
                       "Scomps"=rep(NA,N),
                       "Recruitment"=rep(NA,N),
@@ -30,7 +30,7 @@ R0_profile = function(Path,R0,title,LO) {
   }
   
   names(NLL_comp)[2:(length(comps)+1)] <- names(NLL_temp)[comps+2]
-  NLL_amin <- NLL_a %>% gather(Total,Index,Fcomps,Scomps,Recruitment,value="nll",key="Component") %>%
+  NLL_amin <- NLL_a %>% gather(Total,Indices,Fcomps,Scomps,Recruitment,value="nll",key="Component") %>%
     group_by(Component) %>% mutate(NLL=nll-min(nll))
   
   f1 <- ggplot() +
@@ -47,7 +47,7 @@ geom_line(aes(x=R0,y=NLL,color=Component),data=NLL_amin %>% filter(Component!="T
   NLL_comp_amin <- NLL_comp %>% gather(names(NLL_temp)[comps+2],value="nll",key="Component") %>%
     group_by(Component) %>% mutate(NLL=nll-min(nll))
   
-  if(LO==FALSE) {
+  if(L==FALSE) {
       NLL_comp_amin$Fleet <- c(rep("Fishery-LL",N*5),rep("Fishery-OBJ",N*5),rep("Survey-Early",N),rep("Survey-Late",N))
   NLL_comp_amin$Area <- c(rep(c("A2","A3","A4","A5","A6"),each=N),
                           rep(c("A2","A3","A4","A5","A6"),each=N),
@@ -60,7 +60,7 @@ geom_line(aes(x=R0,y=NLL,color=Component),data=NLL_amin %>% filter(Component!="T
                             rep("EPO",N))
   }
 
-  
+  # 
   f2 <- ggplot() +
     geom_line(aes(x=R0,y=NLL,color=Area,linetype=Fleet),data=NLL_comp_amin) +
     # geom_point(aes(x=R0,y=NLL,color=Area,shape=Fleet),data=NLL_comp_amin) +
@@ -68,13 +68,14 @@ geom_line(aes(x=R0,y=NLL,color=Component),data=NLL_amin %>% filter(Component!="T
     # geom_vline(xintercept = mean(R0),linetype="dashed") +
     xlab("ln(R0)") +
     ylab("NLL - min(NLL)")
-  
+
   # ggsave(f2, file = paste0(Path, "R0_2.png"), width = 8, height = 6)
-  
+
   f_all <- gridExtra::grid.arrange(f1, f2, nrow = 2)
   
-  ggsave(f_all, file = paste0(Path, "R0.png"), width = 6, height = 10)
+  ggsave(f_all, file = paste0(Path, "R0.png"), width = 6, height = 6)
   
-  return(f_all)
+  f <- list("f1"=f1,"f2"=f2)
+  return(f)
   
 }

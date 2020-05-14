@@ -4,7 +4,7 @@
 #' 
 #' @export
 
-make_kobetable_SAC11 <- function(fyear, lyear, Path, KobePath, FFleets, STD_only = TRUE, newSS, FstdPath, FlimitPath, DynamicPath) {
+make_kobetable_SAC11 <- function(Path, KobePath, FFleets, STD_only = TRUE, newSS, FstdPath, FlimitPath, DynamicPath) {
   ##################################################################################################################### STEP 1 - Get time series of BioSmr and SBR from the base case run
   if(STD_only==FALSE) print("change starter file (use par and do not estimate) in KobePath before this section!!!")
   
@@ -18,6 +18,8 @@ make_kobetable_SAC11 <- function(fyear, lyear, Path, KobePath, FFleets, STD_only
   # Get BioSmr series
   startYr <- BaseCase.rep$startyr
   endYr <- BaseCase.rep$endyr
+  fyear <- floor(1975 + (startYr/4) - 0.25)
+  lyear <- floor(1975 + (endYr/4) - 0.25)
   numSeasons <- BaseCase.rep$nseasons
   numAreas <- BaseCase.rep$nareas
   TSraw <- BaseCase.rep$timeseries
@@ -58,8 +60,8 @@ make_kobetable_SAC11 <- function(fyear, lyear, Path, KobePath, FFleets, STD_only
   x <- dSPBdat$Yr2[(3+(lyear-fyear+1)*4):(length(dSPBdat$Yr2))]
   y <- dSPBdat$SpawnBio[(3+(lyear-fyear+1)*4):(length(dSPBdat$SpawnBio))]
   x2 <- unique(floor(x))
-  y2 <- x2
-  for (yy in 1:length(x2)) y2[yy] <- mean(y[floor(x) %in% (x2[yy]-1)])
+  y2 <- y[x %in% x2]
+  # for (yy in 1:length(x2)) y2[yy] <- mean(y[floor(x) %in% (x2[yy]-1)])
   dSBR <- y2/dSPBdat$SpawnBio[1]
   dSpawnBioYr.Out <- cbind(x2, y2, dSBR)
   dSpawnBioYr.Out <- as.data.frame(dSpawnBioYr.Out)

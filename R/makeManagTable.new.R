@@ -1,16 +1,19 @@
-#' Make the management table based on SS output
+#' Make the management table based on SS output (SAC11)
 #' 
-#' \code{makeManagTable.new} This code make the mangament table for IATTC stock assessments
+#' \code{makeManagTable.new} This code make the mangament table for IATTC stock assessments (SAC11)
 #' 
 #' @export
 
-makeManagTable.new <- function(Path, FFleets, FstdPath, FlimitPath) {
+makeManagTable.new <- function(Path, FFleets, FstdPath, FlimitPath, dMSYPath, dS0Path) {
     replist <- r4ss::SS_output(dir = Path, ncols = 400, covar = T, printstats = F, verbose = FALSE)
     TimeSeries <- replist$timeseries
     # numFleets <- replist$nfleets # all fleets including surveys
     # numFleets <- replist$nfishfleets  # only fisheries fleets <>< Change 15 March 2016
     endYr <- replist$endyr
     startYr <- replist$startyr
+    
+    fyear <- floor(1975 + (startYr/4) - 0.25)
+    lyear <- floor(1975 + (endYr/4) - 0.25)
     
     # Make forecast management report name
     ForeRepName <- paste(FstdPath, "Forecast-report.SSO", sep = "")
@@ -37,7 +40,7 @@ makeManagTable.new <- function(Path, FFleets, FstdPath, FlimitPath) {
     Brecent <- ForeTS[ForeTS$Yr == endYr + 1, 3]
     Srecent <- ForeTS[ForeTS$Yr == endYr + 1, 4]
     
-    Crecent <- sum(ForeTS[ForeTS$Yr %in% seq(endYr - 3, endYr, 1), 5:dim(ForeTS)[2]])
+    # Crecent <- sum(ForeTS[ForeTS$Yr %in% seq(endYr - 3, endYr, 1), 5:dim(ForeTS)[2]])
     
     options(scipen = 2)  # Do not use scientific notation in plotting
     # Get management quantities msy msy <- as.numeric(ForeDat[ForeDat[,1]==c('MSY_for_optimize'),5])*4/1000
@@ -54,7 +57,7 @@ makeManagTable.new <- function(Path, FFleets, FstdPath, FlimitPath) {
     # Smsy/S0
     SmsySzero <- as.numeric(ForeDat[ForeDat[, 1] == c("SPBmsy/SPB_virgin"), 2])
     Szero<- as.numeric(ForeDat[ForeDat[, 1] == c("SSB_unfished(Bmark)"),2])
-    CrecentMsy <- Crecent/msy
+    # CrecentMsy <- Crecent/msy
     # Brecent/Bmsy
     BrecentBmsy <- Brecent/Bmsy
     # S recent/Smsy
@@ -136,11 +139,50 @@ makeManagTable.new <- function(Path, FFleets, FstdPath, FlimitPath) {
     
     Prob_F <- 1- pnorm(1,FrecentFlim,FrecentFlim_std) # P(Scur<Slimit)
     
+    ### dynamic SMSY (5/13/2020); from function makeManagTable.new
+    Dynamic.rep <- r4ss::SS_output(dir = dMSYPath, ncols = 400, covar = F, verbose = F, printstats = F)  # dyanmic Smsy
+    
+    dSPBdat <- Dynamic.rep$timeseries
+    dSPBdat$Yr2 <- 1975 + (dSPBdat$Y/4) - 0.25
+    x <- dSPBdat$Yr2[(3+(lyear-fyear+1)*4):(length(dSPBdat$Yr2))]
+    y <- dSPBdat$SpawnBio[(3+(lyear-fyear+1)*4):(length(dSPBdat$SpawnBio))]
+    x2 <- unique(floor(x)) 
+    y2 <- y[x %in% x2]
+    dSpawnBioYr.Out <- cbind(x2-(lyear-fyear+1), y2)
+    dSpawnBioYr.Out <- data.frame(dSpawnBioYr.Out)
+    names(dSpawnBioYr.Out) <- c("Year", "SB")
+    
+    SrecentdSmsy <- Srecent/dSpawnBioYr.Out[lyear-fyear+2,2]
+    ###
+    
+    ### dynamic MSY (5/13/2020); from function makeManagTable.new
+    # get Ccurrent
+    Cdat <- TimeSeries
+    Cdat$Yr2 <- 1975 + (Cdat$Y/4) - 0.25
+    Ccol <- which(substr(names(dMSY),start=1,stop=7)=="dead(B)")
+    x <- Cdat$Yr2[3:(length(Cdat$Yr2))]
+    y <- Cdat[3:nrow(Cdat),Ccol]
+    x2 <- unique(floor(x))
+    y2 <- x2
+    for (yy in 2:length(x2)) y2[yy] <- sum(y[floor(x) %in% (x2[yy]-1),]) # annual catch
+    Crecent <- y2[length(x2)] # MSY in lyear
+    # get MSY
+    MSYdat <- Dynamic.rep$timeseries
+    MSYdat$Yr2 <- 1975 + (MSYdat$Y/4) - 0.25
+    x <- MSYdat$Yr2[(3+(lyear-fyear+1)*4):(length(MSYdat$Yr2))]
+    y <- MSYdat[(3+(lyear-fyear+1)*4):nrow(MSYdat),Ccol]
+    x2 <- unique(floor(x))
+    y2 <- x2
+    for (yy in 2:length(x2)) y2[yy] <- sum(y[floor(x) %in% (x2[yy]-1),]) # annual projected catch under FMSY
+    msy <- y2[length(x2)] 
+    
+    CrecentMsy <- Crecent/msy
+    
     # Make table with management quantities
     RowNames <- c("msy", "Bmsy", "Smsy", "Bmsy/Bzero", "Smsy/Szero",
                   "Crecent/msy", "Brecent/Bmsy", "Srecent/Smsy", "Fmultiplier","Szero",
                   "Szero_dynamic","Srecent/dSmsy","Srecent/Slim","P(Srecent<Slim)", "FrecentFmsy",
-                  "FrecentFmsy_std","Frecent/Flim","P(Frecent>Flim)")
+                  "FrecentFmsy_std","Frecent/Flim","P(Frecent>Flim)","Srecent/dS0")
     
     ManagTable <- matrix(NA, length(RowNames), 2)
     ManagTable <- data.frame(ManagTable)
@@ -158,7 +200,8 @@ makeManagTable.new <- function(Path, FFleets, FstdPath, FlimitPath) {
     ManagTable[9, 2] <- format(Fmult, digits = 4, nsmall = 4)
     ManagTable[10, 2] <- format(Szero, digits = 4, nsmall = 4)
     ManagTable[11, 2] <- format(S0_d, digits = 4, nsmall = 4)
-    ManagTable[12, 2] <- format(Srecent/(S0_d*SmsySzero), digits = 4, nsmall = 4)
+    # ManagTable[12, 2] <- format(Srecent/(S0_d*SmsySzero), digits = 4, nsmall = 4)
+    ManagTable[12, 2] <- format(SrecentdSmsy, digits = 4, nsmall = 4)
     ManagTable[13, 2] <- format(SrecentSlim, digits = 4, nsmall = 4)
     ManagTable[14, 2] <- format(Prob_S, digits = 4, nsmall = 4)
     ManagTable[15, 2] <- format(FrecentFmsy, digits = 4, nsmall = 4)

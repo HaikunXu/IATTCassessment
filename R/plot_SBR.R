@@ -10,7 +10,7 @@ plot_SBR = function(SS_Dir, lyear, fyear, legend, Save_Dir, ymax, figure_name, t
         names(cor_mat) <- c("index","name","value","std.dev")
         SB_est <- cor_mat$value[which(cor_mat$name == "depletion")[1:((lyear[i] - (fyear[i]-1)) * 4)]]
         SB_std <- cor_mat$std.dev[which(cor_mat$name == "depletion")[1:((lyear[i] - (fyear[i]-1)) * 4)]]
-        if(sum(SB_std)==0) SB_std <- cor_mat$std_dev[which(cor_mat$name == "depletion")[1:((lyear[i] - (fyear[i]-1)) * 4)]]
+        # if(sum(SB_std)==0) SB_std <- cor_mat$std_dev[which(cor_mat$name == "depletion")[1:((lyear[i] - (fyear[i]-1)) * 4)]]
         SB <- data.frame(est = SB_est, std = SB_std, year = rep(fyear[i]:lyear[i], each = 4), yq = seq(fyear[i], lyear[i] + 0.75, 0.25))
     
         if(i==1) SB_A <- SB %>% mutate(Model=legend[i])

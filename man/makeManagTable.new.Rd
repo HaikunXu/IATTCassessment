@@ -2,10 +2,10 @@
 % Please edit documentation in R/makeManagTable.new.R
 \name{makeManagTable.new}
 \alias{makeManagTable.new}
-\title{Make the management table based on SS output}
+\title{Make the management table based on SS output (SAC11)}
 \usage{
-makeManagTable.new(Path, FFleets, FstdPath, FlimitPath)
+makeManagTable.new(Path, FFleets, FstdPath, FlimitPath, dMSYPath, dS0Path)
 }
 \description{
-\code{makeManagTable.new} This code make the mangament table for IATTC stock assessments
+\code{makeManagTable.new} This code make the mangament table for IATTC stock assessments (SAC11)
 }

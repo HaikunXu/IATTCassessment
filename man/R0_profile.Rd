@@ -4,7 +4,7 @@
 \alias{R0_profile}
 \title{Generate R0 likelihoood profile figure}
 \usage{
-R0_profile(Path, R0, title, LO)
+R0_profile(Path, R0, title, L)
 }
 \description{
 /code{R0_profile} This function makes R0 profile plot for BET SAC11 assessments
