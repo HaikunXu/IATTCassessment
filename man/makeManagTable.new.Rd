@@ -4,7 +4,7 @@
 \alias{makeManagTable.new}
 \title{Make the management table based on SS output (SAC11)}
 \usage{
-makeManagTable.new(Path, FFleets, FstdPath, FlimitPath, dMSYPath, dS0Path)
+makeManagTable.new(Path, FFleets, FstdPath, FlimitPath, dMSYPath)
 }
 \description{
 \code{makeManagTable.new} This code make the mangament table for IATTC stock assessments (SAC11)

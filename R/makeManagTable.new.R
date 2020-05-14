@@ -4,7 +4,7 @@
 #' 
 #' @export
 
-makeManagTable.new <- function(Path, FFleets, FstdPath, FlimitPath, dMSYPath, dS0Path) {
+makeManagTable.new <- function(Path, FFleets, FstdPath, FlimitPath, dMSYPath) {
     replist <- r4ss::SS_output(dir = Path, ncols = 400, covar = T, printstats = F, verbose = FALSE)
     TimeSeries <- replist$timeseries
     # numFleets <- replist$nfleets # all fleets including surveys
@@ -99,6 +99,8 @@ makeManagTable.new <- function(Path, FFleets, FstdPath, FlimitPath, dMSYPath, dS
                        nrows = (RepEnd - RepStart),blank.lines.skip=FALSE)
     names(RepDat) = c("Yrr","type","S")
     S0_d<-as.numeric(RepDat$S[RepDat$Yrr==endYr+1])
+    
+    SrecentdS0 <- Srecent/S0_d
     
     # get Srecent/Slimit (5/5/2020)
     cor_mat <- read.table(paste0(Path, "ss.std"), skip = 1, fill = NA, header = FALSE)
@@ -208,6 +210,7 @@ makeManagTable.new <- function(Path, FFleets, FstdPath, FlimitPath, dMSYPath, dS
     ManagTable[16, 2] <- format(FrecentFmsy_std, digits = 4, nsmall = 4)
     ManagTable[17, 2] <- format(FrecentFlim, digits = 4, nsmall = 4)
     ManagTable[18, 2] <- format(Prob_F, digits = 4, nsmall = 4)
+    ManagTable[19, 2] <- format(SrecentdS0, digits = 4, nsmall = 4)
     Out <- list(Fvector = Fvector, FmultScale = FmultScale, ManagTable = ManagTable)
     
     return(Out)
