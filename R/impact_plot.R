@@ -32,8 +32,9 @@ impact_plot = function(Dir, n_year, BaseName, n_fishery, title) {
     
     ParDir <- paste0(paste0(Dir, BaseName, "/ss.par"))
     ParFile <- readLines(ParDir, warn = F)
-    Init_F_2 <- as.numeric(ParFile[69])
-    Init_F_14 <- as.numeric(ParFile[71])
+    Line_initial <- match("# Fcast_impl_error:", ParFile)
+    Init_F_2 <- as.numeric(ParFile[Line_initial+3])
+    Init_F_14 <- as.numeric(ParFile[Line_initial+5])
     
     # loop starts here
     
@@ -79,8 +80,8 @@ impact_plot = function(Dir, n_year, BaseName, n_fishery, title) {
         
         ParDir <- paste0(paste0(Dir, step_name[step]), "/ss.par")
         ParFile <- readLines(ParDir, warn = F)
-        ParFile[69] <- toString(Init_F_2 * sum(Catch[1:20, 1:6])/sum(Catch0[1:20, 1:6]))
-        ParFile[71] <- toString(Init_F_14 * sum(Catch[1:20, 13:17])/sum(Catch0[1:20, 13:17]))
+        ParFile[Line_initial+3] <- toString(Init_F_2 * sum(Catch[1:20, 1:6])/sum(Catch0[1:20, 1:6]))
+        ParFile[Line_initial+5] <- toString(Init_F_14 * sum(Catch[1:20, 13:17])/sum(Catch0[1:20, 13:17]))
         
         writeLines(ParFile, ParDir)
         

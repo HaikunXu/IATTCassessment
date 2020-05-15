@@ -12,7 +12,7 @@ R0_profile = function(Path,R0,title,L) {
                       "Indices"=rep(NA,N),
                       "Fcomps"=rep(NA,N),
                       "Scomps"=rep(NA,N),
-                      "Recruitment"=rep(NA,N),
+                      "Recruits"=rep(NA,N),
                       "R0"=R0)
   
   NLL_comp <- data.frame("R0"=R0)
@@ -30,7 +30,7 @@ R0_profile = function(Path,R0,title,L) {
   }
   
   names(NLL_comp)[2:(length(comps)+1)] <- names(NLL_temp)[comps+2]
-  NLL_amin <- NLL_a %>% gather(Total,Indices,Fcomps,Scomps,Recruitment,value="nll",key="Component") %>%
+  NLL_amin <- NLL_a %>% gather(Total,Indices,Fcomps,Scomps,Recruits,value="nll",key="Component") %>%
     group_by(Component) %>% mutate(NLL=nll-min(nll))
   
   f1 <- ggplot() +

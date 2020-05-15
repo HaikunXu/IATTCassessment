@@ -5,7 +5,7 @@
 #' @export
 #' 
 
-cpue_compare <- function(Path, Legend, Save_Path, rescale, ylabel, ylim, xlim) {
+cpue_compare <- function(Path, Legend, Save_Path, rescale, ylabel, xlabel, ylim, xlim) {
     index <- read.csv(paste0(Path[1],"Table_for_SS3.csv"))
     Index <- data.frame("Year"=index$Year/4+1974.75,"Index"=index$Estimate_metric_tons,"Legend"=Legend[1],"CV"=index$SD_log)
 
@@ -21,7 +21,7 @@ cpue_compare <- function(Path, Legend, Save_Path, rescale, ylabel, ylim, xlim) {
     if(rescale==TRUE) Index <- Index %>% group_by(Legend) %>% mutate(Index=Index/mean(Index))
     
     f <- ggplot(data = Index) + geom_line(aes(x = Year, y = Index, color = Legend)) + coord_cartesian(ylim = ylim, xlim=xlim, expand = FALSE) +
-        theme_bw(15) + ylab(ylabel) + geom_point(aes(x = Year, y = Index, color = Legend)) +
+        theme_bw(15) + ylab(ylabel) + xlab(xlabel) + geom_point(aes(x = Year, y = Index, color = Legend)) +
         geom_ribbon(aes(x = Year, ymin = Index * exp(-1.96 * CV), ymax = Index * exp(1.96 * CV), fill = Legend), alpha=0.2)
         
     
@@ -32,8 +32,8 @@ cpue_compare <- function(Path, Legend, Save_Path, rescale, ylabel, ylim, xlim) {
             geom_ribbon(aes(x = Year, ymin = Index * exp(-1.96 * CV), ymax = Index * exp(1.96 * CV), fill = Legend), alpha=0.2)
     }
     
-    ggsave(f, file = paste0(Save_Path, "CPUE_Compare.png"), width = 15, height = 6)
-    ggsave(f, file = paste0(Save_Path, "CPUE_Compare.eps"), width = 15, height = 6, device=cairo_ps)
-    
+    # ggsave(f, file = paste0(Save_Path, "CPUE_Compare.png"), width = 15, height = 6)
+    # ggsave(f, file = paste0(Save_Path, "CPUE_Compare.eps"), width = 15, height = 6, device=cairo_ps)
+    # 
     return(f)
 }

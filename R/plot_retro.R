@@ -24,7 +24,7 @@ plot_retro = function(SS_Dir, lyear, fyear, Save_Dir, title, xlim, ylim) {
         geom_point(aes(x=Year,y=SBR,color=Assess_Year),data = SBR %>% filter(label2==1),size=3) +
         coord_cartesian(ylim=ylim,xlim=xlim) +
         labs(x = "", y = "", color = "Year") +
-        theme_bw(20) + ggtitle(title) + ggeasy::easy_center_title()
+        theme_bw(20) + ggtitle(title) + plot.title = element_text(hjust = 0.5)
         
     
     ggsave(f1, file = paste0(Save_Dir, "Retro_SBR.png"), width = 8, height = 6)
