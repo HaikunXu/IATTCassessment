@@ -22,14 +22,16 @@ cpue_compare <- function(Path, Legend, Save_Path, rescale, ylabel, xlabel, ylim,
     
     f <- ggplot(data = Index) + geom_line(aes(x = Year, y = Index, color = Legend)) + coord_cartesian(ylim = ylim, xlim=xlim, expand = FALSE) +
         theme_bw(15) + ylab(ylabel) + xlab(xlabel) + geom_point(aes(x = Year, y = Index, color = Legend)) +
-        geom_ribbon(aes(x = Year, ymin = Index * exp(-1.96 * CV), ymax = Index * exp(1.96 * CV), fill = Legend), alpha=0.2)
+        geom_ribbon(aes(x = Year, ymin = Index * exp(-1.96 * CV), ymax = Index * exp(1.96 * CV), fill = Legend), alpha=0.2) +
+        labs(color="Index",fill="Index")
         
     
     if(rescale==TRUE) {
         f <- ggplot(data = Index) + geom_line(aes(x = Year, y = Index, color = Legend)) +
             theme_bw(15) + geom_hline(yintercept=1) + ylab(ylabel) + coord_cartesian(ylim = ylim, xlim=xlim, expand = FALSE) +
             geom_point(aes(x = Year, y = Index, color = Legend)) +
-            geom_ribbon(aes(x = Year, ymin = Index * exp(-1.96 * CV), ymax = Index * exp(1.96 * CV), fill = Legend), alpha=0.2)
+            geom_ribbon(aes(x = Year, ymin = Index * exp(-1.96 * CV), ymax = Index * exp(1.96 * CV), fill = Legend), alpha=0.2) +
+            labs(color="Index",fill="Index")
     }
     
     # ggsave(f, file = paste0(Save_Path, "CPUE_Compare.png"), width = 15, height = 6)

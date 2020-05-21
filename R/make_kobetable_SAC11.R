@@ -83,24 +83,23 @@ make_kobetable_SAC11 <- function(Path, KobePath, FFleets, STD_only = TRUE, newSS
       F_mult_high <- F_mult_last+1.96*F_mult_recentSD
     }
     else {
-      Table <- makeManagTable.new(Path, FFleets = FFleets, FstdPath, FstdPath)
-      STD_Table <- data.frame(read.table(file = paste0(Path,"ss.std"),header = TRUE))
+      Table <- makeManagTable.new(Path, FFleets = FFleets, FstdPath, FstdPath, DynamicPath)
+      # STD_Table <- data.frame(read.table(file = paste0(Path,"ss.std"),header = TRUE))
       print("************do use the new ss************")
       FrecentFmsy <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="FrecentFmsy")])
       FrecentFmsy_std <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="FrecentFmsy_std")])
       FrecentFmsy_low <- FrecentFmsy-1.96*FrecentFmsy_std
       FrecentFmsy_high <- FrecentFmsy+1.96*FrecentFmsy_std
+      SrecentdSmsy <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="Srecent/dSmsy")])
+      SrecentdSmsy_std <- SrecentdSmsy * FrecentFmsy_std / FrecentFmsy # assume that CV(SrecentdSmsy)=CV(FrecentFmsy)
+      SrecentdSmsy_low <- SrecentdSmsy-1.96*SrecentdSmsy_std
+      SrecentdSmsy_high <- SrecentdSmsy+1.96*SrecentdSmsy_std
     }
-    
-    SBR_last <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="Srecent/Smsy")])
-    SBR_CV <- STD_Table$std.dev[which(STD_Table$name=="depletion")[(lyear-fyear+1)*4]]/STD_Table$value[which(STD_Table$name=="depletion")[(lyear-fyear+1)*4]]
-    SBR_recent_low <- SBR_last-1.96*SBR_last*SBR_CV
-    SBR_recent_high <- SBR_last+1.96*SBR_last*SBR_CV
     
     if(newSS==FALSE) STD <- data.frame("Fmultiplier"=c(F_mult_low,F_mult_last,F_mult_high),
                                        "SB"=c(SBR_recent_low,SBR_last,SBR_recent_high))
     else STD <- data.frame("FrecentFmsy"=c(FrecentFmsy_low,FrecentFmsy,FrecentFmsy_high),
-                           "SB"=c(SBR_recent_low,SBR_last,SBR_recent_high))
+                           "SB"=c(SrecentdSmsy_low,SrecentdSmsy,SrecentdSmsy_high))
     
     Kobe.Out <- list(STD=STD)
   }
