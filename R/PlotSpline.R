@@ -5,14 +5,14 @@
 #' @export
 #' 
 
-PlotSpline<-function(Path,Save_Path,Fleet,model,model_name,f,fyear,lyear){
+PlotSpline<-function(Path,Save_Path,Fleet,model,model_name,f,fyear,lyear,dim){
   ###Mark's code
   # ****** Use this *******
   # AllFleet<-c(1:6,13:17,19:20,22)
   # FleetNames <- Rep$FleetNames
   
   postscript(paste0(Save_Path,"Fleet",toString(Fleet)," Selex.eps"),width=9,height=9)
-  par(mfrow = c(5, 3),mar=c(2, 2, 2, 2) + 0.1)           #par(mfrow = c(6, 5),mar=c(5, 4, 4, 2) + 0.1)
+  par(mfrow = dim,mar=c(2, 2, 2, 2) + 0.1)           #par(mfrow = c(6, 5),mar=c(5, 4, 4, 2) + 0.1)
   
   for(m in 1:length(model)) {
     Rep <- r4ss::SS_output(dir = Path[m], ncols = 400, covar = F, printstats = F, verbose = FALSE)

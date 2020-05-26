@@ -34,8 +34,8 @@ R0_profile = function(Path,R0,title,L) {
     group_by(Component) %>% mutate(NLL=nll-min(nll))
   
   f1 <- ggplot() +
-        geom_line(aes(x=R0,y=NLL,color=Component),data=NLL_amin %>% filter(Component=="Total"),size=1.5) +
-geom_line(aes(x=R0,y=NLL,color=Component),data=NLL_amin %>% filter(Component!="Total")) +
+        geom_line(aes(x=R0,y=NLL,color=Component),data=NLL_amin,size=1) +
+    geom_point(aes(x=R0,y=NLL,color=Component,shape=Component),data=NLL_amin,size=3) +
     theme_bw(20) +
     xlab("") +
     ylab("") +

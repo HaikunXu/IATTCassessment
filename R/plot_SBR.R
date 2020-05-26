@@ -19,7 +19,8 @@ plot_SBR = function(SS_Dir, lyear, fyear, legend, Save_Dir, ymax, figure_name, t
     
     SB_A <- SB_A %>% data.frame() %>% mutate(Model=factor(Model))
     
-    f <- ggplot(data = SB_A) + geom_ribbon(aes(x = yq, ymin = est - 1.96 * std, ymax = est + 1.96 * std, fill = Model), alpha=alpha) + 
+    f <- ggplot(data = SB_A) + 
+        geom_ribbon(aes(x = yq, ymin = est - 1.96 * std, ymax = est + 1.96 * std, fill = Model), alpha=alpha) + 
         geom_line(aes(x = yq, y = est, color = Model), size = 1) + 
         geom_point(aes(x = yq, y = est, color = Model), size = 1.5,data = SB_A %>% filter(yq==year)) + 
         theme_bw(20) + xlab("") + ylab("") + geom_hline(yintercept = 1, linetype = "dashed") +

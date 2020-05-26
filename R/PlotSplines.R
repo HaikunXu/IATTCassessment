@@ -24,12 +24,12 @@ PlotSplines<-function(Path=Path,Allfleets=c(1:6,13:17,19:20),f,fyears,lyears){
                       ]
     tt<-tt[1,]
     
-    plot(seq(20,198,2),tt[,15:104],main = FleetNames[Allfleets[i]])
+    plot(seq(20,198,2),tt[,15:104],main = paste0("F",toString(i)," (",FleetNames[Allfleets[i]],")"))
     
     tt2 <- Rep$lendbase[Rep$lendbase$Fleet %in% fleets & 
                           Rep$lendbase$Sex %in% c(1), 
                         ]
-    tt2<-tapply(tt2$Obs, tt2$Bin,FUN =mean)
+    tt2<-tapply(tt2$Obs, tt2$Bin,FUN = mean)
     
     tt3<-Rep$natlen[Rep$natlen$Sex %in% c(1,2) &                                              #average oiver both sexes
                       Rep$natlen$"Beg/Mid" %in% c("B") &
@@ -57,7 +57,7 @@ PlotSplines<-function(Path=Path,Allfleets=c(1:6,13:17,19:20),f,fyears,lyears){
                       ]
     tt<-tt[1,]
     
-    plot(seq(20,198,2),tt[,15:104],main = FleetNames[Allfleets[i]])
+    plot(seq(20,198,2),tt[,15:104],main = paste0("F",toString(i)," (",FleetNames[Allfleets[i]],")"))
     
     tt2 <- Rep$lendbase[Rep$lendbase$Fleet %in% fleets & 
                           Rep$lendbase$Sex %in% c(1), 

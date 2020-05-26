@@ -41,7 +41,7 @@ PlotPearsonRes <- function(Path, myFleet, fishery, binsize, title, xlim, ylim, a
     geom_line(aes(x=Yr,y=med,color=Fleet),size=1) +
     # geom_point(aes(x=Yr,y=med,color=Fleet)) +
     theme_bw(15) +
-    xlab("Year") +ylab("Pearson residual") +
+    xlab("Year") +ylab("") +
     geom_hline(yintercept = 0,linetype="dashed") +
     coord_cartesian(ylim=ylim,xlim=xlim) + ggtitle(title) + ggeasy::easy_center_title()
 
@@ -51,7 +51,7 @@ PlotPearsonRes <- function(Path, myFleet, fishery, binsize, title, xlim, ylim, a
     geom_line(aes(x=Bin,y=med,color=Fleet),size=1) +
     # geom_point(aes(x=Yr,y=med,color=Fleet)) +
     theme_bw(15) +
-    xlab("Length (cm)") +ylab("Pearson residual") +
+    xlab("Length (cm)") +ylab("") +
     geom_hline(yintercept = 0,linetype="dashed") +
     coord_cartesian(ylim=ylim) + ggtitle(title) + ggeasy::easy_center_title()
   

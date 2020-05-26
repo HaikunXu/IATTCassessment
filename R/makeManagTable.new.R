@@ -59,7 +59,7 @@ makeManagTable.new <- function(Path, FFleets, FstdPath, FlimitPath, dMSYPath) {
     Szero<- as.numeric(ForeDat[ForeDat[, 1] == c("SSB_unfished(Bmark)"),2])
     # CrecentMsy <- Crecent/msy
     # Brecent/Bmsy
-    BrecentBmsy <- Brecent/Bmsy
+    SrecenSzero <- Srecent/Szero
     # S recent/Smsy
     SrecentSmsy <- Srecent/Smsy
     
@@ -120,7 +120,7 @@ makeManagTable.new <- function(Path, FFleets, FstdPath, FlimitPath, dMSYPath) {
     abline(v=1,col="red")
     dev.off()
     
-    Prob_S <- pnorm(1,SrecentSlim,SrecentSlim_std) # P(Scur<Slimit)
+    Prob_Slimit <- pnorm(1,SrecentSlim,SrecentSlim_std) # P(Scur<Slimit)
     
     # Get Frecent/Flimit (5/5/2020)
     STD <- read.table(file = paste0(FlimitPath,"ss.std"),skip = 1)
@@ -139,7 +139,7 @@ makeManagTable.new <- function(Path, FFleets, FstdPath, FlimitPath, dMSYPath) {
     abline(v=1,col="red")
     dev.off()
     
-    Prob_F <- 1- pnorm(1,FrecentFlim,FrecentFlim_std) # P(Scur<Slimit)
+    Prob_Flimit <- 1 - pnorm(1,FrecentFlim,FrecentFlim_std) # P(Fcur>Flimit)
     
     ### dynamic SMSY (5/13/2020); from function makeManagTable.new
     Dynamic.rep <- r4ss::SS_output(dir = dMSYPath, ncols = 400, covar = F, verbose = F, printstats = F)  # dyanmic Smsy
@@ -156,6 +156,10 @@ makeManagTable.new <- function(Path, FFleets, FstdPath, FlimitPath, dMSYPath) {
     
     SrecentdSmsy <- Srecent/dSpawnBioYr.Out[lyear-fyear+2,2]
     ###
+    
+    # add targer probabilities (5/22/2020)
+    Prob_Ftarget <- 1 - pnorm(1,FrecentFmsy,FrecentFmsy_std) # P(fcur>Ftarget)
+    Prob_Starget <- pnorm(1,SrecentdSmsy,SrecentdSmsy*FrecentFmsy_std/FrecentFmsy) # P(Scur<Starget); assume CV(S/Smsy)=CV(F/Fmsy)
     
     ### dynamic MSY (5/13/2020); from function makeManagTable.new
     # get Ccurrent
@@ -176,15 +180,15 @@ makeManagTable.new <- function(Path, FFleets, FstdPath, FlimitPath, dMSYPath) {
     x2 <- unique(floor(x))
     y2 <- x2
     for (yy in 2:length(x2)) y2[yy] <- sum(y[floor(x) %in% (x2[yy]-1),]) # annual projected catch under FMSY
-    msy <- y2[length(x2)] 
+    msy_d <- y2[length(x2)] 
     
-    CrecentMsy <- Crecent/msy
+    CrecentMsy <- Crecent/msy_d
     
     # Make table with management quantities
-    RowNames <- c("msy", "Bmsy", "Smsy", "Bmsy/Bzero", "Smsy/Szero",
-                  "Crecent/msy", "Brecent/Bmsy", "Srecent/Smsy", "Fmultiplier","Szero",
-                  "Szero_dynamic","Srecent/dSmsy","Srecent/Slim","P(Srecent<Slim)", "FrecentFmsy",
-                  "FrecentFmsy_std","Frecent/Flim","P(Frecent>Flim)","Srecent/dS0")
+    RowNames <- c("msy", "msy_d", "Smsy", "Srecent/Szero", "Smsy/Szero", "Crecent/msy_d", "Brecent/Bmsy",
+                  "Srecent/Smsy", "Fmultiplier","Szero", "Szero_dynamic","Srecent/dSmsy","Srecent/Slim",
+                  "P(Srecent<Slim)", "FrecentFmsy", "FrecentFmsy_std","Frecent/Flim","P(Frecent>Flim)",
+                  "Srecent/dS0","P(Srecent<Starget)","P(Frecent>Ftarget)", "Srecent/Slimit std","Frecent/Flimit std")
     
     ManagTable <- matrix(NA, length(RowNames), 2)
     ManagTable <- data.frame(ManagTable)
@@ -192,25 +196,28 @@ makeManagTable.new <- function(Path, FFleets, FstdPath, FlimitPath, dMSYPath) {
     # Populate table with quantities
     ManagTable[, 1] <- RowNames
     ManagTable[1, 2] <- format(msy, digits = 1)
-    ManagTable[2, 2] <- format(Bmsy, digits = 1)
+    ManagTable[2, 2] <- format(msy_d, digits = 1)
     ManagTable[3, 2] <- format(Smsy, digits = 1)
-    ManagTable[4, 2] <- format(BmsyBzero, digits = 4, nsmall = 4)
-    ManagTable[5, 2] <- format(SmsySzero, digits = 4, nsmall = 4)
-    ManagTable[6, 2] <- format(CrecentMsy, digits = 4, nsmall = 4)
-    ManagTable[7, 2] <- format(BrecentBmsy, digits = 4, nsmall = 4)
-    ManagTable[8, 2] <- format(SrecentSmsy, digits = 4, nsmall = 4)
-    ManagTable[9, 2] <- format(Fmult, digits = 4, nsmall = 4)
-    ManagTable[10, 2] <- format(Szero, digits = 4, nsmall = 4)
-    ManagTable[11, 2] <- format(S0_d, digits = 4, nsmall = 4)
-    # ManagTable[12, 2] <- format(Srecent/(S0_d*SmsySzero), digits = 4, nsmall = 4)
-    ManagTable[12, 2] <- format(SrecentdSmsy, digits = 4, nsmall = 4)
-    ManagTable[13, 2] <- format(SrecentSlim, digits = 4, nsmall = 4)
-    ManagTable[14, 2] <- format(Prob_S, digits = 4, nsmall = 4)
-    ManagTable[15, 2] <- format(FrecentFmsy, digits = 4, nsmall = 4)
-    ManagTable[16, 2] <- format(FrecentFmsy_std, digits = 4, nsmall = 4)
-    ManagTable[17, 2] <- format(FrecentFlim, digits = 4, nsmall = 4)
-    ManagTable[18, 2] <- format(Prob_F, digits = 4, nsmall = 4)
-    ManagTable[19, 2] <- format(SrecentdS0, digits = 4, nsmall = 4)
+    ManagTable[4, 2] <- format(SrecentSzero, digits = 8, nsmall = 8)
+    ManagTable[5, 2] <- format(SmsySzero, digits = 8, nsmall = 8)
+    ManagTable[6, 2] <- format(CrecentMsy, digits = 8, nsmall = 8)
+    ManagTable[7, 2] <- format(BrecentBmsy, digits = 8, nsmall = 8)
+    ManagTable[8, 2] <- format(SrecentSmsy, digits = 8, nsmall = 8)
+    ManagTable[9, 2] <- format(Fmult, digits = 8, nsmall = 8)
+    ManagTable[10, 2] <- format(Szero, digits = 8, nsmall = 8)
+    ManagTable[11, 2] <- format(S0_d, digits = 8, nsmall = 8)
+    ManagTable[12, 2] <- format(SrecentdSmsy, digits = 8, nsmall = 8)
+    ManagTable[13, 2] <- format(SrecentSlim, digits = 8, nsmall = 8)
+    ManagTable[14, 2] <- format(Prob_Slimit, digits = 8, nsmall = 8)
+    ManagTable[15, 2] <- format(FrecentFmsy, digits = 8, nsmall = 8)
+    ManagTable[16, 2] <- format(FrecentFmsy_std, digits = 8, nsmall = 8)
+    ManagTable[17, 2] <- format(FrecentFlim, digits = 8, nsmall = 8)
+    ManagTable[18, 2] <- format(Prob_Flimit, digits = 8, nsmall = 8)
+    ManagTable[19, 2] <- format(SrecentdS0, digits = 8, nsmall = 8)
+    ManagTable[20, 2] <- format(Prob_Starget, digits = 8, nsmall = 8)
+    ManagTable[21, 2] <- format(Prob_Ftarget, digits = 8, nsmall = 8)
+    ManagTable[22, 2] <- format(SrecentSlim_std, digits = 8, nsmall = 8)
+    ManagTable[23, 2] <- format(FrecentFlim_std, digits = 8, nsmall = 8)
     Out <- list(Fvector = Fvector, FmultScale = FmultScale, ManagTable = ManagTable)
     
     return(Out)
