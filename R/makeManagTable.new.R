@@ -59,7 +59,7 @@ makeManagTable.new <- function(Path, FFleets, FstdPath, FlimitPath, dMSYPath) {
     Szero<- as.numeric(ForeDat[ForeDat[, 1] == c("SSB_unfished(Bmark)"),2])
     # CrecentMsy <- Crecent/msy
     # Brecent/Bmsy
-    SrecenSzero <- Srecent/Szero
+    SrecentSzero <- Srecent/Szero
     # S recent/Smsy
     SrecentSmsy <- Srecent/Smsy
     
@@ -201,7 +201,7 @@ makeManagTable.new <- function(Path, FFleets, FstdPath, FlimitPath, dMSYPath) {
     ManagTable[4, 2] <- format(SrecentSzero, digits = 8, nsmall = 8)
     ManagTable[5, 2] <- format(SmsySzero, digits = 8, nsmall = 8)
     ManagTable[6, 2] <- format(CrecentMsy, digits = 8, nsmall = 8)
-    ManagTable[7, 2] <- format(BrecentBmsy, digits = 8, nsmall = 8)
+    ManagTable[7, 2] <- format(NA, digits = 8, nsmall = 8)
     ManagTable[8, 2] <- format(SrecentSmsy, digits = 8, nsmall = 8)
     ManagTable[9, 2] <- format(Fmult, digits = 8, nsmall = 8)
     ManagTable[10, 2] <- format(Szero, digits = 8, nsmall = 8)

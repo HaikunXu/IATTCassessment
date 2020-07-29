@@ -20,11 +20,11 @@ plot_ASPM = function(SS_Dir, lyear, fyear, legend, Save_Dir, ymax, figure_name, 
   SB_A <- SB_A %>% data.frame() %>% mutate(Model=factor(Model))
   
   f <- ggplot(data = SB_A) + 
-    geom_ribbon(aes(x = yq, ymin = est - 1.96 * std, ymax = est + 1.96 * std, fill = Model), alpha=alpha, data=SB_A %>% filter(Model=="ASPM-R")) + 
+    geom_ribbon(aes(x = yq, ymin = est - 1.96 * std, ymax = est + 1.96 * std), alpha=alpha, data=SB_A %>% filter(Model=="ASPM-R")) + 
     geom_line(aes(x = yq, y = est, color = Model), size = 1) + 
     geom_point(aes(x = yq, y = est, color = Model), size = 1.5,data = SB_A %>% filter(yq==year)) + 
     theme_bw(20) + xlab("") + ylab("") + geom_hline(yintercept = 1, linetype = "dashed") +
-    coord_cartesian(ylim = c(0,ymax),xlim=xlim,expand = FALSE)+ ggtitle(title)
+    coord_cartesian(ylim = c(0,ymax),xlim=xlim,expand = FALSE)+ ggtitle(title) + ggeasy::easy_center_title()
   
   ggsave(f, file = paste0(Save_Dir, figure_name, "-SBR.png"), width = 12, height = 8)
   ggsave(f, file = paste0(Save_Dir, figure_name, "-SBR.eps"), width = 12, height = 8,device=cairo_ps)

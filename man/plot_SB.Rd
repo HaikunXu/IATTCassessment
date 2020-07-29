@@ -5,8 +5,8 @@
 \title{Plot quarterly SB}
 \usage{
 plot_SB(SS_Dir, lyear, fyear, legend, Save_Dir, ymax, figure_name, title,
-  xlim)
+  xlim, alpha)
 }
 \description{
-\code{plot_SB} This function plots quarterly SBR for the stock assessment report
+\code{plot_SB} This function plots quarterly SB for the stock assessment report
 }

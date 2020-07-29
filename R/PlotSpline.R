@@ -18,8 +18,8 @@ PlotSpline<-function(Path,Save_Path,Fleet,model,model_name,f,fyear,lyear,dim){
     Rep <- r4ss::SS_output(dir = Path[m], ncols = 400, covar = F, printstats = F, verbose = FALSE)
     
     tt<-Rep$sizeselex[Rep$sizeselex$Factor == "Lsel" & 
-                           Rep$sizeselex$Fleet %in% Fleet & 
-                           Rep$sizeselex$Sex %in% c(1), 
+                        Rep$sizeselex$Fleet %in% Fleet & 
+                        Rep$sizeselex$Sex %in% c(1), 
                       ]
     tt<-tt[1,]
     

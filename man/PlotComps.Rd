@@ -4,8 +4,9 @@
 \alias{PlotComps}
 \title{Plot fisheries comps}
 \usage{
-PlotComps(Path, Save_Path, Fleets, label)
+PlotComps(Path, Save_Path, Fleets, size, label, width = 10,
+  height = 10)
 }
 \description{
-/code{PlotComps} This function plot fisheries aggergated comps
+/code{PlotFComps} This function plot fisheries aggergated comps
 }

@@ -83,7 +83,7 @@ make_kobetable_SAC11 <- function(Path, KobePath, FFleets, STD_only = TRUE, newSS
       F_mult_high <- F_mult_last+1.96*F_mult_recentSD
     }
     else {
-      Table <- makeManagTable.new(Path, FFleets = FFleets, FstdPath, FstdPath, DynamicPath)
+      Table <- makeManagTable.new(Path, FFleets = FFleets, FstdPath, FlimitPath, DynamicPath)
       # STD_Table <- data.frame(read.table(file = paste0(Path,"ss.std"),header = TRUE))
       print("************do use the new ss************")
       FrecentFmsy <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="FrecentFmsy")])
@@ -192,18 +192,19 @@ make_kobetable_SAC11 <- function(Path, KobePath, FFleets, STD_only = TRUE, newSS
       MSYtableOut <- cbind(MSYtableOut, MSYtableTemp)
       names(MSYtableOut)[i] <- paste("run", i)
       
-      MSYtableOut[8,i] <- SpawnBioYr.Out[i + 2, 2]/dSpawnBioYr.Out[i + 2, 2] # new SB/SBmsy late
-      MSYtableOut[5,i] <- (SpawnBioYr.Out[i + 2, 2]/dS0)/MSYtableOut[5,i] # new SB/SBmsy early: S/Smsy = (S/dS0)/(Smsy/S0)
+      MSYtableOut[5,i] <- MSYtableOut[5,i]*dS0 # new dSmsy early: S/Smsy = dS0*(Smsy/S0)
+      MSYtableOut[8,i] <- dSpawnBioYr.Out[i + 2, 2] # new dSmsy late
       p <- (i - 1) / (dim(QrtsMat)[1] - 1)
+      MSYtableOut[2,i] <- (1 - p) * MSYtableOut[5,i] + p * MSYtableOut[8,i]
       MSYtableOut[4,i] <- p
-      MSYtableOut[3,i] <- (1 - p) * MSYtableOut[5,i] + p * MSYtableOut[8,i]
+      MSYtableOut[6,i] <- SpawnBioYr.Out[i + 2, 2]/MSYtableOut[2,i]
       }
     
     # NEED TO GET A VECTOR OF YEAR LabelS Get the years corresponding to the 3-yr averages YearsAvg <-
     # seq(fyear+2,1,dim(MSYtableOut)[2]-1) for(i in 1:length(YearsAvg)){YearsAvg[i]<-yearStart+4 fyear
     
     # Add row labes to MSYtableOut Make table with management quantities
-    RowNames <- c("msy", "Bmsy", "Srecent/dSmsy", "p", "Srecent/dSmsy1", "Crecent/msy", "Brecent/Bmsy", "Srecent/dSmsy2", 
+    RowNames <- c("msy", "dSmsy", "Smsy", "p", "dSmsy1", "Srecent/dSmsy", "Brecent/Bmsy", "dSmsy2", 
                   "Fmultiplier")
     MSYtableOut <- cbind(RowNames, MSYtableOut)
     write.csv(MSYtableOut, paste0(KobePath, "KobePlotOut.csv"), row.names = FALSE)
