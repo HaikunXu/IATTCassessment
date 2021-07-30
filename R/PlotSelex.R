@@ -1,13 +1,17 @@
 #' Plot size selectivity for SS runs
 #' 
-#' \code{cpue_fit} This function plot estimated selectivity curves for specified fleets
+#' \code{PlotSelex} This function plot estimated selectivity curves for specified fleets
 #' 
 #' @export
 #' 
 
-plotSelex <- function(Path, replist, FleetNums, numRows, numCols, w, h)
+Path <- c("C:/Users/hkxu/OneDrive - IATTC/IATTC/2020/BET research/EPO/S-Spline")
+FleetNums <- c(1,2,3,4,5,6,13,14,15,16,17)
+
+PlotSelex <- function(Path, replist, FleetNums, numRows, numCols, w, h)
 {
     # Get quantities from replist
+    replist <- r4ss::SS_output(dir = Path, ncols = 400, covar = T, printstats = F, verbose = FALSE)
     startYr <- replist$startyr
     endYr <- replist$endyr
     numSexes <- replist$nsexes
@@ -15,26 +19,22 @@ plotSelex <- function(Path, replist, FleetNums, numRows, numCols, w, h)
     SizeSelexDat <- replist$sizeselex
     numSizeBins <- replist$nlbins
     SizeBins <- replist$lbinspop
-    # Subset SizeSelexDat for endYr and gender=1
-    SizeSelex <- subset(SizeSelexDat, Yr==endYr & Sex==1)
     FleetNames <- replist$FleetNames
     
-    # Plot
-    tiff(paste0(Path,"Size_Selex.tif"),width = w, height = h, units = "px")
-    par(mfrow=c(numRows,numCols), mar=c(3,3,3,3), omi=c(1,1,1,1))
-    for(ifleet in 1:numFleets)
-    {
-        if(ifleet%in%FleetNums)
-        {
-            plot(SizeBins, SizeSelex[ifleet,6:dim(SizeSelex)[2]], type="l", ylim=c(0,1), ylab="",xlab="", col="black", lwd=2, cex.axis=1.5, mgp=c(2,0.5,0), tcl=-.3, las=1)
-            leg <- FleetNames[ifleet]
-            #leg <- paste("Fishery ", ifleet," - Pescaria ", ifleet, sep="")
-            title(main=leg, cex.main=2)
-        }
-    }
+    SizeSelex <- SizeSelexDat %>% filter(Yr %in% c(startYr,endYr),
+                                         Sex==1,
+                                         Fleet %in% FleetNums,
+                                         Factor=="Lsel") %>%
+        mutate(Time=ifelse(Yr==startYr,"Early","Late"))
+    SizeSelex$FLeet_Names <- FleetNames[SizeSelex$Fleet]
     
-    #legend(5,0.95,lwd=2, col=c("black", "slate grey"), legend=c("SS3"))
-    mtext(side=1, outer=T, "Length (cm)-Talla (cm)", line=2, cex=2.5)
-    mtext(side=2, outer=T, "Selectivity and retention - Selectividad e retencion", line=2, cex=2.5)
-    dev.off()
+    SizeSelex_DF <- SizeSelex %>% gather(6:(ncol(SizeSelex)-2),key="Length",value="Selectivity") %>%
+        mutate(Length=as.numeric(Length))
+    
+    ggplot(data=SizeSelex_DF) +
+        # geom_line(aes(x=Length,y=Selectivity,color=Time)) +
+        geom_point(aes(x=Length,y=Selectivity,color=Time,shape=Time)) +
+        facet_wrap(~Fleet) +
+        theme_bw(15)
+    
 }

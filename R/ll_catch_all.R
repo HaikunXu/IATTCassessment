@@ -215,7 +215,7 @@ ll_catch_all = function(Grid_Catch, FSR_Catch, Species, last_year, dir) {
     
     LL_Catch <- data.frame(save_all) %>% gather(c(paste0("N", seq(1, n_areas)), paste0("W", seq(1, n_areas))), key = "term", 
         value = "catch") %>% group_by(YQ, term) %>% summarise(tot_catch = sum(catch, na.rm = T)) %>% spread(key = term, 
-        value = tot_catch) %>% filter(YQ >= 1975)
+        value = tot_catch)
     
     
     ####################### Coastal countries

@@ -4,8 +4,17 @@
 \alias{PlotSplines}
 \title{Plot size selectivity for SS runs}
 \usage{
-PlotSplines(Path = Path, Allfleets = c(1:6, 13:17, 19:20), f, fyears,
-  lyears)
+PlotSplines(
+  Path = Path,
+  Allfleets = c(1:6, 13:17, 19:20),
+  f,
+  fyears,
+  lyears,
+  nr,
+  nc,
+  w,
+  h
+)
 }
 \description{
 \code{PlotSplines} This function comapres estimated and emperical selectivity curves for specified fleets

@@ -4,8 +4,16 @@
 \alias{make_kobetable_SAC11}
 \title{Make Kobe table for sAC11}
 \usage{
-make_kobetable_SAC11(Path, KobePath, FFleets, STD_only = TRUE, newSS,
-  FstdPath, FlimitPath, DynamicPath)
+make_kobetable_SAC11(
+  Path,
+  KobePath,
+  FFleets,
+  STD_only = TRUE,
+  newSS,
+  FstdPath,
+  FlimitPath,
+  DynamicPath
+)
 }
 \description{
 \code{make_kobetable_SAC11} This function automayically generates the table for kobe plot

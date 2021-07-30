@@ -5,15 +5,15 @@
 #' @export
 #' 
 
-PlotSplines<-function(Path=Path,Allfleets=c(1:6,13:17,19:20),f,fyears,lyears){
+PlotSplines<-function(Path=Path,Allfleets=c(1:6,13:17,19:20),f,fyears,lyears,nr,nc,w,h){
   ###Mark's code
   # ****** Use this *******
   Rep = r4ss::SS_output(dir = Path,ncols = 400,covar = F,verbose = FALSE, printstats = FALSE)
   
   FleetNames <- Rep$FleetNames
   
-  postscript(paste0(Path,"Selex.eps"),width = 2000, height =2000)
-  par(mfrow = c(4, 4),mar=c(2, 2, 2, 2) + 0.1)           #par(mfrow = c(6, 5),mar=c(5, 4, 4, 2) + 0.1)
+  postscript(paste0(Path,"Selex.eps"),width = w, height = h)
+  par(mfrow = c(nr, nc),mar=c(2, 2, 2, 2) + 0.1)           #par(mfrow = c(6, 5),mar=c(5, 4, 4, 2) + 0.1)
   
   for(i in 1:length(Allfleets))
   {
@@ -44,9 +44,9 @@ PlotSplines<-function(Path=Path,Allfleets=c(1:6,13:17,19:20),f,fyears,lyears){
   dev.off()
   
   
-  tiff(paste0(Path,"Selex.tif"),width = 2000, height =2000, res=300)  
+  tiff(paste0(Path,"Selex.tif"),width = w, height =h, res=300)  
   
-  par(mfrow = c(4, 4),mar=c(2, 2, 2, 2) + 0.1)           #par(mfrow = c(6, 5),mar=c(5, 4, 4, 2) + 0.1)
+  par(mfrow = c(nr, nc),mar=c(2, 2, 2, 2) + 0.1)           #par(mfrow = c(6, 5),mar=c(5, 4, 4, 2) + 0.1)
   
   for(i in 1:length(Allfleets))
   {

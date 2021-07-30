@@ -4,9 +4,19 @@
 \alias{cpue_compare}
 \title{Compare cpue from different VAST models}
 \usage{
-cpue_compare(Path, Legend, Save_Path, rescale, ylabel, xlabel, ylim, xlim,
-  CV)
+cpue_compare(
+  Path,
+  Legend,
+  Region,
+  Save_Path,
+  rescale,
+  ylabel,
+  xlabel,
+  ylim,
+  xlim,
+  CV
+)
 }
 \description{
-\code{cpue_compare} This function plot the comaprison of standardized cpue from different VAST models
+/code{cpue_compare} This function plot the comaprison of standardized cpue from different VAST models
 }

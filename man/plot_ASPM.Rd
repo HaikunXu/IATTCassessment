@@ -4,8 +4,18 @@
 \alias{plot_ASPM}
 \title{Plot ASPM results}
 \usage{
-plot_ASPM(SS_Dir, lyear, fyear, legend, Save_Dir, ymax, figure_name, title,
-  xlim, alpha)
+plot_ASPM(
+  SS_Dir,
+  lyear,
+  fyear,
+  legend,
+  Save_Dir,
+  ymax,
+  figure_name,
+  title,
+  xlim,
+  alpha
+)
 }
 \description{
 \code{plot_ASPM} This function plots quarterly SBR for the stock assessment report
