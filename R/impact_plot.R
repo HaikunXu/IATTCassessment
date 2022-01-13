@@ -38,57 +38,58 @@ impact_plot = function(Dir, n_year, BaseName, n_fishery, title) {
     
     # loop starts here
     
-    # for (step in 1:n_step) {
-    #     print(paste0("step: ", step_name[step]))
-    #     unlink(paste0(Dir, step_name[step]), recursive = TRUE)
-    #     dir.create(paste0(Dir, step_name[step]))
-    #     files = c(paste0(Dir, BaseName, "/ss.par"), paste0(Dir, BaseName, "/go_nohess.bat"), paste0(Dir, BaseName,
-    #         "/starter.ss"), paste0(Dir, BaseName, "/forecast.ss"), paste0(Dir, BaseName, "/BET-EPO.ctl"), paste0(Dir,
-    #         BaseName, "/BET-EPO.dat"), paste0(Dir, BaseName, "/ss.exe"))
-    #     file.copy(from = files, to = paste0(Dir, step_name[step]))
-    # 
-    #     CtrlDir <- paste0(paste0(Dir, step_name[step]), "/BET-EPO.dat")
-    #     CtrlFile <- readLines(CtrlDir, warn = F)
-    # 
-    #     Catch <- read.table(file = CtrlDir, nrows = (n_year + 1) * n_fishery + 1, skip = Line)
-    #     names(Catch) <- c("year", "seas", "fleet", "catch", "catch_se")
-    # 
-    #     if (step == 1)
-    #         fishery <- fishery1
-    #     if (step == 2)
-    #         fishery <- fishery2
-    #     if (step == 3)
-    #         fishery <- fishery3
-    #     if (step == 4)
-    #         fishery <- fishery4
-    # 
-    #     Catch1 <- Catch %>% filter(fleet %in% fishery) %>% mutate(catch = ifelse(year > 0, 0, catch))  # change catch to 0
-    #     Catch2 <- Catch %>% filter((fleet %in% fishery) == FALSE)
-    # 
-    #     Catch_combined <- rbind(Catch1, Catch2)
-    # 
-    #     Catch <- Catch_combined %>% filter(year > 0, fleet > 0) %>% select(year, fleet, catch) %>% spread(fleet,
-    #         catch)
-    # 
-    #     # plot(Catch$year,Catch$fleet,xlim=c(1,200),main=title)
-    # 
-    #     for (line in 1:((n_year + 1) * n_fishery + 1)) {
-    #         CtrlFile[Line + line] <- gsub(",", "", toString(Catch_combined[line, ]))
-    #     }
-    # 
-    #     writeLines(CtrlFile, CtrlDir)
-    # 
-    #     ParDir <- paste0(paste0(Dir, step_name[step]), "/ss.par")
-    #     ParFile <- readLines(ParDir, warn = F)
-    #     ParFile[Line_initial+3] <- toString(Init_F_2 * sum(Catch[1:20, 1:6])/sum(Catch0[1:20, 1:6]))
-    #     ParFile[Line_initial+5] <- toString(Init_F_14 * sum(Catch[1:20, 13:17])/sum(Catch0[1:20, 13:17]))
-    # 
-    #     writeLines(ParFile, ParDir)
-    # 
-    #     command <- paste("cd", paste0(Dir, step_name[step]), "& go_noHess.bat", sep = " ")
-    #     # command <- paste0(Dir,step_name[step],'/go_nohess.bat')
-    #     x <- shell(cmd = command, intern = T, wait = T)
-    # }
+    for (step in 1:n_step) {
+        print(paste0("step: ", step_name[step]))
+        unlink(paste0(Dir, step_name[step]), recursive = TRUE)
+        dir.create(paste0(Dir, step_name[step]))
+        files = c(paste0(Dir, BaseName, "/ss.par"), paste0(Dir, BaseName, "/go_nohess.bat"), paste0(Dir, BaseName,
+            "/starter.ss"), paste0(Dir, BaseName, "/forecast.ss"), paste0(Dir, BaseName, "/BET-EPO.ctl"), paste0(Dir,
+            BaseName, "/BET-EPO.dat"), paste0(Dir, BaseName, "/ss.exe"))
+        file.copy(from = files, to = paste0(Dir, step_name[step]))
+
+        CtrlDir <- paste0(paste0(Dir, step_name[step]), "/BET-EPO.dat")
+        CtrlFile <- readLines(CtrlDir, warn = F)
+
+        Catch <- read.table(file = CtrlDir, nrows = (n_year + 1) * n_fishery + 1, skip = Line)
+        names(Catch) <- c("year", "seas", "fleet", "catch", "catch_se")
+
+        if (step == 1)
+            fishery <- fishery1
+        if (step == 2)
+            fishery <- fishery2
+        if (step == 3)
+            fishery <- fishery3
+        if (step == 4)
+            fishery <- fishery4
+
+        Catch1 <- Catch %>% filter(fleet %in% fishery) %>% mutate(catch = ifelse(year > 0, 0, catch))  # change catch to 0
+        Catch2 <- Catch %>% filter((fleet %in% fishery) == FALSE)
+
+        Catch_combined <- rbind(Catch1, Catch2)
+
+        Catch <- Catch_combined %>% filter(year > 0, fleet > 0) %>% select(year, fleet, catch) %>% spread(fleet,
+            catch)
+
+        # plot(Catch$year,Catch$fleet,xlim=c(1,200),main=title)
+
+        for (line in 1:((n_year + 1) * n_fishery + 1)) {
+            CtrlFile[Line + line] <- gsub(",", "", toString(Catch_combined[line, ]))
+        }
+
+        writeLines(CtrlFile, CtrlDir)
+
+        ParDir <- paste0(paste0(Dir, step_name[step]), "/ss.par")
+        ParFile <- readLines(ParDir, warn = F)
+        ParFile[Line_initial+3] <- toString(Init_F_2 * sum(Catch[1:20, 1:6])/sum(Catch0[1:20, 1:6]))
+        ParFile[Line_initial+5] <- toString(Init_F_14 * sum(Catch[1:20, 13:17])/sum(Catch0[1:20, 13:17]))
+
+        writeLines(ParFile, ParDir)
+
+        setwd(paste0(Dir, step_name[step]))
+        command <- paste("cd", paste0(Dir, step_name[step]), "& go_noHess.bat", sep = " ")
+        # command <- paste0(Dir,step_name[step],'/go_nohess.bat')
+        x <- shell(cmd = command, intern = T, wait = T)
+    }
     
     #### ssplot section
     
@@ -107,18 +108,20 @@ impact_plot = function(Dir, n_year, BaseName, n_fishery, title) {
     Dir5 <- paste0(Dir, step_name[4])
     myreplist5 = r4ss::SS_output(dir = Dir5, ncols = 400, covar = F, printstats = F, verbose = FALSE)
     
-    SB_dif <- data.frame(Year = myreplist1$timeseries$Yr[1:n_year + 2], 
-                         SB = myreplist1$timeseries$SpawnBio[1:n_year + 2],
-                         SB0 = myreplist5$timeseries$SpawnBio[1:n_year + 2],
-        noDisc = myreplist2$timeseries$SpawnBio[1:n_year + 2] - myreplist1$timeseries$SpawnBio[1:n_year + 2], 
-        noPS = myreplist3$timeseries$SpawnBio[1:n_year + 2] - myreplist1$timeseries$SpawnBio[1:n_year + 2], noLL = myreplist4$timeseries$SpawnBio[1:n_year + 
-            2] - myreplist1$timeseries$SpawnBio[1:n_year + 2])
+    SB_dif <- data.frame(
+        Year = myreplist1$timeseries$Yr[3:n_year + 2],
+        SB = myreplist1$timeseries$SpawnBio[3:n_year + 2],
+        SB0 = myreplist5$timeseries$SpawnBio[3:n_year + 2],
+        noDisc = myreplist2$timeseries$SpawnBio[3:n_year + 2] - myreplist1$timeseries$SpawnBio[3:n_year + 2],
+        noPS = myreplist3$timeseries$SpawnBio[3:n_year + 2] - myreplist1$timeseries$SpawnBio[3:n_year + 2],
+        noLL = myreplist4$timeseries$SpawnBio[3:n_year + 2] - myreplist1$timeseries$SpawnBio[3:n_year + 2]
+    )
     
-    SB_dif$noDisc_dif <- SB_dif$noDisc/apply(SB_dif[, 4:6], c(1), sum) * (myreplist5$timeseries$SpawnBio[3:(n_year+2)] - 
-        myreplist1$timeseries$SpawnBio[3:(n_year+2)])
-    SB_dif$noPS_dif <- SB_dif$noPS/apply(SB_dif[, 4:6], c(1), sum) * (myreplist5$timeseries$SpawnBio[3:(n_year+2)] - myreplist1$timeseries$SpawnBio[3:(n_year+2)])
-    SB_dif$noLL_dif <- SB_dif$noLL/apply(SB_dif[, 4:6], c(1), sum) * (myreplist5$timeseries$SpawnBio[3:(n_year+2)] - myreplist1$timeseries$SpawnBio[3:(n_year+2)])
-    SB_dif$Year <- SB_dif$Year/4 + 1974.75
+    SB_dif$noDisc_dif <- SB_dif$noDisc / apply(SB_dif[, 4:6], c(1), sum) * (SB_dif$SB0 - SB_dif$SB)
+    SB_dif$noPS_dif <- SB_dif$noPS / apply(SB_dif[, 4:6], c(1), sum) * (SB_dif$SB0 - SB_dif$SB)
+    SB_dif$noLL_dif <- SB_dif$noLL / apply(SB_dif[, 4:6], c(1), sum) * (SB_dif$SB0 - SB_dif$SB)
+    
+    SB_dif$Year <- SB_dif$Year / 4 + 1974.75
     
     write.csv(SB_dif, file = paste0(Dir, "SB.csv"), row.names = FALSE)
     
