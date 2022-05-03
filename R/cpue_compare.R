@@ -5,14 +5,14 @@
 #' @export
 #' 
 
-cpue_compare <- function(Path, Legend, Region, Save_Path, rescale, ylabel, xlabel, ylim, xlim, CV) {
+cpue_compare <- function(Path, Legend, Region, Save_Path, rescale = TRUE, ylabel = "CPUE", xlabel = "", ylim, xlim, CV = TRUE, w = 15, h = 6) {
     index <- read.csv(paste0(Path[1],"Table_for_SS3.csv"))
-    Index <- data.frame("Year"=index$Year,"Index"=index$Estimate_metric_tons,"Legend"=Legend[1],"CV"=index$SD_log, Fleet=index$Fleet)
+    Index <- data.frame("Year"=index$Year,"Index"=index$Estimate_metric_tons,"Legend"=Legend[1],"CV"=index$SD_log, Fleet=Region[1])
 
     if(length(Legend)>1) {
         for (i in 2:length(Path)) {
             index <- read.csv(paste0(Path[i],"Table_for_SS3.csv"))
-            Index <- rbind(Index,data.frame("Year"=index$Year,"Index"=index$Estimate_metric_tons,"Legend"=Legend[i],"CV"=index$SD_log, Fleet=index$Fleet))
+            Index <- rbind(Index,data.frame("Year"=index$Year,"Index"=index$Estimate_metric_tons,"Legend"=Legend[i],"CV"=index$SD_log, Fleet=Region[i]))
         }
         }
     
@@ -54,8 +54,8 @@ cpue_compare <- function(Path, Legend, Region, Save_Path, rescale, ylabel, xlabe
 
     }
     
-    ggsave(f, file = paste0(Save_Path, "CPUE_Compare.png"), width = 15, height = 6)
-    ggsave(f, file = paste0(Save_Path, "CPUE_Compare.eps"), width = 15, height = 6, device=cairo_ps)
+    ggsave(f, file = paste0(Save_Path, "CPUE_Compare.png"), width = w, height = h)
+    ggsave(f, file = paste0(Save_Path, "CPUE_Compare.pdf"), width = w, height = h)
     # 
     return(f)
 }

@@ -5,8 +5,8 @@
 #' @export
 #' 
 
-Path <- c("C:/Users/hkxu/OneDrive - IATTC/IATTC/2020/BET research/EPO/S-Spline")
-FleetNums <- c(1,2,3,4,5,6,13,14,15,16,17)
+# Path <- c("C:/Users/hkxu/OneDrive - IATTC/IATTC/2020/BET research/EPO/S-Spline")
+# FleetNums <- c(1,2,3,4,5,6)
 
 PlotSelex <- function(Path, replist, FleetNums, numRows, numCols, w, h)
 {
@@ -24,8 +24,7 @@ PlotSelex <- function(Path, replist, FleetNums, numRows, numCols, w, h)
     SizeSelex <- SizeSelexDat %>% filter(Yr %in% c(startYr,endYr),
                                          Sex==1,
                                          Fleet %in% FleetNums,
-                                         Factor=="Lsel") %>%
-        mutate(Time=ifelse(Yr==startYr,"Early","Late"))
+                                         Factor=="Lsel")
     SizeSelex$FLeet_Names <- FleetNames[SizeSelex$Fleet]
     
     SizeSelex_DF <- SizeSelex %>% gather(6:(ncol(SizeSelex)-2),key="Length",value="Selectivity") %>%
@@ -33,8 +32,8 @@ PlotSelex <- function(Path, replist, FleetNums, numRows, numCols, w, h)
     
     ggplot(data=SizeSelex_DF) +
         # geom_line(aes(x=Length,y=Selectivity,color=Time)) +
-        geom_point(aes(x=Length,y=Selectivity,color=Time,shape=Time)) +
-        facet_wrap(~Fleet) +
+        geom_line(aes(x=Length,y=Selectivity)) +
+        facet_wrap(~FLeet_Names) +
         theme_bw(15)
     
 }

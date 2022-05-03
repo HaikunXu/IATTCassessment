@@ -9,12 +9,14 @@ cpue_compare(
   Legend,
   Region,
   Save_Path,
-  rescale,
-  ylabel,
-  xlabel,
+  rescale = TRUE,
+  ylabel = "CPUE",
+  xlabel = "",
   ylim,
   xlim,
-  CV
+  CV = TRUE,
+  w = 15,
+  h = 6
 )
 }
 \description{
