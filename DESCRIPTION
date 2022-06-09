@@ -1,11 +1,10 @@
 Package: IATTCassessment
-Type: Package
-Title: Codes for IATTC Stock Assessments
-Version: 1.4
+Title: R functions for IATTC Stock Assessments
+Version: 1.5
 Author: Haikun Xu
 Maintainer: Haikun Xu <hkxu@iattc.org>
-Description: This package provides some codes to automate data precessing and result visualization
-License: What license is it under?
+Description: This package provides some R functions to automate data precessing and result visualization
+License: Apache License (>= 2)
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1

@@ -1,6 +1,6 @@
-#' Longline fisheries' length freqeuncy
+#' Longline fisheries' length frequency
 #' 
-#' \code{ll_fisheries_lf} This function processes the raw LL fisheries' length freqeuncy data into the format for Stock Assessment
+#' \code{ll_fisheries_lf} This function processes the raw LL fisheries' length frequency data into the format for Stock Assessment
 #' 
 #' @export
 
@@ -99,7 +99,7 @@ ll_fisheries_lf = function(JPN_size, JPN_ce, Grid_Catch, Species, last_year, dir
         geom_polygon(data = wmap, aes(long, lat, group = group), fill = "black", colour = "white", 
                      alpha = 1, lwd = 0.5) + coord_quickmap(ylim = c(-40, 40), xlim = c(-150, -70)) + theme_bw(8)
     
-    ggsave(filename = paste0(dir,"Areas.png"), dpi = 300, width = 5, height = 5)
+    ggsave(filename = paste0(dir,"Areas_LF.png"), dpi = 300, width = 5, height = 5)
     
     # raise LF by total catch for each LL area
     data_area <- data %>% group_by(Area,Year,Length) %>% summarise(LF_final=sum(LF*Number)) %>%
@@ -123,7 +123,7 @@ ll_fisheries_lf = function(JPN_size, JPN_ce, Grid_Catch, Species, last_year, dir
     
     # prepare and save the final length freqeuncy output based on SS format
     F_LF_SS <- data.frame("Year"=data_area_final$Year,"Month"=1,"Fleet"=data_area_final$Area,
-                          "sex"=0, "par"=0, "Nsamp" = data_area_final$n)
+                          "sex"=0, "par"=0, "Nsamp" = data_area_final$n/100)
     F_LF_SS <- cbind(F_LF_SS,data_area_final[3:92],data_area_final[3:92]) # male and female LF
     write.csv(F_LF_SS,file = paste0(dir,"LF.csv"),row.names = FALSE) # save
     
