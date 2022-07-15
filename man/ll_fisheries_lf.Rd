@@ -2,10 +2,18 @@
 % Please edit documentation in R/ll_fisheries_lf.R
 \name{ll_fisheries_lf}
 \alias{ll_fisheries_lf}
-\title{Longline fisheries' length freqeuncy}
+\title{Longline fisheries' length frequency}
 \usage{
-ll_fisheries_lf(JPN_size, JPN_ce, Grid_Catch, Species, last_year, dir)
+ll_fisheries_lf(
+  JPN_size,
+  JPN_ce,
+  Grid_Catch,
+  Species,
+  last_year,
+  dir,
+  minNsamp = 1
+)
 }
 \description{
-\code{ll_fisheries_lf} This function processes the raw LL fisheries' length freqeuncy data into the format for Stock Assessment
+\code{ll_fisheries_lf} This function processes the raw LL fisheries' length frequency data into the format for Stock Assessment
 }

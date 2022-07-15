@@ -1,10 +1,10 @@
 #' Longline fisheries' length frequency
 #' 
-#' \code{ll_fisheries_lf} This function processes the raw LL fisheries' length frequency data into the format for Stock Assessment
+#' \code{ll_fisheries_lf_new} This function processes the raw LL fisheries' length frequency data into the format for Stock Assessment
 #' 
 #' @export
 
-ll_fisheries_lf = function(JPN_size, JPN_ce, Grid_Catch, Species, last_year, dir, minNsamp = 1) {
+ll_fisheries_lf_new = function(JPN_size, Grid_Catch, Species, last_year, dir, minNsamp = 1) {
   
   #### Compute sample size
   size_data0 <- JPN_size %>%
@@ -45,51 +45,32 @@ ll_fisheries_lf = function(JPN_size, JPN_ce, Grid_Catch, Species, last_year, dir
            level == 4, # 1by1 data
            M_unit %in% c(6,7), # 1/2cm resolution data
            place == 13 | YY <= 2010) %>% # remove fishermen's LF during 2011-2014
-    mutate(CLS = ifelse(M_unit == 6, CLS - 1, CLS - 2),
+    mutate(
+      CLS = ifelse(M_unit == 6, CLS - 1, CLS - 2),
       L = cut(
         CLS,
         breaks = c(20, seq(22, 198, 2), 400), # 20, 22, ......, 196, 198
         right = F,
         labels = seq(20, 198, 2)
       ),
+      Lat = floor(Y/5)*5 + 2.5,
+      Lon = floor((X-360)/5)*5 + 2.5,
       Year = (YY - 1975) * 4 + ceiling(MM / 3)) %>%
     group_by(X,Y) %>% mutate(N=length(unique(YY))) %>%
     filter(N>3) %>% # remove rarely sampled grids
     filter(is.na(L) == FALSE) %>%
-    group_by(Year, X, Y, L) %>% summarise(count = n()) %>% # count number of fish
-    group_by(Year, X, Y) %>% mutate(count_sum = sum(count)) %>%
+    group_by(Year, Lat, Lon, L) %>% summarise(count = n()) %>% # count number of fish
+    group_by(Year, Lat, Lon) %>% mutate(count_sum = sum(count)) %>%
     mutate(LF = count / count_sum) %>% # 1 by 1 LF
-    select(Year, X, Y, L, LF) %>%
-    spread(L,LF, fill = 0) # spread length bins into column
+    select(Year, Lat, Lon, L, LF) %>%
+    spread(L, LF, fill = 0) # spread length bins into column
   
-  # catch data
-  catch_data <- JPN_ce %>%
-    filter(NGYO == 1, # commercial vessels
-           ioc == 4, # EPO
-           YY > 1974,
-           YY <= last_year,
-           MM > 0,
-           NHBF > 0) %>%
-    mutate(Year=(YY-1975)*4+ceiling(MM/3)) %>%
-    group_by(Year, X, Y) %>%
-    summarise(catch=ifelse(Species=="BET",sum(bigeye),sum(yellowfin))) # total catch
   
   # combine LF and catch data
-  size_catch_data <- left_join(size_data,catch_data) %>% 
-    na.omit() %>%
+  size_catch_data <- size_data %>% 
     gather(names(size_data)[4:ncol(size_data)],"key"=Length,"value"=LF) %>% 
-    mutate (Length = as.numeric(Length),
-            X2 = cut(X,breaks = seq(210,290,5),labels = seq(212.5,287.5,5)), # 5 by 5 resolution
-            Y2 = cut(Y,breaks = seq(-40,40,5),labels = seq(-37.5,37.5,5))) %>% # 5 by 5 resolution
-    na.omit() %>%
-    group_by(Year,X2,Y2,Length) %>%
-    summarise(LF_Catch = sum(LF*catch)) %>% # JPN 1by1 raised to 5by5 using catch in number
-    group_by(Year,X2,Y2) %>%
-    mutate(Tot_Catch=sum(LF_Catch)) %>%
-    mutate(LF=LF_Catch/sum(LF_Catch)) # JPN 5by5 LF
+    mutate (Length = as.numeric(Length))
   
-  size_catch_data$Lon <- as.numeric(levels(size_catch_data$X2))[size_catch_data$X2] - 360
-  size_catch_data$Lat <- as.numeric(levels(size_catch_data$Y2))[size_catch_data$Y2]
   
   # compute total 5by5 catch across countries
   Grid_Catch <- data.frame(Grid_Catch) %>% filter(SpeciesAbv==Species) %>%
