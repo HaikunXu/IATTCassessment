@@ -11,7 +11,8 @@ ll_catch = function(Grid_Catch, FSR_Catch, Species, last_year, dir) {
     data <- data.frame(Lat = Grid_Catch$Lat, Lon = Grid_Catch$Lon, Areas = as.factor(Grid_Catch$NewAreas))
     
     wmap <- ggplot2::map_data("world")
-    ggplot() + geom_point(aes(x = Lon, y = Lat, color = Areas), data = data, size = 6, shape = 15) + geom_polygon(data = wmap, 
+    ggplot() + geom_point(aes(x = Lon, y = Lat, color = Areas), data = data, size = 6, shape = 15) +
+      geom_polygon(data = wmap, 
         aes(long, lat, group = group), fill = "black", colour = "white", alpha = 1, lwd = 0.5) + coord_quickmap(ylim = c(-40, 
         40), xlim = c(-150, -70)) + theme_bw(8)
     
@@ -87,7 +88,8 @@ ll_catch = function(Grid_Catch, FSR_Catch, Species, last_year, dir) {
                 0 & Grid_weight_annual$EPO < FSR_annual[which(FSR_annual$Year %in% Grid_weight_annual$Yrr), "mt"], 
                 1, 0), ifelse(Grid_weight_annual$EPO > 0, ifelse(Grid_weight_annual$EPO < FSR_annual[which(FSR_annual$Year %in% 
                 Grid_weight_annual$Yrr), "mt"], 1, 2), 3))
-        } else {
+        } 
+        else {
             allocation_flag[flag_id == TRUE] <- ifelse(Grid_number_annual$EPO > 0, 0, ifelse(Grid_weight_annual$EPO > 
                 0, ifelse(Grid_weight_annual$EPO < FSR_annual[which(FSR_annual$Year %in% Grid_weight_annual$Yrr), 
                 "mt"], 1, 2), 3))
@@ -113,7 +115,8 @@ ll_catch = function(Grid_Catch, FSR_Catch, Species, last_year, dir) {
   
             # if FSR does not exist for last year, use the previous year's value
             if (is.na(as.numeric(FSR_annual[which(FSR_annual$Year == year), "mt"])) == FALSE) 
-                FSR <- as.numeric(FSR_annual[which(FSR_annual$Year == year), "mt"]) else FSR <- as.numeric(FSR_annual[which(FSR_annual$Year == (year - 1)), "mt"])
+                FSR <- as.numeric(FSR_annual[which(FSR_annual$Year == year), "mt"])
+            else FSR <- as.numeric(FSR_annual[which(FSR_annual$Year == (year - 1)), "mt"])
             
             if (allocation_flag[i] == 1) {
                 # allocate using FSR and weight prop by quarter by area
@@ -160,7 +163,8 @@ ll_catch = function(Grid_Catch, FSR_Catch, Species, last_year, dir) {
                   # print(year_new)
                   allocation[which(allocation$Year == year), paste0("W", seq(1, n_areas))] <- FSR * prop_final
                   
-                } else {
+                }
+              else {
                   # use the prop in number for allocation
                   for (year_diff in 1:40) {
                     if ((year - year_diff) %in% Grid_number_annual$Yrr) {
@@ -223,7 +227,7 @@ ll_catch = function(Grid_Catch, FSR_Catch, Species, last_year, dir) {
     Coastal_Countries <- sort(Coastal_Countries)
     
     if (Species == "BET") 
-        Area_Flag <- c(6, 3, 3, 3, 4, 3, 3, 6, 4, 3)
+        Area_Flag <- c(6, 4, 4, 4, 6, 4, 4, 4, 4) # "CHL" "COL" "CRI" "ECU" "ESP" "HND" "PER" "PRT" "SLV"
     if (Species == "YFT") 
         Area_Flag <- c(1, 3, 3, 3, 3, 2, 2, 3, 3, 3, 2, 3, 3)
     
@@ -260,6 +264,18 @@ ll_catch = function(Grid_Catch, FSR_Catch, Species, last_year, dir) {
                                                                         
     write.csv(LL_Catch, paste0(dir, "LL_Catch.csv"), row.names = FALSE)
     write.csv(LL_Catch_SS, paste0(dir, "LL_Catch_SS.csv"), row.names = FALSE)
+    
+    LL_Catch_plot <- data.frame(LL_Catch) %>%
+      gather(c(paste0("N", seq(1, n_areas)), paste0("W", seq(1, n_areas))), key = "Fishery",value = "Catch") %>%
+      mutate(Unit = ifelse(substr(Fishery,1,1)=="N","Number","Weight"),
+             Area = substr(Fishery,2,2))
+    
+    ggplot(data=LL_Catch_plot) +
+      geom_line(aes(x=YQ,y=Catch,color=Area),alpha=0.25) +
+      geom_smooth(aes(x=YQ,y=Catch,color=Area),span=0.25,se=FALSE) +
+      facet_wrap(~Unit, scales="free_y", nrow=2) +
+      theme_bw()
+    ggsave(filename = paste0(dir,"Catches.png"), dpi = 300, width = 8, height = 8)
     
     return(LL_Catch)
 }
