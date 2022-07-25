@@ -10,7 +10,9 @@ ll_fisheries_lf_new(
   Species,
   last_year,
   dir,
-  minNsamp = 1
+  minNsamp = 1,
+  period,
+  legend
 )
 }
 \description{

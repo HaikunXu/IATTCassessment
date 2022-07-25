@@ -4,7 +4,7 @@
 #' 
 #' @export
 
-ll_fisheries_lf_new = function(JPN_size, Grid_Catch, Species, last_year, dir, minNsamp = 1) {
+ll_fisheries_lf_new = function(JPN_size, Grid_Catch, Species, last_year, dir, minNsamp = 1, period, legend) {
   
   #### Compute sample size
   size_data0 <- JPN_size %>%
@@ -61,7 +61,7 @@ ll_fisheries_lf_new = function(JPN_size, Grid_Catch, Species, last_year, dir, mi
     filter(is.na(L) == FALSE) %>%
     group_by(Year, Lat, Lon, L) %>% summarise(count = n()) %>% # count number of fish
     group_by(Year, Lat, Lon) %>% mutate(count_sum = sum(count)) %>%
-    filter(count_sum>=10) %>% # a strata needs to have more than 10 fish measured
+    filter(count_sum>10) %>% # a strata needs to have more than 10 fish measured
     mutate(LF = count / count_sum) %>% # 1 by 1 LF
     select(Year, Lat, Lon, L, LF) %>%
     spread(L, LF, fill = 0) # spread length bins into column
@@ -70,7 +70,7 @@ ll_fisheries_lf_new = function(JPN_size, Grid_Catch, Species, last_year, dir, mi
   # combine LF and catch data
   size_catch_data <- size_data %>% 
     gather(names(size_data)[4:ncol(size_data)],"key"=Length,"value"=LF) %>% 
-    mutate (Length = as.numeric(Length))
+    mutate(Length = as.numeric(Length))
   
   
   # compute total 5by5 catch across countries
@@ -123,16 +123,18 @@ ll_fisheries_lf_new = function(JPN_size, Grid_Catch, Species, last_year, dir, mi
   #     summarise(lf_mean=sum(lf*n)/sum(n))
   
   data_plot <- data_area_final %>% gather(as.character(seq(20,198,2)), key = length, value = lf) %>%
-    mutate(length=as.numeric(length)) %>% group_by(Area,length) %>%
+    mutate(Length=as.numeric(length),
+           Period = cut(Year, breaks = c(-Inf, period, Inf), right = F, labels = legend)) %>%
+    group_by(Period,Area,Length) %>%
     summarise(lf_mean=sum(lf*n)/sum(n))
   
   ggplot(data=data_plot) +
-    geom_smooth(aes(x=length,y=lf_mean,color=factor(Area)),span = 0.2,se = FALSE) +
+    geom_smooth(aes(x=Length,y=lf_mean,color=Period),span = 0.2,se = FALSE) +
     # geom_line(aes(x=length,y=lf_mean,color=factor(Area),linetype=period),alpha=0.25) +
-    theme_bw(12) +
-    # facet_wrap(~period) +
+    theme_bw(16) +
+    facet_wrap(~Area) +
     ylab("Fishery LF")
-  ggsave(filename = paste0(dir,"LL Fisheries LF.png"), dpi = 300, width = 12, height = 8)
+  ggsave(filename = paste0(dir,"LL Fisheries LF.png"), dpi = 300, width = 15, height = 12)
   
   return(data_area_final)
 }
