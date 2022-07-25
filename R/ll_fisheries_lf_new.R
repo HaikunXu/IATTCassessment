@@ -61,6 +61,7 @@ ll_fisheries_lf_new = function(JPN_size, Grid_Catch, Species, last_year, dir, mi
     filter(is.na(L) == FALSE) %>%
     group_by(Year, Lat, Lon, L) %>% summarise(count = n()) %>% # count number of fish
     group_by(Year, Lat, Lon) %>% mutate(count_sum = sum(count)) %>%
+    filter(count_sum>=10) %>% # a strata needs to have more than 10 fish measured
     mutate(LF = count / count_sum) %>% # 1 by 1 LF
     select(Year, Lat, Lon, L, LF) %>%
     spread(L, LF, fill = 0) # spread length bins into column
