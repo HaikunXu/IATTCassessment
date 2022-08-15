@@ -54,6 +54,7 @@ ll_fisheries_lf_new = function(JPN_size, KOR_size, Add_KOR = FALSE, Grid_Catch, 
         Lat = floor(Lat / 5) * 5 + 2.5,
         Lon = floor(Lon / 5) * 5 + 2.5
       ) %>%
+      filter(is.na(L) == FALSE) %>%
       group_by(Year, Lat, Lon, L) %>%
       summarise(count = sum(Number)) %>%
       group_by(Year, Lat, Lon) %>%
@@ -109,21 +110,20 @@ ll_fisheries_lf_new = function(JPN_size, KOR_size, Add_KOR = FALSE, Grid_Catch, 
              LF) %>%
     mutate(Length = as.numeric(Length))
   
-  # compute total 5by5 catch across countries
-  Grid_Catch <-
-    data.frame(Grid_Catch) %>% filter(SpeciesAbv == Species) %>%
-    mutate(Year = (Yrr - 1975) * 4 + Quarter) %>% group_by(Year, Lat, Lon) %>%
-    summarise(Number = sum(SumOfNumber, na.rm = TRUE)) # compute total catch in number
   
   # plot the distribution of catch by decade
-  Grid_Catch_plot <- Grid_Catch %>% filter(SpeciesAbv == "BET") %>%
-    mutate(Decade = floor(Yrr / 10) * 10) %>% group_by(Decade, Lat, Lon) %>%
-    summarise(Number = sum(SumOfNumber, na.rm = TRUE))
+  Grid_Catch_plot <-
+    Grid_Catch %>% filter(SpeciesAbv == "BET", Yrr > 1979, Yrr < 2020) %>%
+    mutate(Decade = paste0(floor(Yrr / 10) * 10, "-", floor(Yrr / 10) * 10 + 9)) %>%
+    group_by(Decade, Lat, Lon) %>%
+    summarise(Number = sum(SumOfNumber, na.rm = TRUE)) %>%
+    group_by(Decade) %>%
+    mutate(Catch_Proportion = Number / sum(Number))
   
   wmap <- ggplot2::map_data("world")
   ggplot() + geom_point(
-    aes(x = Lon, y = Lat, color = Number),
-    data = data,
+    aes(x = Lon, y = Lat, color = Catch_Proportion),
+    data = Grid_Catch_plot,
     size = 6,
     shape = 15
   ) +
@@ -135,21 +135,26 @@ ll_fisheries_lf_new = function(JPN_size, KOR_size, Add_KOR = FALSE, Grid_Catch, 
       alpha = 1,
       lwd = 0.5
     ) +
-    coord_quickmap(ylim = c(-40, 40), xlim = c(-150,-70)) + theme_bw(8) +
-    facet_wrap( ~ Decade)
+    coord_quickmap(ylim = c(-40, 40), xlim = c(-150,-70)) + theme_bw(12) +
+    facet_wrap( ~ Decade) +
+    scale_color_distiller(palette = "Spectral", name = "% bet catch")
   
   ggsave(
     filename = paste0(dir, "BET_Catch.png"),
     dpi = 300,
-    width = 5,
-    height = 5
+    width = 7,
+    height = 7
   )
   
+  # compute total 5by5 catch across countries
+  Grid_Catch_new <- Grid_Catch %>% data.frame() %>% filter(SpeciesAbv == Species) %>%
+    mutate(Year = (Yrr - 1975) * 4 + Quarter) %>% group_by(Year, Lat, Lon) %>%
+    summarise(Number = sum(SumOfNumber, na.rm = TRUE)) # compute total catch in number
+  
   # combine LF with gridded catch data
-  data <- left_join(size_catch_data, Grid_Catch)
+  data <- left_join(size_catch_data, Grid_Catch_new)
   data$Area <- area_code(data$Lat, data$Lon, Species)
   
-  wmap <- ggplot2::map_data("world")
   ggplot() + geom_point(
     aes(x = Lon, y = Lat, color = factor(Area)),
     data = data,
