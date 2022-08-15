@@ -6,6 +6,8 @@
 \usage{
 ll_fisheries_lf_new(
   JPN_size,
+  KOR_size,
+  Add_KOR = FALSE,
   Grid_Catch,
   Species,
   last_year,
