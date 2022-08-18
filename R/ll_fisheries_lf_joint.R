@@ -1,10 +1,10 @@
 #' Longline fisheries' length frequency
 #' 
-#' \code{ll_fisheries_lf_new} This function processes the raw LL fisheries' length frequency data into the format for Stock Assessment
+#' \code{ll_fisheries_lf_joint} This function processes the raw LL fisheries' length frequency data into the format for Stock Assessment
 #' 
 #' @export
 
-ll_fisheries_lf_new = function(JPN_size, KOR_size, Add_KOR = FALSE, Grid_Catch, Species, last_year, dir, minNsamp = 1, period, legend) {
+ll_fisheries_lf_joint = function(JPN_size, KOR_size, Grid_Catch, Species, last_year, dir, period, legend, minNsamp = 1, Add_KOR = FALSE, catch_weighted = FALSE) {
   
   ####
   # count data for JPN
@@ -66,12 +66,37 @@ ll_fisheries_lf_new = function(JPN_size, KOR_size, Add_KOR = FALSE, Grid_Catch, 
   
   # combine JPN and KOR data
   if (Add_KOR == TRUE) {
-    size_data$Flag = "JPN"
-    size_data_a <- rbind(size_data, KOR_LF)
-    size_data <- size_data_a %>%
-      group_by(Year, Lat, Lon, L) %>%
-      summarise(count = sum(count),
-                count_sum = sum(count_sum))
+    if (catch_weighted == FALSE) {
+      size_data$Flag = "JPN"
+      size_data_a <- rbind(size_data, KOR_LF)
+      size_data <- size_data_a %>%
+        group_by(Year, Lat, Lon, L) %>%
+        summarise(count = sum(count),
+                  count_sum = sum(count_sum))
+    } else {
+      size_data$Flag = "JPN"
+      size_data_a <- rbind(size_data, KOR_LF)
+      
+      # compute proportional catch
+      Grid_Catch_prop <- Grid_Catch %>% data.frame() %>%
+        filter(SpeciesAbv == Species, FlagAbv %in% c("JPN", "KOR")) %>%
+        mutate(Year = (Yrr - 1975) * 4 + Quarter) %>%
+        select(Year, FlagAbv, Lat, Lon, SumOfNumber) %>%
+        spread(FlagAbv, SumOfNumber, fill = 0) %>%
+        gather(4:5, key = "Flag", value = "catch") %>%
+        group_by(Year, Lat, Lon) %>%
+        mutate(prop = catch / sum(catch)) %>%
+        select(c(1:4, 6))
+      
+      size_data_a <- left_join(size_data_a, Grid_Catch_prop)
+      
+      size_data <- size_data_a %>%
+        group_by(Year, Lat, Lon, L) %>%
+        summarise(
+          count = sum(count * prop, na.rm = TRUE),
+          count_sum = sum(count_sum * prop, na.rm = TRUE)
+        )
+    }
   } else {
     size_data_a <- size_data %>% mutate(Flag = "JPN")
   }
@@ -85,17 +110,18 @@ ll_fisheries_lf_new = function(JPN_size, KOR_size, Add_KOR = FALSE, Grid_Catch, 
   size_data_flag <- size_data_a %>%
     mutate(Area = area_code(Lat, Lon, Species)) %>%
     group_by(Area, Year, Flag) %>%
-    summarise(Nsamp = sum(count)) # sample size
+    summarise(Nsamp = sum(count)) # sample size by Flag
+  
   ggplot(data = size_data_flag) +
-    geom_point(aes(x = Year, y = Nsamp, color = factor(Flag))) +
+    geom_point(aes(x = Year, y = Nsamp, color = Flag),alpha = 0.5) +
     facet_wrap( ~ Area) +
-    theme_bw(12) +
+    theme_bw(16) +
     ylab("Sample size")
   ggsave(
     filename = paste0(dir, "Sample size.png"),
     dpi = 300,
-    width = 8,
-    height = 5
+    width = 12,
+    height = 8
   )
   
   
@@ -106,23 +132,28 @@ ll_fisheries_lf_new = function(JPN_size, KOR_size, Add_KOR = FALSE, Grid_Catch, 
     spread(L, LF, fill = 0)
   
   size_catch_data <- size_data_wide %>%
-    gather(names(size_data_wide)[4:ncol(size_data_wide)], "key" = Length, "value" =
-             LF) %>%
+    gather(names(size_data_wide)[4:ncol(size_data_wide)], "key" = Length, "value" = LF) %>%
     mutate(Length = as.numeric(Length))
   
   
   # plot the distribution of catch by decade
   Grid_Catch_plot <-
-    Grid_Catch %>% filter(SpeciesAbv == "BET", Yrr > 1979, Yrr < 2020) %>%
-    mutate(Decade = paste0(floor(Yrr / 10) * 10, "-", floor(Yrr / 10) * 10 + 9)) %>%
-    group_by(Decade, Lat, Lon) %>%
-    summarise(Number = sum(SumOfNumber, na.rm = TRUE)) %>%
-    group_by(Decade) %>%
-    mutate(Catch_Proportion = Number / sum(Number))
+    Grid_Catch %>% filter(SpeciesAbv == Species, Yrr > 1979, Yrr < 2020) %>%
+    mutate(
+      Flag = as.character(FlagAbv),
+      Decade = paste0(floor(Yrr / 10) * 10, "-", floor(Yrr / 10) * 10 + 9),
+      Flag = ifelse(Flag %in% c("JPN", "KOR", "TWN", "CHN"), Flag, "Others")
+    ) %>%
+    group_by(Flag, Decade, Lat, Lon) %>%
+    summarise(Number = ifelse(
+      sum(SumOfNumber, na.rm = TRUE) > 3e5,
+      3e5,
+      sum(SumOfNumber, na.rm = TRUE)
+    ))
   
   wmap <- ggplot2::map_data("world")
   ggplot() + geom_point(
-    aes(x = Lon, y = Lat, color = Catch_Proportion),
+    aes(x = Lon, y = Lat, color = Number),
     data = Grid_Catch_plot,
     size = 6,
     shape = 15
@@ -136,14 +167,14 @@ ll_fisheries_lf_new = function(JPN_size, KOR_size, Add_KOR = FALSE, Grid_Catch, 
       lwd = 0.5
     ) +
     coord_quickmap(ylim = c(-40, 40), xlim = c(-150,-70)) + theme_bw(12) +
-    facet_wrap( ~ Decade) +
-    scale_color_distiller(palette = "Spectral", name = "% bet catch")
+    facet_grid(Flag ~ Decade) +
+    scale_color_distiller(palette = "Spectral", name = paste0(Species," catch"))
   
   ggsave(
-    filename = paste0(dir, "BET_Catch.png"),
+    filename = paste0(dir, Species, "_Catch.png"),
     dpi = 300,
-    width = 7,
-    height = 7
+    width = 8,
+    height = 10
   )
   
   # compute total 5by5 catch across countries
