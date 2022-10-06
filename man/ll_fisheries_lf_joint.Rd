@@ -7,15 +7,16 @@
 ll_fisheries_lf_joint(
   JPN_size,
   KOR_size,
-  Add_KOR = FALSE,
-  catch_weighted = FALSE,
   Grid_Catch,
   Species,
   last_year,
   dir,
-  minNsamp = 1,
   period,
-  legend
+  legend,
+  minNsamp = 1,
+  Add_KOR = FALSE,
+  catch_weighted = FALSE,
+  LF_name = "LF"
 )
 }
 \description{

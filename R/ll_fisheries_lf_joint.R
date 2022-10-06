@@ -4,7 +4,7 @@
 #' 
 #' @export
 
-ll_fisheries_lf_joint = function(JPN_size, KOR_size, Grid_Catch, Species, last_year, dir, period, legend, minNsamp = 1, Add_KOR = FALSE, catch_weighted = FALSE) {
+ll_fisheries_lf_joint = function(JPN_size, KOR_size, Grid_Catch, Species, last_year, dir, period, legend, minNsamp = 1, Add_KOR = FALSE, catch_weighted = FALSE, LF_name = "LF") {
   
   ####
   # count data for JPN
@@ -17,8 +17,8 @@ ll_fisheries_lf_joint = function(JPN_size, KOR_size, Grid_Catch, Species, last_y
       YY <= last_year,
       MM > 0,
       level == 4, # 1by1 data
-      M_unit %in% c(6, 7), # 1/2cm resolution data
-      place == 13 | YY <= 2010 # remove fishermen's LF during 2011-2014
+      M_unit %in% c(6, 7) # 1/2cm resolution data
+      # place == 13 | YY <= 2010 # remove fishermen's LF during 2011-2014
     ) %>% 
     mutate(
       CLS = ifelse(M_unit == 6, CLS - 1, CLS - 2),
@@ -33,11 +33,11 @@ ll_fisheries_lf_joint = function(JPN_size, KOR_size, Grid_Catch, Species, last_y
       Year = (YY - 1975) * 4 + ceiling(MM / 3)
     ) %>%
     group_by(X, Y) %>% mutate(nyear = length(unique(YY))) %>%
-    filter(nyear > 3) %>% # remove rarely sampled grids
+    # filter(nyear > 3) %>% # remove rarely sampled grids
     filter(is.na(L) == FALSE) %>%
     group_by(Year, Lat, Lon, L) %>% summarise(count = n()) %>% # count number of fish
     group_by(Year, Lat, Lon) %>% mutate(count_sum = sum(count)) %>%
-    filter(count_sum > 10) %>% # a strata needs to have more than 10 fish measured
+    filter(count_sum >= 20) %>% # a strata needs to have more than 20 fish measured
     data.frame()
   
   # count data for KOR
@@ -59,7 +59,7 @@ ll_fisheries_lf_joint = function(JPN_size, KOR_size, Grid_Catch, Species, last_y
       summarise(count = sum(Number)) %>%
       group_by(Year, Lat, Lon) %>%
       mutate(count_sum = sum(count)) %>%
-      filter(count_sum > 10) %>% # a strata needs to have more than 10 fish measured
+      filter(count_sum >= 20) %>% # a strata needs to have more than 20 fish measured
       mutate(Flag = "KOR") %>%
       data.frame()
   }
@@ -73,7 +73,8 @@ ll_fisheries_lf_joint = function(JPN_size, KOR_size, Grid_Catch, Species, last_y
         group_by(Year, Lat, Lon, L) %>%
         summarise(count = sum(count),
                   count_sum = sum(count_sum))
-    } else {
+    }
+    else {
       size_data$Flag = "JPN"
       size_data_a <- rbind(size_data, KOR_LF)
       
@@ -92,17 +93,36 @@ ll_fisheries_lf_joint = function(JPN_size, KOR_size, Grid_Catch, Species, last_y
       
       size_data <- size_data_a %>%
         group_by(Year, Lat, Lon, L) %>%
-        summarise(
-          count = sum(count * prop, na.rm = TRUE),
-          count_sum = sum(count_sum * prop, na.rm = TRUE)
-        )
+        summarise(LF_raw = sum(count / count_sum * prop, na.rm = TRUE)) %>%
+        group_by(Year, Lat, Lon) %>%
+        mutate(LF=LF_raw/sum(LF_raw))
     }
   } else {
     size_data_a <- size_data %>% mutate(Flag = "JPN")
   }
   
+  # compile gridded LF data
+  grid_LF <-  size_data %>%
+    select(Year, Lat, Lon, L, LF) %>%
+    spread(L, LF, fill = 0)
+  
+  # fill in the missing 2-cm length bins with 0
+  for (i in seq(20, 198, 2)) {
+    if (as.character(i) %in% names(grid_LF) == FALSE)
+      grid_LF[[as.character(i)]] <- 0
+  }
+  
+  # final length frequency output
+  grid_LF_final <-
+    grid_LF %>% gather(as.character(seq(20, 198, 2)), key = L, value = lf) %>%
+    mutate(L = floor(as.numeric(L)/10)*10) %>%
+    group_by(Year,Lat,Lon,L) %>%
+    summarise(LF=sum(lf))
+  
+  write.csv(grid_LF_final, file = paste0(dir, LF_name, "_grid.csv"), row.names = FALSE) # save
+  
   #### Compute sample size
-  sample_size <- size_data %>%
+  sample_size <- size_data_a %>%
     mutate(Area = area_code(Lat, Lon, Species)) %>%
     group_by(Area, Year) %>%
     summarise(Nsamp = sum(count)) # sample size
@@ -113,7 +133,7 @@ ll_fisheries_lf_joint = function(JPN_size, KOR_size, Grid_Catch, Species, last_y
     summarise(Nsamp = sum(count)) # sample size by Flag
   
   ggplot(data = size_data_flag) +
-    geom_point(aes(x = Year, y = Nsamp, color = Flag),alpha = 0.5) +
+    geom_point(aes(x = Year, y = Nsamp, color = Flag),alpha = 0.75) +
     facet_wrap( ~ Area) +
     theme_bw(16) +
     ylab("Sample size")
@@ -127,7 +147,7 @@ ll_fisheries_lf_joint = function(JPN_size, KOR_size, Grid_Catch, Species, last_y
   
   # prepare LF in the format to be combined with catch data
   size_data_wide <- size_data %>%
-    mutate(LF = count / count_sum) %>%
+    # mutate(LF = count / count_sum) %>%
     select(Year, Lat, Lon, L, LF) %>%
     spread(L, LF, fill = 0)
   
@@ -146,8 +166,8 @@ ll_fisheries_lf_joint = function(JPN_size, KOR_size, Grid_Catch, Species, last_y
     ) %>%
     group_by(Flag, Decade, Lat, Lon) %>%
     summarise(Number = ifelse(
-      sum(SumOfNumber, na.rm = TRUE) > 3e5,
-      3e5,
+      sum(SumOfNumber, na.rm = TRUE) > 2e5,
+      2e5,
       sum(SumOfNumber, na.rm = TRUE)
     ))
   
@@ -244,7 +264,7 @@ ll_fisheries_lf_joint = function(JPN_size, KOR_size, Grid_Catch, Species, last_y
   F_LF_SS <- cbind(F_LF_SS, data_area_final[3:92], data_area_final[3:92]) # male and female LF
   F_LF_SS <- data.frame(F_LF_SS) %>% filter(Nsamp >= minNsamp) # remove LF with sample size < minNsamp
   print(paste0("!!! Using a minimal sample size threshold of ", minNsamp, " !!!"))
-  write.csv(F_LF_SS, file = paste0(dir, "LF.csv"), row.names = FALSE) # save
+  write.csv(F_LF_SS, file = paste0(dir, LF_name, ".csv"), row.names = FALSE) # save
   
   # check results
   # data_plot <- data_area_final %>% gather(as.character(seq(20,198,2)), key = length, value = lf) %>%
@@ -267,7 +287,7 @@ ll_fisheries_lf_joint = function(JPN_size, KOR_size, Grid_Catch, Species, last_y
   
   ggplot(data = data_plot) +
     geom_smooth(aes(x = Length, y = lf_mean, color = Period),
-                span = 0.2,
+                span = 0.25,
                 se = FALSE) +
     theme_bw(16) +
     facet_wrap( ~ Area) +
