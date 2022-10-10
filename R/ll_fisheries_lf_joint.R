@@ -37,7 +37,7 @@ ll_fisheries_lf_joint = function(JPN_size, KOR_size, Grid_Catch, Species, last_y
     filter(is.na(L) == FALSE) %>%
     group_by(Year, Lat, Lon, L) %>% summarise(count = n()) %>% # count number of fish
     group_by(Year, Lat, Lon) %>% mutate(count_sum = sum(count)) %>%
-    filter(count_sum >= 20) %>% # a strata needs to have more than 20 fish measured
+    filter(count_sum >= 18) %>% # a strata needs to have more than 20 fish measured
     data.frame()
   
   # count data for KOR
@@ -59,7 +59,7 @@ ll_fisheries_lf_joint = function(JPN_size, KOR_size, Grid_Catch, Species, last_y
       summarise(count = sum(Number)) %>%
       group_by(Year, Lat, Lon) %>%
       mutate(count_sum = sum(count)) %>%
-      filter(count_sum >= 20) %>% # a strata needs to have more than 20 fish measured
+      filter(count_sum >= 18) %>% # a strata needs to have more than 20 fish measured
       mutate(Flag = "KOR") %>%
       data.frame()
   }
@@ -98,11 +98,13 @@ ll_fisheries_lf_joint = function(JPN_size, KOR_size, Grid_Catch, Species, last_y
         mutate(LF=LF_raw/sum(LF_raw))
     }
   } else {
+    size_data$LF <- size_data$count / size_data$count_sum
     size_data_a <- size_data %>% mutate(Flag = "JPN")
   }
   
-  # compile gridded LF data
-  grid_LF <-  size_data %>%
+  # compile and save gridded LF data
+  grid_LF <-  size_data  %>%
+    # mutate(LF = count / count_sum) %>%
     select(Year, Lat, Lon, L, LF) %>%
     spread(L, LF, fill = 0)
   
@@ -158,7 +160,7 @@ ll_fisheries_lf_joint = function(JPN_size, KOR_size, Grid_Catch, Species, last_y
   
   # plot the distribution of catch by decade
   Grid_Catch_plot <-
-    Grid_Catch %>% filter(SpeciesAbv == Species, Yrr > 1979, Yrr < 2020) %>%
+    Grid_Catch %>% filter(SpeciesAbv == Species, Yrr > 1969, Yrr < 2020) %>%
     mutate(
       Flag = as.character(FlagAbv),
       Decade = paste0(floor(Yrr / 10) * 10, "-", floor(Yrr / 10) * 10 + 9),
@@ -175,7 +177,7 @@ ll_fisheries_lf_joint = function(JPN_size, KOR_size, Grid_Catch, Species, last_y
   ggplot() + geom_point(
     aes(x = Lon, y = Lat, color = Number),
     data = Grid_Catch_plot,
-    size = 6,
+    size = 4,
     shape = 15
   ) +
     geom_polygon(
@@ -193,9 +195,52 @@ ll_fisheries_lf_joint = function(JPN_size, KOR_size, Grid_Catch, Species, last_y
   ggsave(
     filename = paste0(dir, Species, "_Catch.png"),
     dpi = 300,
-    width = 8,
-    height = 10
+    width = 12,
+    height = 8
   )
+  
+  
+  # plot the distribution of cpue by decade
+  Grid_cpue_plot <-
+    Grid_Catch %>% filter(SpeciesAbv == Species, Yrr > 1969, Yrr < 2020) %>%
+    mutate(
+      Flag = as.character(FlagAbv),
+      Decade = paste0(floor(Yrr / 10) * 10, "-", floor(Yrr / 10) * 10 + 9),
+      Flag = ifelse(Flag %in% c("JPN", "KOR", "TWN", "CHN"), Flag, "Others")
+    ) %>%
+    group_by(Flag, Decade, Lat, Lon) %>%
+    summarise(CPUE = ifelse(
+      sum(SumOfNumber, na.rm = TRUE) / sum(SumOfHooks) * 1000 > 20,
+      20,
+      sum(SumOfNumber, na.rm = TRUE) / sum(SumOfHooks) * 1000
+    ))
+  
+  wmap <- ggplot2::map_data("world")
+  ggplot() + geom_point(
+    aes(x = Lon, y = Lat, color = CPUE),
+    data = Grid_cpue_plot,
+    size = 4,
+    shape = 15
+  ) +
+    geom_polygon(
+      data = wmap,
+      aes(long, lat, group = group),
+      fill = "black",
+      colour = "white",
+      alpha = 1,
+      lwd = 0.5
+    ) +
+    coord_quickmap(ylim = c(-40, 40), xlim = c(-150,-70)) + theme_bw(12) +
+    facet_grid(Flag ~ Decade) +
+    scale_color_distiller(palette = "Spectral", name = paste0(Species," cpue"))
+  
+  ggsave(
+    filename = paste0(dir, Species, "_CPUE.png"),
+    dpi = 300,
+    width = 12,
+    height = 8
+  )
+  
   
   # compute total 5by5 catch across countries
   Grid_Catch_new <- Grid_Catch %>% data.frame() %>% filter(SpeciesAbv == Species) %>%
