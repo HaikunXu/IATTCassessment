@@ -1,0 +1,166 @@
+---
+title: "Data figures for SS"
+author: "   "
+output:
+  word_document:
+    fig_width: 12
+    fig_height: 8
+    fig_caption: true
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE)
+```
+
+* This document provides the data figures for the assessment report for Bigeye.
+* This code is run on `r Sys.Date()` by Haikun Xu.
+* The model used to generate this document is `r Path`
+* Results are saved in `r RmdPath`
+
+\newpage
+
+```{r 1:Catch}
+Catch_Fleet <- myreplist$catch %>%
+  filter(Yr>=startyr,Yr<=endyr) %>%
+  mutate(Year=ceiling(Yr/4)+1974) %>%
+  group_by(Fleet,Year) %>%
+  summarise(Catch=sum(sel_bio))
+
+Fisheries <- Fleet_DF %>% filter(Fleet_Type==1)
+  
+Catch_Fleet2 <- left_join(Catch_Fleet,Fisheries) %>%
+  mutate(Fleet_Name2=paste0("Fleet",Fleet," (",Fleet_Name,")")) %>%
+  mutate(Fleet_Name2=fct_reorder(Fleet_Name2, Fleet))
+
+f1a <- ggplot(data=Catch_Fleet2) +
+  geom_line(aes(x=Year,y=Catch,color=Gear)) +
+  facet_wrap(~Fleet_Name2) +
+  theme_bw(15)
+
+ggsave(f1a,file=paste0(Path,"Catch.pdf"),width=10,height=10)
+
+Catch_Fleet_all <- Catch_Fleet2 %>%
+  group_by(Year,Gear) %>%
+  summarise(Catch=sum(Catch))
+
+f1b <- ggplot(data=Catch_Fleet_all) +
+  geom_area(aes(x=Year,y=Catch,fill=Gear)) +
+  # facet_wrap(~Fleet_Name2) +
+  theme_bw(15)
+
+ggsave(f1b,file=paste0(Path,"Catch_all.pdf"),width=10,height=10)
+
+f1a
+f1b
+
+```
+
+```{r 2:Mean length frequency}
+LenComps <- myreplist$lendbase %>% filter(Sex==1) %>%
+    group_by(Fleet,Bin) %>% summarise(comp=mean(Obs*Nsamp_adj)) %>% 
+    group_by(Fleet) %>% mutate(Comp=comp/sum(comp)/2,Bin=Bin+1)
+  
+SizeComps <- myreplist$sizedbase %>% filter(Sex==1) %>%
+    group_by(Fleet,Bin) %>% summarise(comp=mean(Obs*Nsamp_adj)) %>% 
+    group_by(Fleet) %>% mutate(Comp=comp/sum(comp)/10,Bin=Bin+5)
+  
+comps <- rbind(LenComps,SizeComps)
+  
+Comps <- left_join(comps,Fleet_DF)%>%
+  # mutate(Fleet_Name2=paste0("Fleet",Fleet," (",Fleet_Name,")")) %>%
+  mutate(Fleet_Name2=Fleet_Name) %>%
+  mutate(Fleet_Name2=fct_reorder(Fleet_Name2, Fleet))
+  
+f2 <- ggplot(data=Comps)+
+  geom_ribbon(aes(x=Bin,ymin=0,ymax=Comp,fill=Gear))+theme_bw(12) +
+  facet_wrap(~Fleet_Name2) + 
+  ylab("Weighted length freqeuncy") + xlab("Length (cm)")
+
+ggsave(f2, file = paste0(Path, "Comps.pdf"), width = 10, height = 10)
+
+f2
+```
+
+```{r 3:CAAL}
+# CAAL <- read.csv("CAAL.csv")
+# names(CAAL)[4:19] <- seq(1,16)
+# CAAL <- CAAL %>% gather(names(CAAL)[4:19],key="Age",value="Number") %>%
+#   filter(Number>0) %>% mutate(Age=as.numeric(Age))
+# 
+# f3 <- ggplot(data=CAAL) +
+#   geom_point(aes(x=Age,y=Lbin_lo+1,size=Nsamp)) +
+#   theme_bw(16) +
+#   xlab("Age (quarter)") +
+#   ylab("Length (cm)") +
+#   labs(size = "N")
+# 
+# ggsave(f3, file = paste0(RmdPath, "CAAL.pdf"), width = 10, height = 10)
+
+# f3
+```
+
+```{r 4:Sample Size}
+Sample_Size <- myreplist$len_comp_fit_table %>%
+  select(!Area) %>%
+  mutate(Year=ceiling(Yr/4)+1974) %>%
+  group_by(Fleet,Year) %>%
+  summarise(Nsamp=sum(Nsamp_adj))
+
+Sample_Size2 <- left_join(Sample_Size,Fleet_DF) %>%
+  filter(SFleet=="Y") %>%
+  select(Year,Nsamp,Area,Gear,Fleet) %>%
+  spread(Year,Nsamp,fill = 0) %>%
+  gather(as.character(c(Startyr:Endyr)),value="Nsamp",key="Year") %>%
+  mutate(Year=as.numeric(Year))
+
+f4 <- ggplot(data=Sample_Size2) +
+  geom_point(aes(x=Year,y=Nsamp,color=Area),alpha=0.25) +
+  geom_smooth(aes(x=Year,y=Nsamp,color=Area),span=0.2,se = FALSE) +
+  facet_wrap(~Gear,nrow=2,scales = "free") +
+  theme_bw(16)
+
+ggsave(f4, file = paste0(Path, "Sample_Size.pdf"), width = 10, height = 10)
+
+f4
+```
+
+```{r 5:CPUE}
+CPUE <- myreplist$cpue %>%
+  select(!Area) %>%
+  mutate(Year=Yr/4+1974.75)
+
+CPUE2 <- left_join(CPUE,Fleet_DF)
+
+f5 <- ggplot(data=CPUE2) +
+  geom_line(aes(x=Year,y=Obs,color=Fleet_Name)) +
+  geom_point(aes(x=Year,y=Obs,color=Fleet_Name)) +
+  geom_ribbon(aes(x=Year,ymin=exp(log(Obs)-1.96*SE),ymax=exp(log(Obs)+1.96*SE),fill=Fleet_Name),alpha=0.25) +
+  theme_bw(16) +
+  coord_cartesian(ylim=c(0,max(exp(log(CPUE2$Obs)+1.96*CPUE2$SE))))
+
+ggsave(f5, file = paste0(Path, "CPUE.pdf"), width = 10, height = 10)
+
+f5
+```
+
+```{r 6:Mean Length}
+Mean_Len <- myreplist$lendbase %>% filter(Sex==1) %>%
+  select(!Area) %>%
+  mutate(Year=ceiling(Yr/4)+1974) %>%
+  group_by(Fleet,Year) %>% summarise(MeanL=sum(Obs*(Bin+1))/sum(Obs)) 
+
+Mean_Len2 <- left_join(Mean_Len,Fleet_DF) %>%
+  filter(SFleet=="Y", Area != "Area1")
+
+f6 <- ggplot(data=Mean_Len2)+
+  geom_point(aes(x=Year,y=MeanL,color=Area),alpha=0.5)+
+  geom_smooth(aes(x=Year,y=MeanL,color=Area,fill=Area),alpha=0.2)+
+  facet_wrap(~Gear,nrow=2,scales = "free") +
+  theme_bw(16)
+
+ggsave(f6, file = paste0(Path, "MeanL.pdf"), width = 10, height = 10)
+
+f6
+```
