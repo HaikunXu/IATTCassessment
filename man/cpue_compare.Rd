@@ -16,7 +16,8 @@ cpue_compare(
   xlim,
   CV = TRUE,
   w = 15,
-  h = 6
+  h = 6,
+  smooth = TRUE
 )
 }
 \description{

@@ -5,7 +5,7 @@
 #' @export
 #' 
 
-cpue_compare <- function(Path, Legend, Region, Save_Path, rescale = TRUE, ylabel = "CPUE", xlabel = "", ylim, xlim, CV = TRUE, w = 15, h = 6) {
+cpue_compare <- function(Path, Legend, Region, Save_Path, rescale = TRUE, ylabel = "CPUE", xlabel = "", ylim, xlim, CV = TRUE, w = 15, h = 6, smooth = TRUE) {
     index <- read.csv(paste0(Path[1],"Table_for_SS3.csv"))
     Index <- data.frame("Year"=index$Year,"Index"=index$Estimate_metric_tons,"Legend"=Legend[1],"CV"=index$SD_log, Fleet=Region[1])
 
@@ -16,7 +16,7 @@ cpue_compare <- function(Path, Legend, Region, Save_Path, rescale = TRUE, ylabel
         }
         }
     
-    Index <- Index %>% mutate(Legend=factor(Legend),Region=Fleet)
+    Index <- Index %>% mutate(Legend=factor(Legend),Region=Fleet,Year=Year/4+1974.875)
     
     if(rescale==TRUE) Index <- Index %>% group_by(Legend,Fleet) %>% mutate(Index=Index/mean(Index))
     
@@ -24,14 +24,22 @@ cpue_compare <- function(Path, Legend, Region, Save_Path, rescale = TRUE, ylabel
         f <- ggplot(data = Index) + geom_line(aes(x = Year, y = Index, color = Legend)) + coord_cartesian(ylim = ylim, xlim=xlim, expand = FALSE) +
             theme_bw(15) + ylab(ylabel) + xlab(xlabel) + geom_point(aes(x = Year, y = Index, color = Legend)) +
             geom_ribbon(aes(x = Year, ymin = Index * exp(-1.96 * CV), ymax = Index * exp(1.96 * CV), fill = Legend), alpha=0.2) +
-            labs(color="Index",fill="Index") +
-            facet_wrap(~Region)
+            labs(color="Index",fill="Index")
+
+          if(length(unique(Region))>1)
+            f <- f + facet_wrap(~Region)
     }
     else {
-        f <- ggplot(data = Index) + geom_line(aes(x = Year, y = Index, color = Legend)) + coord_cartesian(ylim = ylim, xlim=xlim, expand = FALSE) +
-            theme_bw(15) + ylab(ylabel) + xlab(xlabel) + geom_point(aes(x = Year, y = Index, color = Legend)) +
-            labs(color="Index",fill="Index") +
-            facet_wrap(~Region)
+        f <- ggplot(data = Index) +
+          # geom_line(aes(x = Year, y = Index, color = Legend)) +
+          geom_smooth(aes(x = Year, y = Index, color = Legend)) +
+          coord_cartesian(ylim = ylim, xlim=xlim, expand = FALSE) +
+          theme_bw(15) + ylab(ylabel) + xlab(xlabel) + 
+          geom_point(aes(x = Year, y = Index, color = Legend)) +
+          labs(color="Index",fill="Index")
+
+          if(length(unique(Region))>1)
+            f <- f + facet_wrap(~Region)
     }
         
     
@@ -41,15 +49,37 @@ cpue_compare <- function(Path, Legend, Region, Save_Path, rescale = TRUE, ylabel
                 theme_bw(15) + geom_hline(yintercept=1) + ylab(ylabel) + coord_cartesian(ylim = ylim, xlim=xlim, expand = FALSE) +
                 geom_point(aes(x = Year, y = Index, color = Legend)) +
                 geom_ribbon(aes(x = Year, ymin = Index * exp(-1.96 * CV), ymax = Index * exp(1.96 * CV), fill = Legend), alpha=0.2) +
-                labs(color="Index",fill="Index") +
-                facet_wrap(~Region)
+                labs(color="Index",fill="Index")
+
+              if(length(unique(Region))>1)
+                f <- f + facet_wrap(~Region)
         }
         else {
-            f <- ggplot(data = Index) + geom_line(aes(x = Year, y = Index, color = Legend)) +
-                theme_bw(15) + geom_hline(yintercept=1) + ylab(ylabel) + coord_cartesian(ylim = ylim, xlim=xlim, expand = FALSE) +
-                geom_point(aes(x = Year, y = Index, color = Legend)) +
-                labs(color="Index",fill="Index") +
-                facet_wrap(~Region)   
+          if(smooth == TRUE) {
+            f <- ggplot(data = Index) +
+              geom_smooth(aes(x = Year, y = Index, color = Legend), se = FALSE, span = 0.1) +
+              theme_bw(15) +
+              geom_hline(yintercept=1, linetype = "dashed") +
+              ylab(ylabel) + coord_cartesian(ylim = ylim, xlim=xlim, expand = FALSE) +
+              geom_point(aes(x = Year, y = Index, color = Legend), alpha = 0.5) +
+              labs(color="Index",fill="Index")
+
+              if(length(unique(Region))>1)
+                f <- f + facet_wrap(~Region)
+          }
+          else {
+            f <- ggplot(data = Index) +
+              geom_line(aes(x = Year, y = Index, color = Legend)) +
+              theme_bw(15) +
+              geom_hline(yintercept=1, linetype = "dashed") +
+              ylab(ylabel) + coord_cartesian(ylim = ylim, xlim=xlim, expand = FALSE) +
+              # geom_point(aes(x = Year, y = Index, color = Legend), alpha = 0.5) +
+              labs(color="Index",fill="Index")
+            
+            if(length(unique(Region))>1)
+              f <- f + facet_wrap(~Region)
+          }
+   
         }
 
     }

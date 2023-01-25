@@ -13,10 +13,10 @@ ll_fisheries_lf_joint(
   dir,
   period,
   legend,
-  minNsamp = 1,
+  minNsamp = 0,
   Add_KOR = FALSE,
-  catch_weighted = FALSE,
-  LF_name = "LF"
+  LF_name = "LF",
+  plot_map = FALSE
 )
 }
 \description{

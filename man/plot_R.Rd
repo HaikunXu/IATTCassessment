@@ -14,7 +14,8 @@ plot_R(
   figure_name,
   title,
   xlim,
-  alpha
+  alpha = 0.1,
+  ref = 0
 )
 }
 \description{

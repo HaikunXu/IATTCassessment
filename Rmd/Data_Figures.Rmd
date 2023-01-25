@@ -74,10 +74,11 @@ Comps <- left_join(comps,Fleet_DF)%>%
   mutate(Fleet_Name2=fct_reorder(Fleet_Name2, Fleet))
   
 f2 <- ggplot(data=Comps)+
-  geom_ribbon(aes(x=Bin,ymin=0,ymax=Comp,fill=Gear))+theme_bw(12) +
+  geom_ribbon(aes(x=Bin,ymin=0,ymax=Comp,fill=Gear))+theme_bw(16) +
   facet_wrap(~Fleet_Name2) + 
   ylab("Weighted length freqeuncy") + xlab("Length (cm)")
 
+ggsave(f2, file = paste0(Path, "Comps.png"), width = 10, height = 10)
 ggsave(f2, file = paste0(Path, "Comps.pdf"), width = 10, height = 10)
 
 f2

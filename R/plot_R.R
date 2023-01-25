@@ -4,7 +4,7 @@
 #' 
 #' @export
 
-plot_R = function(SS_Dir, lyear, fyear, legend, Save_Dir, ymax, figure_name, title, xlim, alpha) {
+plot_R = function(SS_Dir, lyear, fyear, legend, Save_Dir, ymax, figure_name, title, xlim, alpha = 0.1, ref = 0) {
     for (i in 1:length(lyear)) {
         cor_mat <- read.table(paste0(SS_Dir[i], "ss.cor"), skip = 1, fill = NA, header = TRUE)
         R_est <- cor_mat$value[which(cor_mat$name == "recr_std")[3:((lyear[i] - (fyear[i]-1)) * 4 + 2)]]
@@ -51,14 +51,27 @@ plot_R = function(SS_Dir, lyear, fyear, legend, Save_Dir, ymax, figure_name, tit
         theme_bw(20) + xlab("") + ylab("") + geom_hline(yintercept = 1, linetype = "dashed") +
         coord_cartesian(ylim = c(0,ymax[1]),xlim=xlim,expand = FALSE) + ggtitle(title) + ggeasy::easy_center_title()
     
-    f2 <- ggplot(data = R_A) + geom_ribbon(aes(x = year, ymin = R * exp(-1.96 * STD), ymax = R * exp(1.96 * STD), fill = Model), alpha=alpha) +
+    if(ref == 0) {
+      f2 <- ggplot(data = R_A) + geom_ribbon(aes(x = year, ymin = R * exp(-1.96 * STD), ymax = R * exp(1.96 * STD), fill = Model), alpha=alpha) +
         geom_line(aes(x = year, y = R, color = Model), size = 1) + geom_point(aes(x = year, y = R, color = Model),size=3) +
         theme_bw(20) + xlab("") + ylab("") + geom_hline(yintercept = 1, linetype = "dashed") +
         coord_cartesian(ylim = c(0,ymax[2]),xlim=xlim,expand = FALSE) + ggtitle(title) + ggeasy::easy_center_title()
+    }
     
-    # f_all <- gridExtra::grid.arrange(f1, f2, nrow = 2)
-    ggsave(f2, file = paste0(Save_Dir, figure_name, "-R.png"), width = 12, height = 8)
-    ggsave(f2, file = paste0(Save_Dir, figure_name, "-R.eps"), width = 12, height = 8,device=cairo_ps)
+    else {
+      f2 <- ggplot(data = R_A) + geom_ribbon(aes(x = year, ymin = R * exp(-1.96 * STD), ymax = R * exp(1.96 * STD), fill = Model), alpha=alpha) +
+        geom_line(aes(x = year, y = R, color = Model), size = 1) +
+        geom_point(aes(x = year, y = R, color = Model),size=2.5) +
+        geom_line(aes(x = year, y = R, color = Model), size = 1, data = R_A %>% filter(Model %in% legend[ref])) + 
+        geom_point(aes(x = year, y = R, color = Model), size=4.5, data = R_A %>% filter(Model %in% legend[ref])) +
+        theme_bw(20) + xlab("") + ylab("") + geom_hline(yintercept = 1, linetype = "dashed") +
+        coord_cartesian(ylim = c(0,ymax[2]),xlim=xlim,expand = FALSE) + ggtitle(title) + ggeasy::easy_center_title()
+    }
+    
+    
+        # f_all <- gridExtra::grid.arrange(f1, f2, nrow = 2)
+    ggsave(f2, file = paste0(Save_Dir, figure_name, "-R.png"), width = 12, height = 10)
+    ggsave(f2, file = paste0(Save_Dir, figure_name, "-R.pdf"), width = 12, height = 10)
     
     f <- list("f1"=f1,"f2"=f2)
     return(f)
