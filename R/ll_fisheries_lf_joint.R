@@ -139,16 +139,16 @@ ll_fisheries_lf_joint = function(JPN_size, KOR_size, Grid_Catch, Species, last_y
     summarise(Nsamp = sum(count)) # sample size by Flag
   
   ggplot(data = size_data_flag) +
-    geom_point(aes(x = Year, y = Nsamp, color = Flag, shape = Flag)) +
+    geom_col(aes(x = Year, y = Nsamp, fill = Flag)) +
     scale_shape_manual(values = c(3, 4)) + 
-    facet_wrap( ~ Area) +
+    facet_wrap( ~ Area, nrow = 6) +
     theme_bw(16) +
     ylab("Sample size")
   ggsave(
     filename = paste0(dir, "Sample size.png"),
     dpi = 300,
-    width = 12,
-    height = 8
+    width = 9,
+    height = 10
   )
   
   ### plot sample maps
@@ -238,11 +238,11 @@ ll_fisheries_lf_joint = function(JPN_size, KOR_size, Grid_Catch, Species, last_y
   
   # plot the proportion of bigeye catch
   Grid_Catch_plot2 <-
-    Grid_Catch %>% filter(SpeciesAbv == Species, Yrr > 1978) %>%
+    Grid_Catch %>% filter(SpeciesAbv == Species, Yrr > 1978, Yrr < 2020) %>%
     mutate(Decade = ifelse(
       Yrr < 1994,
       "1979-1993",
-      ifelse(Yrr > 2010, "2011-", "1994-2010")
+      ifelse(Yrr > 2010, "2011-2019", "1994-2010")
     ), ) %>%
     group_by(Decade, Lat, Lon) %>%
     summarise(Catch = sum(SumOfNumber, na.rm = TRUE)) %>%
@@ -250,7 +250,7 @@ ll_fisheries_lf_joint = function(JPN_size, KOR_size, Grid_Catch, Species, last_y
     mutate(Catch2 = ifelse(Catch / sum(Catch) > 0.05, 0.05, Catch / sum(Catch)))
   
   ggplot() + geom_point(
-    aes(x = Lon, y = Lat, color = Catch2),
+    aes(x = Lon, y = Lat, color = Catch2 * 100),
     data = Grid_Catch_plot2,
     size = 4,
     shape = 15
@@ -263,6 +263,14 @@ ll_fisheries_lf_joint = function(JPN_size, KOR_size, Grid_Catch, Species, last_y
       alpha = 1,
       lwd = 0.5
     ) +
+    geom_segment(aes(
+      x = Lon1,
+      xend = Lon2,
+      y = Lat1,
+      yend = Lat2
+    ),
+    data = BET_LL,
+    size = 1) +
     coord_quickmap(ylim = c(-40, 40), xlim = c(-150, -70)) + theme_bw(12) +
     facet_wrap(~ Decade) +
     scale_color_distiller(palette = "Spectral", name = paste0(Species, " catch (%)"))
