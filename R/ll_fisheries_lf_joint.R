@@ -150,6 +150,12 @@ ll_fisheries_lf_joint = function(JPN_size, KOR_size, Grid_Catch, Species, last_y
     width = 9,
     height = 10
   )
+  ggsave(
+    filename = paste0(dir, "Sample size.pdf"),
+    dpi = 300,
+    width = 9,
+    height = 10
+  )
   
   ### plot sample maps
   if(plot_map == TRUE) {
@@ -178,6 +184,13 @@ ll_fisheries_lf_joint = function(JPN_size, KOR_size, Grid_Catch, Species, last_y
     
     ggsave(
       filename = paste0(dir, Species, "_LF_Grids_Flag.png"),
+      f,
+      dpi = 300,
+      width = 12,
+      height = 15
+    )
+    ggsave(
+      filename = paste0(dir, Species, "_LF_Grids_Flag.pdf"),
       f,
       dpi = 300,
       width = 12,
@@ -237,8 +250,8 @@ ll_fisheries_lf_joint = function(JPN_size, KOR_size, Grid_Catch, Species, last_y
   )
   
   # plot the proportion of bigeye catch
-  Grid_Catch_plot2 <-
-    Grid_Catch %>% filter(SpeciesAbv == Species, Yrr > 1978, Yrr < 2020) %>%
+    Grid_Catch_plot2 <-
+    Grid_Catch %>% filter(SpeciesAbv == Species, Yrr > 1978, Yrr < 2020, as.character(FlagAbv) %in% c("JPN", "KOR")) %>%
     mutate(Decade = ifelse(
       Yrr < 1994,
       "1979-1993",
@@ -277,6 +290,12 @@ ll_fisheries_lf_joint = function(JPN_size, KOR_size, Grid_Catch, Species, last_y
   
   ggsave(
     filename = paste0(dir, Species, "_Catch_Prop.png"),
+    dpi = 300,
+    width = 10,
+    height = 5
+  )
+  ggsave(
+    filename = paste0(dir, Species, "_Catch_Prop.pdf"),
     dpi = 300,
     width = 10,
     height = 5
@@ -421,6 +440,12 @@ ll_fisheries_lf_joint = function(JPN_size, KOR_size, Grid_Catch, Species, last_y
     ylab("Fishery LF")
   ggsave(
     filename = paste0(dir, "LL Fisheries LF.png"),
+    dpi = 300,
+    width = 15,
+    height = 12
+  )
+  ggsave(
+    filename = paste0(dir, "LL Fisheries LF.pdf"),
     dpi = 300,
     width = 15,
     height = 12
