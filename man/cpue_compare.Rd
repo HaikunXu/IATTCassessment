@@ -14,10 +14,13 @@ cpue_compare(
   xlabel = "",
   ylim,
   xlim,
-  CV = TRUE,
+  CV = FALSE,
   w = 15,
-  h = 6,
-  smooth = TRUE
+  h = 8,
+  smooth = TRUE,
+  version = "New",
+  s = 0.1,
+  Figure_name = "CPUE_Compare"
 )
 }
 \description{
