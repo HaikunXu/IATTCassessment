@@ -1,6 +1,6 @@
 #' Longline catch allocation
 #' 
-#' \code{ll_catch_all} This function processes the raw LL catch data into the format for Stock Assessment
+#' \code{ll_catch_all} This function processes the raw LL catch data into the format for Stock Assessment - including catch before 1975
 #' 
 #' @export
 
