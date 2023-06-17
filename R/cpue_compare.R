@@ -29,9 +29,9 @@ cpue_compare <- function(Path, Legend, Region, Save_Path, rescale = TRUE, ylabel
     }
   }
   
-
   
   Index <- Index %>% mutate(Legend=factor(Legend),Region=Fleet,Year=Year/4+1974.875)
+  write.csv(Index, file = paste0(Save_Path, "Index.csv"), row.names = FALSE)
   
   if(rescale==TRUE) Index <- Index %>% group_by(Legend,Fleet) %>% mutate(Index=Index/mean(Index))
   
