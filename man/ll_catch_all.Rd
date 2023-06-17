@@ -7,5 +7,5 @@
 ll_catch_all(Grid_Catch, FSR_Catch, Species, last_year, dir)
 }
 \description{
-\code{ll_catch_all} This function processes the raw LL catch data into the format for Stock Assessment
+\code{ll_catch_all} This function processes the raw LL catch data into the format for Stock Assessment - including catch before 1975
 }

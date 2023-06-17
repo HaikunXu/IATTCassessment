@@ -77,6 +77,8 @@ ll_fisheries_lf_joint = function(JPN_size, KOR_size, Grid_Catch, Species, last_y
       size_data$Flag = "JPN"
       size_data_a <- rbind(size_data, KOR_LF)
       
+      write.csv(size_data_a, file = paste0(dir, LF_name, "_grid_flag.csv"), row.names = FALSE) # save
+      
       # compute proportional catch
       Grid_Catch_prop <- Grid_Catch %>% data.frame() %>%
         filter(SpeciesAbv == Species, FlagAbv %in% c("JPN", "KOR")) %>%
