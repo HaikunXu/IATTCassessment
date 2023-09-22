@@ -226,10 +226,10 @@ ll_catch = function(Grid_Catch, FSR_Catch, Species, last_year, dir) {
     Coastal_Countries <- as.character(unique(FSR_Catch$FlagAbv))[!as.character(unique(FSR_Catch$FlagAbv)) %in% Countries]
     Coastal_Countries <- sort(Coastal_Countries)
     
-    if (Species == "BET") 
-        Area_Flag <- c(6, 4, 4, 4, 6, 4, 4, 4, 4) # "CHL" "COL" "CRI" "ECU" "ESP" "HND" "PER" "PRT" "SLV"
-    if (Species == "YFT") 
-        Area_Flag <- c(1, 3, 3, 3, 3, 2, 2, 3, 3, 3, 2, 3, 3)
+    if (Species == "BET")
+      Area_Flag <- c(6, 4, 4, 4, 6, 4, 4, 4, 4) # "CHL" "COL" "CRI" "ECU" "ESP" "HND" "PER" "PRT" "SLV"
+    if (Species == "YFT")
+      Area_Flag <- c(1, 3, 3, 3, 3, 2, 2, 3, 3, 3, 2, 3, 3)
     
     print(Coastal_Countries)
     print(Area_Flag)

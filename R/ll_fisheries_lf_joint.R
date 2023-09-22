@@ -21,12 +21,12 @@ ll_fisheries_lf_joint = function(JPN_size, KOR_size, Grid_Catch, Species, last_y
       # place == 13 | YY <= 2010 # remove fishermen's LF during 2011-2014
     ) %>% 
     mutate(
-      CLS = ifelse(M_unit == 6, CLS - 1, CLS - 2),
+      # CLS = ifelse(M_unit == 6, CLS - 1, CLS - 2),
       L = cut(
         CLS,
-        breaks = c(20, seq(22, 198, 2), 400), # 20, 22, ......, 196, 198
+        breaks = c(seq(25, 195, 10), 245), # 20, 22, ......, 196, 198
         right = F,
-        labels = seq(20, 198, 2)
+        labels = seq(25, 195, 10)
       ),
       Lat = floor(Y / 5) * 5 + 2.5,
       Lon = floor((X - 360) / 5) * 5 + 2.5,
@@ -115,14 +115,14 @@ ll_fisheries_lf_joint = function(JPN_size, KOR_size, Grid_Catch, Species, last_y
     spread(L, LF, fill = 0)
   
   # fill in the missing 2-cm length bins with 0
-  for (i in seq(20, 198, 2)) {
+  for (i in seq(25, 195, 10)) {
     if (as.character(i) %in% names(grid_LF) == FALSE)
       grid_LF[[as.character(i)]] <- 0
   }
   
   # final length frequency output
   grid_LF_final <-
-    grid_LF %>% gather(as.character(seq(20, 198, 2)), key = L, value = lf) %>%
+    grid_LF %>% gather(as.character(seq(25, 195, 10)), key = L, value = lf) %>%
     mutate(L = floor(as.numeric(L)/10)*10) %>%
     group_by(Year,Lat,Lon,L) %>%
     summarise(LF=sum(lf))
@@ -384,14 +384,14 @@ ll_fisheries_lf_joint = function(JPN_size, KOR_size, Grid_Catch, Species, last_y
     spread(Length, LF_final_ss)
   
   # fill in the missing 2-cm length bins with 0
-  for (i in seq(20, 198, 2)) {
+  for (i in seq(25, 195, 10)) {
     if (as.character(i) %in% names(data_area) == FALSE)
       data_area[[as.character(i)]] <- 0
   }
   
   # final length frequency output
   data_area_final <-
-    data_area %>% gather(as.character(seq(20, 198, 2)), key = length, value = lf) %>%
+    data_area %>% gather(as.character(seq(25, 195, 10)), key = length, value = lf) %>%
     mutate(length = as.numeric(length)) %>% spread(length, lf) %>%
     arrange(Area, Year)
   
@@ -409,7 +409,7 @@ ll_fisheries_lf_joint = function(JPN_size, KOR_size, Grid_Catch, Species, last_y
       "par" = 0,
       "Nsamp" = data_area_final$Nsamp / 100
     )
-  F_LF_SS <- cbind(F_LF_SS, data_area_final[3:92], data_area_final[3:92]) # male and female LF
+  F_LF_SS <- cbind(F_LF_SS, data_area_final[3:20], data_area_final[3:20]) # male and female LF
   F_LF_SS <- data.frame(F_LF_SS) %>% filter(Nsamp >= minNsamp) # remove LF with sample size < minNsamp
   print(paste0("!!! Using a minimal sample size threshold of ", minNsamp, " !!!"))
   write.csv(F_LF_SS, file = paste0(dir, LF_name, ".csv"), row.names = FALSE) # save
@@ -420,7 +420,7 @@ ll_fisheries_lf_joint = function(JPN_size, KOR_size, Grid_Catch, Species, last_y
   #     summarise(lf_mean=sum(lf*n)/sum(n))
   
   data_plot <-
-    data_area_final %>% gather(as.character(seq(20, 198, 2)), key = length, value = lf) %>%
+    data_area_final %>% gather(as.character(seq(25, 195, 10)), key = length, value = lf) %>%
     mutate(
       Length = as.numeric(length),
       Period = cut(
