@@ -9,10 +9,10 @@ impact_plot = function(Dir, n_year, BaseName, n_fishery, title) {
     step_name <- c("noDisc", "noPS", "noLL", "noF")
     n_step <- length(step_name)
     
-    fishery1 <- 18
-    fishery2 <- seq(13,23)
-    fishery3 <- seq(1,12)
-    fishery4 <- seq(1,23)
+    fishery1 <- 20
+    fishery2 <- c(15:19,21:22)
+    fishery3 <- seq(1,14)
+    fishery4 <- seq(1,22)
     
     print("change starter file (use par and do not estimate) before this section!!!")
     
@@ -32,9 +32,9 @@ impact_plot = function(Dir, n_year, BaseName, n_fishery, title) {
     
     ParDir <- paste0(paste0(Dir, BaseName, "/ss.par"))
     ParFile <- readLines(ParDir, warn = F)
-    Line_initial <- match("# Fcast_impl_error:", ParFile)
+    Line_initial <- match("# Fcast_recruitments:", ParFile)
     Init_F_2 <- as.numeric(ParFile[Line_initial+3])
-    Init_F_14 <- as.numeric(ParFile[Line_initial+5])
+    Init_F_16 <- as.numeric(ParFile[Line_initial+5])
     
     # loop starts here
     
@@ -80,8 +80,8 @@ impact_plot = function(Dir, n_year, BaseName, n_fishery, title) {
 
         ParDir <- paste0(paste0(Dir, step_name[step]), "/ss.par")
         ParFile <- readLines(ParDir, warn = F)
-        ParFile[Line_initial+3] <- toString(Init_F_2 * sum(Catch[1:20, 1:6])/sum(Catch0[1:20, 1:6]))
-        ParFile[Line_initial+5] <- toString(Init_F_14 * sum(Catch[1:20, 13:17])/sum(Catch0[1:20, 13:17]))
+        ParFile[Line_initial+3] <- toString(Init_F_2 * sum(Catch[1:20, 1:7])/sum(Catch0[1:20, 1:7]))
+        ParFile[Line_initial+5] <- toString(Init_F_16 * sum(Catch[1:20, c(15:19,21:22)])/sum(Catch0[1:20, c(15:19,21:22)]))
 
         writeLines(ParFile, ParDir)
 
@@ -125,10 +125,27 @@ impact_plot = function(Dir, n_year, BaseName, n_fishery, title) {
     
     write.csv(SB_dif, file = paste0(Dir, "SB.csv"), row.names = FALSE)
     
-    f <- ggplot(data = SB_dif) + geom_ribbon(aes(x = Year, ymin = 0, ymax = SB), fill = "red") + geom_ribbon(aes(x = Year, 
-        ymin = SB, ymax = SB + noDisc_dif), fill = "green") + geom_ribbon(aes(x = Year, ymin = SB + noDisc_dif, ymax = SB + 
-        noDisc_dif + noPS_dif), fill = "purple") + geom_ribbon(aes(x = Year, ymin = SB + noDisc_dif + noPS_dif, ymax = SB0), fill = "blue") + theme_bw() + ylab("Spawning biomass (mt)") +
-        coord_cartesian(expand = FALSE) + ggtitle(title)
+    f <-ggplot(data = SB_dif) +
+      geom_ribbon(aes(x = Year, ymin = 0, ymax = SB), fill = "red") +
+      geom_ribbon(aes(
+        x = Year,
+        ymin = SB,
+        ymax = SB + noDisc_dif
+      ), fill = "green") +
+      geom_ribbon(aes(
+        x = Year,
+        ymin = SB + noDisc_dif,
+        ymax = SB +
+          noDisc_dif + noPS_dif
+      ), fill = "purple") +
+      geom_ribbon(aes(
+        x = Year,
+        ymin = SB + noDisc_dif + noPS_dif,
+        ymax = SB0
+      ), fill = "blue") +
+      theme_bw() + ylab("") + xlab("") +
+      coord_cartesian(expand = FALSE) + ggtitle(title) +
+      theme(plot.title = element_text(hjust = 0.5))
     
     ggsave(f, file = paste0(Dir, "impact_plots.png"), width = 8, height = 6)
     ggsave(f, file = paste0(Dir, "impact_plots.eps"), width = 8, height = 6)
