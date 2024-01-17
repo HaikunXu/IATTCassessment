@@ -10,14 +10,16 @@ area_code = function(Lat, Lon, Species) {
     if (Species == "BET") {
         i2 <- which(Lat > -5 & Lat < 10 & Lon < (-105))
         Areas[i2] <- 2
-        i3 <- which(Lat < (-5) & Lat > -15 & Lon < (-105))
+        i3 <- which(Lat < (-5) & Lat > -15 & Lon < (-130) & Lon > (-150))
         Areas[i3] <- 3
-        i4 <- which(Lon > -105 & Lat > -15)
+        i4 <- which(Lat < (-5) & Lat > -15 & Lon < (-105) & Lon > (-130))
         Areas[i4] <- 4
-        i5 <- which(Lat < (-15) & Lon < (-90))
+        i5 <- which(Lon > -105 & Lat > -15)
         Areas[i5] <- 5
-        i6 <- which(Lat < (-15) & Lon > -90)
+        i6 <- which(Lat < (-15) & Lon < (-90))
         Areas[i6] <- 6
+        i7 <- which(Lat < (-15) & Lon > (-90))
+        Areas[i7] <- 7
     }
     
     if (Species == "YFT") {
