@@ -4,8 +4,8 @@
 \alias{PlotSelex}
 \title{Plot size selectivity for SS runs}
 \usage{
-PlotSelex(Path, replist, FleetNums, numRows, numCols, w, h)
+PlotSelex(Path, FleetNums, numRows = 0, w = 8, h = 8)
 }
 \description{
-\code{PlotSelex} This function plot estimated selectivity curves for specified fleets
+/code{PlotSelex} This function plot estimated selectivity curves for specified fleets
 }

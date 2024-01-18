@@ -17,7 +17,6 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE)
 * This document provides the data figures for the assessment report for Bigeye.
 * This code is run on `r Sys.Date()` by Haikun Xu.
 * The model used to generate this document is `r Path`
-* Results are saved in `r RmdPath`
 
 \newpage
 
@@ -28,29 +27,34 @@ Catch_Fleet <- myreplist$catch %>%
   group_by(Fleet,Year) %>%
   summarise(Catch=sum(sel_bio))
 
-Fisheries <- Fleet_DF %>% filter(Fleet_Type==1)
+Fisheries <- Fleet_DF %>% filter(Fleet_Type==1) # Fishery fleets
   
 Catch_Fleet2 <- left_join(Catch_Fleet,Fisheries) %>%
   mutate(Fleet_Name2=paste0("Fleet",Fleet," (",Fleet_Name,")")) %>%
-  mutate(Fleet_Name2=fct_reorder(Fleet_Name2, Fleet))
+  mutate(Fleet_Name2=fct_reorder(Fleet_Name2, Fleet)) %>%
+  group_by(Gear, Area, Year) %>%
+  summarise(Catch=sum(Catch))
 
 f1a <- ggplot(data=Catch_Fleet2) +
-  geom_line(aes(x=Year,y=Catch,color=Gear)) +
-  facet_wrap(~Fleet_Name2) +
-  theme_bw(15)
+  geom_bar(aes(x=Year,y=Catch,fill=Gear),stat="identity") +
+  facet_wrap(~Area) +
+  ylab("Catch (mt)") +
+  theme_bw(14)
 
 ggsave(f1a,file=paste0(Path,"Catch.pdf"),width=10,height=10)
+ggsave(f1a,file=paste0(Path,"Catch.png"),width=10,height=10)
 
 Catch_Fleet_all <- Catch_Fleet2 %>%
   group_by(Year,Gear) %>%
   summarise(Catch=sum(Catch))
 
 f1b <- ggplot(data=Catch_Fleet_all) +
-  geom_area(aes(x=Year,y=Catch,fill=Gear)) +
-  # facet_wrap(~Fleet_Name2) +
-  theme_bw(15)
+  geom_bar(aes(x=Year,y=Catch,fill=Gear),stat="identity") +
+  ylab("Catch (mt)") +
+  theme_bw(16)
 
 ggsave(f1b,file=paste0(Path,"Catch_all.pdf"),width=10,height=10)
+ggsave(f1b,file=paste0(Path,"Catch_all.png"),width=10,height=10)
 
 f1a
 f1b
@@ -76,7 +80,8 @@ Comps <- left_join(comps,Fleet_DF)%>%
 f2 <- ggplot(data=Comps)+
   geom_ribbon(aes(x=Bin,ymin=0,ymax=Comp,fill=Gear))+theme_bw(16) +
   facet_wrap(~Fleet_Name2) + 
-  ylab("Weighted length freqeuncy") + xlab("Length (cm)")
+  ylab("Weighted length freqeuncy") + xlab("Length (cm)") +
+  coord_cartesian(ylim = c(0, 0.05))
 
 ggsave(f2, file = paste0(Path, "Comps.png"), width = 10, height = 10)
 ggsave(f2, file = paste0(Path, "Comps.pdf"), width = 10, height = 10)
@@ -103,28 +108,28 @@ f2
 ```
 
 ```{r 4:Sample Size}
-Sample_Size <- myreplist$len_comp_fit_table %>%
-  select(!Area) %>%
-  mutate(Year=ceiling(Yr/4)+1974) %>%
-  group_by(Fleet,Year) %>%
-  summarise(Nsamp=sum(Nsamp_adj))
-
-Sample_Size2 <- left_join(Sample_Size,Fleet_DF) %>%
-  filter(SFleet=="Y") %>%
-  select(Year,Nsamp,Area,Gear,Fleet) %>%
-  spread(Year,Nsamp,fill = 0) %>%
-  gather(as.character(c(Startyr:Endyr)),value="Nsamp",key="Year") %>%
-  mutate(Year=as.numeric(Year))
-
-f4 <- ggplot(data=Sample_Size2) +
-  geom_point(aes(x=Year,y=Nsamp,color=Area),alpha=0.25) +
-  geom_smooth(aes(x=Year,y=Nsamp,color=Area),span=0.2,se = FALSE) +
-  facet_wrap(~Gear,nrow=2,scales = "free") +
-  theme_bw(16)
-
-ggsave(f4, file = paste0(Path, "Sample_Size.pdf"), width = 10, height = 10)
-
-f4
+# Sample_Size <- myreplist$len_comp_fit_table %>%
+#   select(!Area) %>%
+#   mutate(Year=ceiling(Yr/4)+1974) %>%
+#   group_by(Fleet,Year) %>%
+#   summarise(Nsamp=sum(Nsamp_adj))
+# 
+# Sample_Size2 <- left_join(Sample_Size,Fleet_DF) %>%
+#   filter(SFleet=="Y") %>%
+#   select(Year,Nsamp,Area,Gear,Fleet) %>%
+#   spread(Year,Nsamp,fill = 0) %>%
+#   gather(as.character(c(Startyr:Endyr)),value="Nsamp",key="Year") %>%
+#   mutate(Year=as.numeric(Year))
+# 
+# f4 <- ggplot(data=Sample_Size2) +
+#   geom_point(aes(x=Year,y=Nsamp,color=Area),alpha=0.25) +
+#   geom_smooth(aes(x=Year,y=Nsamp,color=Area),span=0.2,se = FALSE) +
+#   facet_wrap(~Gear,nrow=2,scales = "free") +
+#   theme_bw(16)
+# 
+# ggsave(f4, file = paste0(Path, "Sample_Size.pdf"), width = 10, height = 10)
+# 
+# f4
 ```
 
 ```{r 5:CPUE}
@@ -141,7 +146,8 @@ f5 <- ggplot(data=CPUE2) +
   theme_bw(16) +
   coord_cartesian(ylim=c(0,max(exp(log(CPUE2$Obs)+1.96*CPUE2$SE))))
 
-ggsave(f5, file = paste0(Path, "CPUE.pdf"), width = 10, height = 10)
+ggsave(f5, file = paste0(Path, "CPUE.pdf"), width = 12, height = 8)
+ggsave(f5, file = paste0(Path, "CPUE.png"), width = 12, height = 8)
 
 f5
 ```

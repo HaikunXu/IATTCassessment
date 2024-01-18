@@ -227,7 +227,7 @@ ll_catch = function(Grid_Catch, FSR_Catch, Species, last_year, dir) {
     Coastal_Countries <- sort(Coastal_Countries)
     
     if (Species == "BET")
-      Area_Flag <- c(6, 4, 4, 4, 6, 4, 4, 4, 4) # "CHL" "COL" "CRI" "ECU" "ESP" "HND" "PER" "PRT" "SLV"
+      Area_Flag <- c(6, 4, 4, 4, 6, 4, 4, 4, 4) + 1 # "CHL" "COL" "CRI" "ECU" "ESP" "HND" "PER" "PRT" "SLV"
     if (Species == "YFT")
       Area_Flag <- c(1, 3, 3, 3, 3, 2, 2, 3, 3, 3, 2, 3, 3)
     
@@ -268,11 +268,14 @@ ll_catch = function(Grid_Catch, FSR_Catch, Species, last_year, dir) {
     LL_Catch_plot <- data.frame(LL_Catch) %>%
       gather(c(paste0("N", seq(1, n_areas)), paste0("W", seq(1, n_areas))), key = "Fishery",value = "Catch") %>%
       mutate(Unit = ifelse(substr(Fishery,1,1)=="N","Number","Weight"),
-             Area = substr(Fishery,2,2))
+             Area = substr(Fishery,2,2),
+             Year = floor(YQ)) %>%
+      group_by(Area, Unit, Year) %>%
+      summarise(Catch = sum(Catch))
     
     ggplot(data=LL_Catch_plot) +
-      geom_line(aes(x=YQ,y=Catch,color=Area),alpha=0.25) +
-      geom_smooth(aes(x=YQ,y=Catch,color=Area),span=0.25,se=FALSE) +
+      geom_bar(aes(x=Year,y=Catch,fill=Area),position = "stack", stat="identity") +
+      # geom_smooth(aes(x=YQ,y=Catch,color=Area),span=0.25,se=FALSE) +
       facet_wrap(~Unit, scales="free_y", nrow=2) +
       theme_bw()
     ggsave(filename = paste0(dir,"Catches.png"), dpi = 300, width = 8, height = 8)

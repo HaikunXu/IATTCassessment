@@ -6,16 +6,17 @@
 \usage{
 PlotSplines(
   Path = Path,
-  Allfleets = c(1:6, 13:17, 19:20),
+  Allfleets,
   f,
   fyears,
   lyears,
   nr,
   nc,
   w,
-  h
+  h,
+  name = "Selex"
 )
 }
 \description{
-\code{PlotSplines} This function comapres estimated and emperical selectivity curves for specified fleets
+\code{PlotSplines} This function compares estimated and empirical selectivity curves for specified fleets
 }
