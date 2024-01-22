@@ -19,10 +19,10 @@ ASPM = function(Path, ASPM_Path, Rdevs) {
             overwrite = TRUE)
   
   # use control_new
-  dat <-
-    SS_readdat_3.30(file = paste0(ASPMPath, "/BET-EPO.dat"),
-                    verbose = FALSE)
-  ctl <- SS_readctl_3.30(
+  dat <- r4ss::SS_readdat_3.30(file = paste0(ASPMPath, "/BET-EPO.dat"),
+                         verbose = FALSE)
+  
+  ctl <- r4ss::SS_readctl_3.30(
     file = paste0(ASPMPath, "/control.ss_new"),
     verbose = FALSE,
     datlist = dat,
@@ -57,7 +57,7 @@ ASPM = function(Path, ASPM_Path, Rdevs) {
   ctl$MG_parms$PHASE[1:6] <- -1
   
   # write the new control file
-  SS_writectl_3.30(
+  r4ss::SS_writectl_3.30(
     ctl,
     outfile = paste0(ASPMPath, "/BET-EPO.ctl"),
     overwrite = TRUE,
@@ -76,7 +76,7 @@ ASPM = function(Path, ASPM_Path, Rdevs) {
   ss <- shell(cmd = command, intern = T, wait = T)
   
   # check the max gradient
-  myreplist <- SS_output(
+  myreplist <- r4ss::SS_output(
     dir = ASPMPath,
     # ncols = 400,
     covar = F,

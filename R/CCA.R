@@ -19,10 +19,10 @@ CCA = function(Path, CCA_Path) {
             overwrite = TRUE)
   
   # use control_new
-  dat <-
-    SS_readdat_3.30(file = paste0(CCAPath, "/BET-EPO.dat"),
+  dat <- r4ss::SS_readdat_3.30(file = paste0(CCAPath, "/BET-EPO.dat"),
                     verbose = FALSE)
-  ctl <- SS_readctl_3.30(
+  
+  ctl <- r4ss::SS_readctl_3.30(
     file = paste0(CCAPath, "/control.ss_new"),
     verbose = FALSE,
     datlist = dat,
@@ -33,12 +33,12 @@ CCA = function(Path, CCA_Path) {
   ctl$lambdas <- rbind(ctl$lambdas, c(1, 23, 1, 0, 1))
   ctl$N_lambdas <- ctl$N_lambdas + 1
   
-  # q
+  # do not estimate catchability
   ctl$Q_options$float <- 1
   ctl$Q_parms$PHASE <- -1
   
   # write the new control file
-  SS_writectl_3.30(
+  r4ss::SS_writectl_3.30(
     ctl,
     outfile = paste0(CCAPath, "/BET-EPO.ctl"),
     overwrite = TRUE,
@@ -57,7 +57,7 @@ CCA = function(Path, CCA_Path) {
   ss <- shell(cmd = command, intern = T, wait = T)
   
   # check the max gradient
-  myreplist <- SS_output(
+  myreplist <- r4ss::SS_output(
     dir = CCAPath,
     # ncols = 400,
     covar = F,

@@ -7,7 +7,7 @@
 Index_CV = function(Path) {
   
   # from https://github.com/PacificCommunity/ofp-sam-2023-assessments/blob/main/cpue/cv/demo/simple/sigma.R
-  Replist <- SS_output(
+  Replist <- r4ss::SS_output(
     dir = Path,
     covar = F,
     verbose = FALSE,

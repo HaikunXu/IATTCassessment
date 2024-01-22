@@ -68,7 +68,7 @@ make_kobetable_SAC11 <- function(Path, KobePath, FFleets, STD_only = TRUE, newSS
   names(dSpawnBioYr.Out) <- c("Year", "SB", "SBR")
   
   # Get the std vales
-  if(STD_only==TRUE) {
+  if(STD_only==TRUE) { # only get the std value of the terminal estimate
     if(newSS==FALSE) {
       Table <- makeManagTable(Path, FFleets = FFleets)
       print("************do not use the new ss************")
@@ -104,7 +104,7 @@ make_kobetable_SAC11 <- function(Path, KobePath, FFleets, STD_only = TRUE, newSS
     Kobe.Out <- list(STD=STD)
   }
   
-  ################################################################################################# STEP 2 - Do the interative Kobe runs
+  ################################################################################################# STEP 2 - Do the interactive Kobe runs
   else { # run the kobe trajectory code
     ## 2.1 - Get replist from the Kobe run and create the forecast file qrt definition tables
     
