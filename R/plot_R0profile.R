@@ -15,7 +15,7 @@ plot_R0profile = function(Path, R0, R0_MLE, Fleet_comps) {
                       "Recruit"=rep(NA,N),
                       "R0"=R0)
   NLL_comp <- data.frame("R0"=R0)
-  for(f in 1:length(comps)) NLL_comp <- cbind(NLL_comp, rep(NA,N))
+  for(f in 1:length(Fleet_comps)) NLL_comp <- cbind(NLL_comp, rep(NA,N))
   
   for (n in 1:N) {
     myreplist = r4ss::SS_output(dir = paste0(Path,toString(R0[n])),covar = F,verbose = FALSE, printstats = FALSE)
@@ -27,9 +27,9 @@ plot_R0profile = function(Path, R0, R0_MLE, Fleet_comps) {
     NLL_a[n,5] <- myreplist$likelihoods_by_fleet[14,25]
     
     NLL_temp <- myreplist$likelihoods_by_fleet
-    for(c in 1:length(comps)) {
-      if(comps[c]>7) NLL_comp[n,c+1] <- NLL_temp[NLL_temp$Label=="Length_like",comps[c]+2]
-      else NLL_comp[n,c+1] <- NLL_temp[NLL_temp$Label=="SizeFreq_like:_1",comps[c]+2]
+    for(c in 1:length(Fleet_comps)) {
+      if(Fleet_comps[c]>7) NLL_comp[n,c+1] <- NLL_temp[NLL_temp$Label=="Length_like",Fleet_comps[c]+2]
+      else NLL_comp[n,c+1] <- NLL_temp[NLL_temp$Label=="SizeFreq_like:_1",Fleet_comps[c]+2]
     }
     
   }
@@ -47,8 +47,8 @@ plot_R0profile = function(Path, R0, R0_MLE, Fleet_comps) {
   
   ggsave(f1, file = paste0(Path, "R0.png"), width = 12, height = 8)
   
-  names(NLL_comp)[2:(length(comps)+1)] <- names(NLL_temp)[comps+2]
-  NLL_comp_amin <- NLL_comp %>% gather(2:(length(comps)+1),value="nll",key="Fleet") %>%
+  names(NLL_comp)[2:(length(Fleet_comps)+1)] <- names(NLL_temp)[Fleet_comps+2]
+  NLL_comp_amin <- NLL_comp %>% gather(2:(length(Fleet_comps)+1),value="nll",key="Fleet") %>%
     group_by(Fleet) %>% mutate(NLL=nll-min(nll))
   NLL_comp_amin$Gear <- rep(c(rep("LL", 7), rep("OBJ", 5), rep("NOA", 2)), each = N)
   NLL_comp_amin$Area <- rep(c("A1", "A2", "A3", "A4", "A5", "A6", "A7",
