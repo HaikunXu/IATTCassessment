@@ -29,15 +29,25 @@ Catch_Fleet <- myreplist$catch %>%
 
 Fisheries <- Fleet_DF %>% filter(Fleet_Type==1) # Fishery fleets
   
-Catch_Fleet2 <- left_join(Catch_Fleet,Fisheries) %>%
-  mutate(Fleet_Name2=paste0("Fleet",Fleet," (",Fleet_Name,")")) %>%
-  mutate(Fleet_Name2=fct_reorder(Fleet_Name2, Fleet)) %>%
+Catch_Fleet2 <- left_join(Catch_Fleet, Fisheries) %>%
+  mutate(Fleet_Name2 = paste0("Fleet", Fleet, " (", Fleet_Name, ")")) %>%
+  mutate(Fleet_Name2 = fct_reorder(Fleet_Name2, Fleet)) %>%
   group_by(Gear, Area, Year) %>%
-  summarise(Catch=sum(Catch))
+  summarise(Catch = sum(Catch))
 
-f1a <- ggplot(data=Catch_Fleet2) +
-  geom_bar(aes(x=Year,y=Catch,fill=Gear),stat="identity") +
-  facet_wrap(~Area) +
+Catch_Fleet_mean <- Catch_Fleet2 %>%
+  group_by(Gear, Area) %>%
+  summarise(Catch_mean = mean(Catch))
+
+f1a <- ggplot(data = Catch_Fleet2) +
+  geom_bar(aes(x = Year, y = Catch, fill = Gear), stat = "identity") +
+  geom_hline(
+    aes(yintercept = Catch_mean),
+    data = Catch_Fleet_mean,
+    linetype = "dashed",
+    linewidth = 1
+  ) +
+  facet_wrap( ~ Area) +
   ylab("Catch (mt)") +
   theme_bw(14)
 
@@ -80,7 +90,7 @@ Comps <- left_join(comps,Fleet_DF)%>%
 f2 <- ggplot(data=Comps)+
   geom_ribbon(aes(x=Bin,ymin=0,ymax=Comp,fill=Gear))+theme_bw(16) +
   facet_wrap(~Fleet_Name2) + 
-  ylab("Weighted length freqeuncy") + xlab("Length (cm)") +
+  ylab("Proportion") + xlab("Length (cm)") +
   coord_cartesian(ylim = c(0, 0.05))
 
 ggsave(f2, file = paste0(Path, "Comps.png"), width = 10, height = 10)
@@ -133,41 +143,41 @@ f2
 ```
 
 ```{r 5:CPUE}
-CPUE <- myreplist$cpue %>%
-  select(!Area) %>%
-  mutate(Year=Yr/4+1974.75)
-
-CPUE2 <- left_join(CPUE,Fleet_DF)
-
-f5 <- ggplot(data=CPUE2) +
-  geom_line(aes(x=Year,y=Obs,color=Fleet_Name)) +
-  geom_point(aes(x=Year,y=Obs,color=Fleet_Name)) +
-  geom_ribbon(aes(x=Year,ymin=exp(log(Obs)-1.96*SE),ymax=exp(log(Obs)+1.96*SE),fill=Fleet_Name),alpha=0.25) +
-  theme_bw(16) +
-  coord_cartesian(ylim=c(0,max(exp(log(CPUE2$Obs)+1.96*CPUE2$SE))))
-
-ggsave(f5, file = paste0(Path, "CPUE.pdf"), width = 12, height = 8)
-ggsave(f5, file = paste0(Path, "CPUE.png"), width = 12, height = 8)
-
-f5
+# CPUE <- myreplist$cpue %>%
+#   select(!Area) %>%
+#   mutate(Year=Yr/4+1974.75)
+# 
+# CPUE2 <- left_join(CPUE,Fleet_DF)
+# 
+# f5 <- ggplot(data=CPUE2) +
+#   geom_line(aes(x=Year,y=Obs,color=Fleet_Name)) +
+#   geom_point(aes(x=Year,y=Obs,color=Fleet_Name)) +
+#   geom_ribbon(aes(x=Year,ymin=exp(log(Obs)-1.96*SE),ymax=exp(log(Obs)+1.96*SE),fill=Fleet_Name),alpha=0.25) +
+#   theme_bw(16) +
+#   coord_cartesian(ylim=c(0,max(exp(log(CPUE2$Obs)+1.96*CPUE2$SE))))
+# 
+# ggsave(f5, file = paste0(Path, "CPUE.pdf"), width = 12, height = 8)
+# ggsave(f5, file = paste0(Path, "CPUE.png"), width = 12, height = 8)
+# 
+# f5
 ```
 
 ```{r 6:Mean Length}
-Mean_Len <- myreplist$lendbase %>% filter(Sex==1) %>%
-  select(!Area) %>%
-  mutate(Year=ceiling(Yr/4)+1974) %>%
-  group_by(Fleet,Year) %>% summarise(MeanL=sum(Obs*(Bin+1))/sum(Obs)) 
-
-Mean_Len2 <- left_join(Mean_Len,Fleet_DF) %>%
-  filter(SFleet=="Y", Area != "Area1")
-
-f6 <- ggplot(data=Mean_Len2)+
-  geom_point(aes(x=Year,y=MeanL,color=Area),alpha=0.5)+
-  geom_smooth(aes(x=Year,y=MeanL,color=Area,fill=Area),alpha=0.2)+
-  facet_wrap(~Gear,nrow=2,scales = "free") +
-  theme_bw(16)
-
-ggsave(f6, file = paste0(Path, "MeanL.pdf"), width = 10, height = 10)
-
-f6
+# Mean_Len <- myreplist$lendbase %>% filter(Sex==1) %>%
+#   select(!Area) %>%
+#   mutate(Year=ceiling(Yr/4)+1974) %>%
+#   group_by(Fleet,Year) %>% summarise(MeanL=sum(Obs*(Bin+1))/sum(Obs)) 
+# 
+# Mean_Len2 <- left_join(Mean_Len,Fleet_DF) %>%
+#   filter(SFleet=="Y", Area != "Area1")
+# 
+# f6 <- ggplot(data=Mean_Len2)+
+#   geom_point(aes(x=Year,y=MeanL,color=Area),alpha=0.5)+
+#   geom_smooth(aes(x=Year,y=MeanL,color=Area,fill=Area),alpha=0.2)+
+#   facet_wrap(~Gear,nrow=2,scales = "free") +
+#   theme_bw(16)
+# 
+# ggsave(f6, file = paste0(Path, "MeanL.pdf"), width = 10, height = 10)
+# 
+# f6
 ```
