@@ -4,8 +4,8 @@
 #' 
 #' @export
 
-makeManagTable.new <- function(Path, FFleets, FstdPath, FlimitPath, dMSYPath) {
-    replist <- r4ss::SS_output(dir = Path, ncols = 400, covar = T, printstats = F, verbose = FALSE)
+makeManagTable.new <- function(Path, FFleets, FlimitPath, dMSYPath) {
+    replist <- r4ss::SS_output(dir = Path, covar = T, printstats = F, verbose = FALSE)
     TimeSeries <- replist$timeseries
     # numFleets <- replist$nfleets # all fleets including surveys
     # numFleets <- replist$nfishfleets  # only fisheries fleets <>< Change 15 March 2016
@@ -16,7 +16,7 @@ makeManagTable.new <- function(Path, FFleets, FstdPath, FlimitPath, dMSYPath) {
     lyear <- floor(1975 + (endYr/4) - 0.25)
     
     # Make forecast management report name
-    ForeRepName <- paste(FstdPath, "Forecast-report.SSO", sep = "")
+    ForeRepName <- paste(Path, "Forecast-report.SSO", sep = "")
     # Get management report
     ForeRepStart <- grep("Management_report", readLines(ForeRepName))
     ForeRepEnd <- grep("THIS FORECAST FOR PURPOSES", readLines(ForeRepName))[1]
@@ -42,7 +42,6 @@ makeManagTable.new <- function(Path, FFleets, FstdPath, FlimitPath, dMSYPath) {
     
     # Crecent <- sum(ForeTS[ForeTS$Yr %in% seq(endYr - 3, endYr, 1), 5:dim(ForeTS)[2]])
     
-    options(scipen = 2)  # Do not use scientific notation in plotting
     # Get management quantities msy msy <- as.numeric(ForeDat[ForeDat[,1]==c('MSY_for_optimize'),5])*4/1000
     msy <- as.numeric(ForeDat[ForeDat[, 1] == c("MSY_for_optimize"), 2]) * 4
     # Bmsy Bmsy <- as.numeric(ForeDat[ForeDat[,1]==c('Biomass_Smry'),5])/1000
@@ -76,7 +75,7 @@ makeManagTable.new <- function(Path, FFleets, FstdPath, FlimitPath, dMSYPath) {
     
     # new code to extract the std of F multiplier using the new ss; 04/26/2020
     
-    STD <- read.table(file = paste0(FstdPath,"ss.std"),skip = 1)
+    STD <- read.table(file = paste0(Path,"ss.std"),skip = 1)
     names(STD) <- c("index", "name", "value", "std")
     
     FrecentFmsy_line <- which(STD$name=="F_std")[endYr-startYr+1] # the last 12 quarters
@@ -111,14 +110,14 @@ makeManagTable.new <- function(Path, FFleets, FstdPath, FlimitPath, dMSYPath) {
     SrecentS0 <- cor_mat$value[max(which(cor_mat$name == "depletion"))]
     SrecentS0_std <- cor_mat$std.dev[max(which(cor_mat$name == "depletion"))]
     
-    png(paste0(Path,"SrecentSlim.png"),width = 500, height =500)  
-    plot(seq(0,3*SrecentSlim,0.01),pnorm(seq(0,3*SrecentSlim,0.01),SrecentSlim,SrecentSlim_std),
-         main = "SrecentSlim(+-std)",xlab="Srecent/Slim",ylab="P(Scur<Slimit)")
-    abline(v=SrecentSlim)
-    abline(v=SrecentSlim-SrecentSlim_std,lty="dashed")
-    abline(v=SrecentSlim+SrecentSlim_std,lty="dashed")
-    abline(v=1,col="red")
-    dev.off()
+    # png(paste0(Path,"SrecentSlim.png"),width = 500, height =500)  
+    # plot(seq(0,3*SrecentSlim,0.01),pnorm(seq(0,3*SrecentSlim,0.01),SrecentSlim,SrecentSlim_std),
+    #      main = "SrecentSlim(+-std)",xlab="Srecent/Slim",ylab="P(Scur<Slimit)")
+    # abline(v=SrecentSlim)
+    # abline(v=SrecentSlim-SrecentSlim_std,lty="dashed")
+    # abline(v=SrecentSlim+SrecentSlim_std,lty="dashed")
+    # abline(v=1,col="red")
+    # dev.off()
     
     Prob_Slimit <- pnorm(1,SrecentSlim,SrecentSlim_std) # P(Scur<Slimit)
     
@@ -130,19 +129,19 @@ makeManagTable.new <- function(Path, FFleets, FstdPath, FlimitPath, dMSYPath) {
     FrecentFlim <- STD$value[FrecentFlim_line]
     FrecentFlim_std <- STD$std[FrecentFlim_line]
     
-    png(paste0(Path,"FrecentFlim.png"),width = 500, height =500)  
-    plot(seq(0,2*FrecentFlim,0.01),pnorm(seq(0,2*FrecentFlim,0.01),FrecentFlim,FrecentFlim_std),
-         main = "FrecentFlim(+-std)",xlab="Frecent/Flim",ylab="P(Fcur>Flimit)")
-    abline(v=FrecentFlim)
-    abline(v=FrecentFlim-FrecentFlim_std,lty="dashed")
-    abline(v=FrecentFlim+FrecentFlim_std,lty="dashed")
-    abline(v=1,col="red")
-    dev.off()
+    # png(paste0(Path,"FrecentFlim.png"),width = 500, height =500)  
+    # plot(seq(0,2*FrecentFlim,0.01),pnorm(seq(0,2*FrecentFlim,0.01),FrecentFlim,FrecentFlim_std),
+    #      main = "FrecentFlim(+-std)",xlab="Frecent/Flim",ylab="P(Fcur>Flimit)")
+    # abline(v=FrecentFlim)
+    # abline(v=FrecentFlim-FrecentFlim_std,lty="dashed")
+    # abline(v=FrecentFlim+FrecentFlim_std,lty="dashed")
+    # abline(v=1,col="red")
+    # dev.off()
     
     Prob_Flimit <- 1 - pnorm(1,FrecentFlim,FrecentFlim_std) # P(Fcur>Flimit)
     
     ### dynamic SMSY (5/13/2020); from function makeManagTable.new
-    Dynamic.rep <- r4ss::SS_output(dir = dMSYPath, ncols = 400, covar = F, verbose = F, printstats = F)  # dyanmic Smsy
+    Dynamic.rep <- r4ss::SS_output(dir = dMSYPath, covar = F, verbose = F, printstats = F)  # dyanmic Smsy
     
     dSPBdat <- Dynamic.rep$timeseries
     dSPBdat$Yr2 <- 1975 + (dSPBdat$Y/4) - 0.25
