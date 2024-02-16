@@ -51,14 +51,14 @@ plot_R0profile = function(Path, R0, R0_MLE, Fleet_comps) {
   NLL_comp_amin <- NLL_comp %>% gather(2:(length(Fleet_comps)+1),value="nll",key="Fleet") %>%
     group_by(Fleet) %>% mutate(NLL=nll-min(nll))
   NLL_comp_amin$Gear <- rep(c(rep("LL", 7), rep("OBJ", 5), rep("NOA", 2)), each = N)
-  NLL_comp_amin$Area <- rep(c("A1", "A2", "A3", "A4", "A5", "A6", "A7",
-                              "A1", "A2", "A3", "A4", "A5",
-                              "A1", "A2"), each = N)
+  NLL_comp_amin$Area <- rep(c("1", "2", "3", "4", "5", "6", "7",
+                              "1", "2", "3", "4", "5",
+                              "1", "2"), each = N)
   
   
-  f2 <- ggplot(NLL_comp_amin) +
+  f2 <- ggplot(NLL_comp_amin %>% filter(Gear != "NOA")) +
     geom_line(aes(x = R0, y = NLL, color = Area)) +
-    geom_point(aes(x = R0, y = NLL, color = Area)) +
+    geom_text(aes(x = R0, y = NLL, label = Area, color = Area),size = 6) +
     theme_bw() +
     facet_wrap(~ Gear, nrow = 1) +
     geom_vline(xintercept = R0_MLE,
@@ -66,7 +66,7 @@ plot_R0profile = function(Path, R0, R0_MLE, Fleet_comps) {
                size = 1) +
     xlab("ln(R0)")
   
-  ggsave(f2, file = paste0(Path, "R0_F.png"), width = 16, height = 8)
+  ggsave(f2, file = paste0(Path, "R0_F.png"), width = 10, height = 5)
   
   return(f1)
     
