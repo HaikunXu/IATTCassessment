@@ -19,7 +19,7 @@ makeManagTable.new <- function(Path, FFleets, FlimitPath, dMSYPath) {
     ForeRepName <- paste(Path, "Forecast-report.SSO", sep = "")
     # Get management report
     ForeRepStart <- grep("Management_report", readLines(ForeRepName))
-    ForeRepEnd <- grep("THIS FORECAST FOR PURPOSES", readLines(ForeRepName))[1]
+    ForeRepEnd <- grep("THIS FORECAST IS FOR PURPOSES", readLines(ForeRepName))[1]
     
     # ForeDat <- read.table(file=ForeRepName,col.names=c(seq(1,10,by=1)),fill=T,quote='',colClasses='character',
     # nrows=45, skip = ForeRepStart-1)
