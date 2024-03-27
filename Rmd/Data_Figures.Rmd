@@ -82,7 +82,7 @@ SizeComps <- myreplist$sizedbase %>% filter(Sex==1) %>%
   
 comps <- rbind(LenComps,SizeComps)
   
-Comps <- left_join(comps,Fleet_DF)%>%
+Comps <- left_join(comps,Fleet_DF) %>%
   # mutate(Fleet_Name2=paste0("Fleet",Fleet," (",Fleet_Name,")")) %>%
   mutate(Fleet_Name2=Fleet_Name) %>%
   mutate(Fleet_Name2=fct_reorder(Fleet_Name2, Fleet))
@@ -96,7 +96,7 @@ f2 <- ggplot(data=Comps)+
 ggsave(f2, file = paste0(Path, "Comps.png"), width = 10, height = 10)
 ggsave(f2, file = paste0(Path, "Comps.pdf"), width = 10, height = 10)
 
-f2
+# f2
 ```
 
 ```{r 3:CAAL}
@@ -118,26 +118,24 @@ f2
 ```
 
 ```{r 4:Sample Size}
-# Sample_Size <- myreplist$len_comp_fit_table %>%
-#   select(!Area) %>%
-#   mutate(Year=ceiling(Yr/4)+1974) %>%
-#   group_by(Fleet,Year) %>%
-#   summarise(Nsamp=sum(Nsamp_adj))
+Sample_Size <- myreplist$len_comp_fit_table %>%
+  # select(!Area) %>%
+  mutate(Year=ceiling(Yr/4)+1974) %>%
+  group_by(Fleet,Year) %>%
+  summarise(Nsamp=sum(Nsamp_in))
 # 
-# Sample_Size2 <- left_join(Sample_Size,Fleet_DF) %>%
-#   filter(SFleet=="Y") %>%
-#   select(Year,Nsamp,Area,Gear,Fleet) %>%
-#   spread(Year,Nsamp,fill = 0) %>%
-#   gather(as.character(c(Startyr:Endyr)),value="Nsamp",key="Year") %>%
-#   mutate(Year=as.numeric(Year))
+SS <- left_join(Sample_Size,Fleet_DF) %>%
+  filter(Fleet<20)
 # 
-# f4 <- ggplot(data=Sample_Size2) +
-#   geom_point(aes(x=Year,y=Nsamp,color=Area),alpha=0.25) +
-#   geom_smooth(aes(x=Year,y=Nsamp,color=Area),span=0.2,se = FALSE) +
-#   facet_wrap(~Gear,nrow=2,scales = "free") +
-#   theme_bw(16)
+f4 <- ggplot(data=SS) +
+  geom_bar(aes(x=Year,y=Nsamp), stat = "identity") +
+  facet_wrap(~Area,nrow=2) +
+  theme_bw(14) +
+  xlab("") +
+  ylab("Sample Size")
 # 
-# ggsave(f4, file = paste0(Path, "Sample_Size.pdf"), width = 10, height = 10)
+ggsave(f4, file = paste0(Path, "Sample_Size.pdf"), width = 10, height = 8)
+ggsave(f4, file = paste0(Path, "Sample_Size.png"), width = 10, height = 8)
 # 
 # f4
 ```
