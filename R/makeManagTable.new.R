@@ -75,7 +75,7 @@ makeManagTable.new <- function(Path, FFleets, FlimitPath, dMSYPath) {
     
     # new code to extract the std of F multiplier using the new ss; 04/26/2020
     
-    STD <- read.table(file = paste0(Path,"ss.std"),skip = 1)
+    STD <- read.table(file = paste0(Path,"ss3.std"),skip = 1)
     names(STD) <- c("index", "name", "value", "std")
     
     FrecentFmsy_line <- which(STD$name=="F_std")[endYr-startYr+1] # the last 12 quarters
@@ -102,7 +102,7 @@ makeManagTable.new <- function(Path, FFleets, FlimitPath, dMSYPath) {
     SrecentdS0 <- Srecent/S0_d
     
     # get Srecent/Slimit (5/5/2020)
-    cor_mat <- read.table(paste0(Path, "ss.std"), skip = 1, fill = NA, header = FALSE)
+    cor_mat <- read.table(paste0(Path, "ss3.std"), skip = 1, fill = NA, header = FALSE)
     names(cor_mat) <- c("index","name","value","std.dev")
     SrecentSlim <- cor_mat$value[max(which(cor_mat$name == "depletion"))]/0.077
     SrecentSlim_std <- cor_mat$std.dev[max(which(cor_mat$name == "depletion"))]/0.077 # std(x/c)=std(x)/c
@@ -122,7 +122,7 @@ makeManagTable.new <- function(Path, FFleets, FlimitPath, dMSYPath) {
     Prob_Slimit <- pnorm(1,SrecentSlim,SrecentSlim_std) # P(Scur<Slimit)
     
     # Get Frecent/Flimit (5/5/2020)
-    STD <- read.table(file = paste0(FlimitPath,"ss.std"),skip = 1)
+    STD <- read.table(file = paste0(FlimitPath,"ss3.std"),skip = 1)
     names(STD) <- c("index", "name", "value", "std")
     
     FrecentFlim_line <- which(STD$name=="F_std")[endYr-startYr+1] # the last 12 quarters
