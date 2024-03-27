@@ -186,7 +186,7 @@ makeManagTable.new <- function(Path, FFleets, FlimitPath, dMSYPath) {
     # Make table with management quantities
     RowNames <- c("msy", "msy_d", "Smsy", "Srecent/Szero", "Smsy/Szero", "Crecent/msy_d", "Brecent/Bmsy",
                   "Srecent/Smsy", "Fmultiplier","Szero", "Szero_dynamic","Srecent/dSmsy","Srecent/Slim",
-                  "P(Srecent<Slim)", "FrecentFmsy", "FrecentFmsy_std","Frecent/Flim","P(Frecent>Flim)",
+                  "P(Srecent<Slim)", "Frecent/Fmsy", "Frecent/Fmsy std","Frecent/Flim","P(Frecent>Flim)",
                   "Srecent/dS0","P(Srecent<Starget)","P(Frecent>Ftarget)", "Srecent/Slimit std","Frecent/Flimit std")
     
     ManagTable <- matrix(NA, length(RowNames), 2)
