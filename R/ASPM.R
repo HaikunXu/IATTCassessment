@@ -6,8 +6,10 @@
 
 ASPM = function(Path, ASPM_Path, Rdevs) {
   
+  dir.create(ASPM_Path) # create a folder to run the ASPM
+  
   files = c(
-    paste0(Path, "/go_nohess.bat"),
+    paste0(Path, "/go.bat"),
     paste0(Path, "/starter.ss"),
     paste0(Path, "/forecast.ss"),
     paste0(Path, "/control.ss_new"),
@@ -15,15 +17,15 @@ ASPM = function(Path, ASPM_Path, Rdevs) {
     paste0(Path, "/ss.exe")
   )
   file.copy(from = files,
-            to = ASPMPath,
+            to = ASPM_Path,
             overwrite = TRUE)
   
   # use control_new
-  dat <- r4ss::SS_readdat_3.30(file = paste0(ASPMPath, "/BET-EPO.dat"),
-                         verbose = FALSE)
+  dat <- r4ss::SS_readdat_3.30(file = paste0(ASPM_Path, "/BET-EPO.dat"),
+                               verbose = FALSE)
   
   ctl <- r4ss::SS_readctl_3.30(
-    file = paste0(ASPMPath, "/control.ss_new"),
+    file = paste0(ASPM_Path, "/control.ss_new"),
     verbose = FALSE,
     datlist = dat,
     use_datlist = TRUE
@@ -49,7 +51,7 @@ ASPM = function(Path, ASPM_Path, Rdevs) {
       ctl$SR_parms_tv$PHASE[2:length(ctl$SR_parms_tv$PHASE)] <- -1
     }
   }
-
+  
   # no R bias adjustment
   ctl$max_bias_adj <- 0
   
@@ -59,25 +61,25 @@ ASPM = function(Path, ASPM_Path, Rdevs) {
   # write the new control file
   r4ss::SS_writectl_3.30(
     ctl,
-    outfile = paste0(ASPMPath, "/BET-EPO.ctl"),
+    outfile = paste0(ASPM_Path, "/BET-EPO.ctl"),
     overwrite = TRUE,
     verbose = FALSE
   )
   
   # not from the par file
-  starterFile <- readLines(paste0(ASPMPath, "/starter.ss"), warn = F)
+  starterFile <- readLines(paste0(ASPM_Path, "/starter.ss"), warn = F)
   starterFile[6] <- toString(0) # start from initial condition
-  writeLines(starterFile, paste0(ASPMPath, "/starter.ss"))
+  writeLines(starterFile, paste0(ASPM_Path, "/starter.ss"))
   
-  setwd(ASPMPath)
-  print(ASPMPath)
+  setwd(ASPM_Path)
+  print(ASPM_Path)
   
-  command <- paste("cd", ASPMPath, "& go_noHess.bat", sep = " ")
+  command <- paste("cd", ASPM_Path, "& go.bat", sep = " ")
   ss <- shell(cmd = command, intern = T, wait = T)
   
   # check the max gradient
   myreplist <- r4ss::SS_output(
-    dir = ASPMPath,
+    dir = ASPM_Path,
     # ncols = 400,
     covar = F,
     verbose = FALSE,
