@@ -96,7 +96,7 @@ f2 <- ggplot(data=Comps)+
 ggsave(f2, file = paste0(Path, "Comps.png"), width = 10, height = 10)
 ggsave(f2, file = paste0(Path, "Comps.pdf"), width = 10, height = 10)
 
-# f2
+f2
 ```
 
 ```{r 3:CAAL}
@@ -132,50 +132,32 @@ f4 <- ggplot(data=SS) +
   facet_wrap(~Area,nrow=2) +
   theme_bw(14) +
   xlab("") +
-  ylab("Sample Size")
+  ylab("Input sample size")
 # 
-ggsave(f4, file = paste0(Path, "Sample_Size.pdf"), width = 10, height = 8)
-ggsave(f4, file = paste0(Path, "Sample_Size.png"), width = 10, height = 8)
+ggsave(f4, file = paste0(Path, "Sample_Size_PS.pdf"), width = 10, height = 8)
+ggsave(f4, file = paste0(Path, "Sample_Size_PS.png"), width = 10, height = 8)
 # 
-# f4
+f4
 ```
 
-```{r 5:CPUE}
-# CPUE <- myreplist$cpue %>%
-#   select(!Area) %>%
-#   mutate(Year=Yr/4+1974.75)
+```{r 5:Sample Size}
+Sample_Size <- myreplist$size_comp_fit_table %>%
+  # select(!Area) %>%
+  mutate(Year=ceiling(Yr/4)+1974) %>%
+  group_by(Fleet,Year) %>%
+  summarise(Nsamp=sum(Nsamp_in))
 # 
-# CPUE2 <- left_join(CPUE,Fleet_DF)
+SS <- left_join(Sample_Size,Fleet_DF)
 # 
-# f5 <- ggplot(data=CPUE2) +
-#   geom_line(aes(x=Year,y=Obs,color=Fleet_Name)) +
-#   geom_point(aes(x=Year,y=Obs,color=Fleet_Name)) +
-#   geom_ribbon(aes(x=Year,ymin=exp(log(Obs)-1.96*SE),ymax=exp(log(Obs)+1.96*SE),fill=Fleet_Name),alpha=0.25) +
-#   theme_bw(16) +
-#   coord_cartesian(ylim=c(0,max(exp(log(CPUE2$Obs)+1.96*CPUE2$SE))))
+f5 <- ggplot(data=SS) +
+  geom_bar(aes(x=Year,y=Nsamp), stat = "identity") +
+  facet_wrap(~Area,nrow=2) +
+  theme_bw(14) +
+  xlab("") +
+  ylab("Effective sample size")
 # 
-# ggsave(f5, file = paste0(Path, "CPUE.pdf"), width = 12, height = 8)
-# ggsave(f5, file = paste0(Path, "CPUE.png"), width = 12, height = 8)
+ggsave(f5, file = paste0(Path, "Sample_Size_LL.pdf"), width = 10, height = 8)
+ggsave(f5, file = paste0(Path, "Sample_Size_LL.png"), width = 10, height = 8)
 # 
-# f5
-```
-
-```{r 6:Mean Length}
-# Mean_Len <- myreplist$lendbase %>% filter(Sex==1) %>%
-#   select(!Area) %>%
-#   mutate(Year=ceiling(Yr/4)+1974) %>%
-#   group_by(Fleet,Year) %>% summarise(MeanL=sum(Obs*(Bin+1))/sum(Obs)) 
-# 
-# Mean_Len2 <- left_join(Mean_Len,Fleet_DF) %>%
-#   filter(SFleet=="Y", Area != "Area1")
-# 
-# f6 <- ggplot(data=Mean_Len2)+
-#   geom_point(aes(x=Year,y=MeanL,color=Area),alpha=0.5)+
-#   geom_smooth(aes(x=Year,y=MeanL,color=Area,fill=Area),alpha=0.2)+
-#   facet_wrap(~Gear,nrow=2,scales = "free") +
-#   theme_bw(16)
-# 
-# ggsave(f6, file = paste0(Path, "MeanL.pdf"), width = 10, height = 10)
-# 
-# f6
+f5
 ```
