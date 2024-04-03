@@ -79,18 +79,17 @@ ll_catch = function(Grid_Catch, FSR_Catch, Species, last_year, dir) {
             summarise(mt = sum(mt))
         
         # flag = 0 (have gridded number data); 1 (gridded weight data < FSR, need to do allocation); 2 (gridded weight
-        # data > FSR, use gridded weight data); 3 (no gridded number or weight data, need to do allowcation);
+        # data > FSR, use gridded weight data); 3 (no gridded number or weight data, need to do allocation);
         
         allocation_flag <- rep(3, nrow(FSR_annual))
         flag_id <- FSR_annual$Year %in% Grid_number_annual$Yrr
         if (Countries[c] %in% Special_Countires) {
-            allocation_flag[flag_id == TRUE] <- ifelse(Grid_number_annual$EPO > 0, ifelse(Grid_weight_annual$EPO > 
+          allocation_flag[flag_id == TRUE] <- ifelse(Grid_number_annual$EPO > 0, ifelse(Grid_weight_annual$EPO > 
                 0 & Grid_weight_annual$EPO < FSR_annual[which(FSR_annual$Year %in% Grid_weight_annual$Yrr), "mt"], 
                 1, 0), ifelse(Grid_weight_annual$EPO > 0, ifelse(Grid_weight_annual$EPO < FSR_annual[which(FSR_annual$Year %in% 
                 Grid_weight_annual$Yrr), "mt"], 1, 2), 3))
-        } 
-        else {
-            allocation_flag[flag_id == TRUE] <- ifelse(Grid_number_annual$EPO > 0, 0, ifelse(Grid_weight_annual$EPO > 
+        } else {
+          allocation_flag[flag_id == TRUE] <- ifelse(Grid_number_annual$EPO > 0, 0, ifelse(Grid_weight_annual$EPO > 
                 0, ifelse(Grid_weight_annual$EPO < FSR_annual[which(FSR_annual$Year %in% Grid_weight_annual$Yrr), 
                 "mt"], 1, 2), 3))
         }
@@ -214,6 +213,8 @@ ll_catch = function(Grid_Catch, FSR_Catch, Species, last_year, dir) {
         
         save_all <- rbind(save_all, data.matrix(save))
     }
+    
+    
     colnames(save_all) <- c("YQ", paste0("N", seq(1, n_areas)), paste0("W", seq(1, n_areas)))
     write.csv(save_all, paste0(dir, "save_all.csv"), row.names = FALSE)
     
