@@ -11,10 +11,10 @@ plot_SB(
   legend,
   Save_Dir,
   ymax,
-  figure_name,
-  title,
+  figure_name = "",
+  title = "",
   xlim,
-  alpha
+  alpha = 0.1
 )
 }
 \description{

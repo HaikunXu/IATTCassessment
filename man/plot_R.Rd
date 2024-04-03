@@ -10,12 +10,11 @@ plot_R(
   fyear,
   legend,
   Save_Dir,
-  ymax,
-  figure_name,
-  title,
+  ymax = 2,
+  figure_name = "",
+  title = "",
   xlim,
-  alpha = 0.1,
-  ref = 0
+  alpha = 0.1
 )
 }
 \description{

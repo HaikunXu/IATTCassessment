@@ -10,7 +10,6 @@ make_kobetable_SAC11(
   FFleets,
   STD_only = TRUE,
   newSS,
-  FstdPath,
   FlimitPath,
   DynamicPath
 )
