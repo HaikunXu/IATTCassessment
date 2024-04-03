@@ -4,14 +4,14 @@
 #' 
 #' @export
 
-make_kobetable_SAC11 <- function(Path, KobePath, FFleets, STD_only = TRUE, newSS, FstdPath, FlimitPath, DynamicPath) {
+make_kobetable_SAC11 <- function(Path, KobePath, FFleets, STD_only = TRUE, newSS, FlimitPath, DynamicPath) {
   ##################################################################################################################### STEP 1 - Get time series of BioSmr and SBR from the base case run
   if(STD_only==FALSE) print("change starter file (use par and do not estimate) in KobePath before this section!!!")
   
   # Get the base case rep list
   # print(c("Getting the base case rep list"))
-  BaseCase.rep <- r4ss::SS_output(dir = Path, ncols = 400, covar = F, verbose = F, printstats = F)  # Need base case BaseCase.rep to extract endyr
-  Dynamic.rep <- r4ss::SS_output(dir = DynamicPath, ncols = 400, covar = F, verbose = F, printstats = F)  # dyanmic Smsy
+  BaseCase.rep <- r4ss::SS_output(dir = Path, covar = F, verbose = F, printstats = F)  # Need base case BaseCase.rep to extract endyr
+  Dynamic.rep <- r4ss::SS_output(dir = DynamicPath, covar = F, verbose = F, printstats = F)  # dyanmic Smsy
   
   # print(c("Base case rep list was read"))
   
@@ -83,7 +83,7 @@ make_kobetable_SAC11 <- function(Path, KobePath, FFleets, STD_only = TRUE, newSS
       F_mult_high <- F_mult_last+1.96*F_mult_recentSD
     }
     else {
-      Table <- makeManagTable.new(Path, FFleets = FFleets, FstdPath, FlimitPath, DynamicPath)
+      Table <- makeManagTable.new(Path, FFleets = FFleets, FlimitPath, DynamicPath)
       # STD_Table <- data.frame(read.table(file = paste0(Path,"ss.std"),header = TRUE))
       print("************do use the new ss************")
       FrecentFmsy <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="FrecentFmsy")])
@@ -109,7 +109,7 @@ make_kobetable_SAC11 <- function(Path, KobePath, FFleets, STD_only = TRUE, newSS
     ## 2.1 - Get replist from the Kobe run and create the forecast file qrt definition tables
     
     # Get the replist to extract some quantities
-    Kobe.rep <- r4ss::SS_output(dir = KobePath, ncols = 400, forecast = F, covar = F, verbose = F, printstats = F)  # Need base case replist to extract endyr
+    Kobe.rep <- r4ss::SS_output(dir = KobePath, forecast = F, covar = F, verbose = F, printstats = F)  # Need base case replist to extract endyr
     QrtsMat <- matrix(0, 0, 3)  # Output table
     vecTemp <- rep(0, 3)
     

@@ -5,7 +5,7 @@
 #' @export
 
 makeManagTable <- function(Path, FFleets) {
-    replist <- r4ss::SS_output(dir = Path, ncols = 400, covar = T, printstats = F, verbose = FALSE)
+    replist <- r4ss::SS_output(dir = Path, covar = T, printstats = F, verbose = FALSE)
     TimeSeries <- replist$timeseries
     # numFleets <- replist$nfleets # all fleets including surveys
     # numFleets <- replist$nfishfleets  # only fisheries fleets <>< Change 15 March 2016
@@ -15,7 +15,7 @@ makeManagTable <- function(Path, FFleets) {
     ForeRepName <- paste(Path, "Forecast-report.SSO", sep = "")
     # Get management report
     ForeRepStart <- grep("Management_report", readLines(ForeRepName))
-    ForeRepEnd <- grep("THIS FORECAST FOR PURPOSES", readLines(ForeRepName))[1]
+    ForeRepEnd <- grep("THIS FORECAST IS FOR PURPOSES", readLines(ForeRepName))[1]
     
     # ForeDat <- read.table(file=ForeRepName,col.names=c(seq(1,10,by=1)),fill=T,quote='',colClasses='character',
     # nrows=45, skip = ForeRepStart-1)
