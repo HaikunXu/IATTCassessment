@@ -86,8 +86,8 @@ make_kobetable_SAC11 <- function(Path, KobePath, FFleets, STD_only = TRUE, newSS
       Table <- makeManagTable.new(Path, FFleets = FFleets, FlimitPath, DynamicPath)
       # STD_Table <- data.frame(read.table(file = paste0(Path,"ss.std"),header = TRUE))
       print("************do use the new ss************")
-      FrecentFmsy <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="FrecentFmsy")])
-      FrecentFmsy_std <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="FrecentFmsy_std")])
+      FrecentFmsy <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="Frecent/Fmsy")])
+      FrecentFmsy_std <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="Frecent/Fmsy std")])
       FrecentFmsy_low <- FrecentFmsy-1.96*FrecentFmsy_std
       FrecentFmsy_high <- FrecentFmsy+1.96*FrecentFmsy_std
       SrecentdSmsy <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="Srecent/dSmsy")])
