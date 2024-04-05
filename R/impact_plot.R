@@ -4,7 +4,7 @@
 #' 
 #' @export
 
-impact_plot = function(Dir, n_year, BaseName, n_fishery, title) {
+impact_plot = function(Dir, n_year, BaseName = "Base", n_fishery, title) {
     
     step_name <- c("noDisc", "noPS", "noLL", "noF")
     n_step <- length(step_name)
@@ -30,7 +30,7 @@ impact_plot = function(Dir, n_year, BaseName, n_fishery, title) {
     
     ### 
     
-    ParDir <- paste0(paste0(Dir, BaseName, "/ss.par"))
+    ParDir <- paste0(paste0(Dir, BaseName, "/ss3.par"))
     ParFile <- readLines(ParDir, warn = F)
     Line_initial <- match("# Fcast_recruitments:", ParFile)
     Init_F_2 <- as.numeric(ParFile[Line_initial+3])
@@ -42,7 +42,7 @@ impact_plot = function(Dir, n_year, BaseName, n_fishery, title) {
         print(paste0("step: ", step_name[step]))
         unlink(paste0(Dir, step_name[step]), recursive = TRUE)
         dir.create(paste0(Dir, step_name[step]))
-        files = c(paste0(Dir, BaseName, "/ss.par"), paste0(Dir, BaseName, "/go_nohess.bat"), paste0(Dir, BaseName,
+        files = c(paste0(Dir, BaseName, "/ss3.par"), paste0(Dir, BaseName, "/go_nohess.bat"), paste0(Dir, BaseName,
             "/starter.ss"), paste0(Dir, BaseName, "/forecast.ss"), paste0(Dir, BaseName, "/BET-EPO.ctl"), paste0(Dir,
             BaseName, "/BET-EPO.dat"), paste0(Dir, BaseName, "/ss.exe"))
         file.copy(from = files, to = paste0(Dir, step_name[step]))
@@ -78,7 +78,7 @@ impact_plot = function(Dir, n_year, BaseName, n_fishery, title) {
 
         writeLines(CtrlFile, CtrlDir)
 
-        ParDir <- paste0(paste0(Dir, step_name[step]), "/ss.par")
+        ParDir <- paste0(paste0(Dir, step_name[step]), "/ss3.par")
         ParFile <- readLines(ParDir, warn = F)
         ParFile[Line_initial+3] <- toString(Init_F_2 * sum(Catch[1:20, 1:7])/sum(Catch0[1:20, 1:7]))
         ParFile[Line_initial+5] <- toString(Init_F_16 * sum(Catch[1:20, c(15:19,21:22)])/sum(Catch0[1:20, c(15:19,21:22)]))
@@ -94,19 +94,19 @@ impact_plot = function(Dir, n_year, BaseName, n_fishery, title) {
     #### ssplot section
     
     Dir1 <- paste0(Dir, BaseName)
-    myreplist1 = r4ss::SS_output(dir = Dir1, ncols = 400, covar = F, printstats = F, verbose = FALSE)
+    myreplist1 = r4ss::SS_output(dir = Dir1, covar = F, printstats = F, verbose = FALSE)
     
     Dir2 <- paste0(Dir, step_name[1])
-    myreplist2 = r4ss::SS_output(dir = Dir2, ncols = 400, covar = F, printstats = F, verbose = FALSE)
+    myreplist2 = r4ss::SS_output(dir = Dir2, covar = F, printstats = F, verbose = FALSE)
     
     Dir3 <- paste0(Dir, step_name[2])
-    myreplist3 = r4ss::SS_output(dir = Dir3, ncols = 400, covar = F, printstats = F, verbose = FALSE)
+    myreplist3 = r4ss::SS_output(dir = Dir3, covar = F, printstats = F, verbose = FALSE)
     
     Dir4 <- paste0(Dir, step_name[3])
-    myreplist4 = r4ss::SS_output(dir = Dir4, ncols = 400, covar = F, printstats = F, verbose = FALSE)
+    myreplist4 = r4ss::SS_output(dir = Dir4, covar = F, printstats = F, verbose = FALSE)
     
     Dir5 <- paste0(Dir, step_name[4])
-    myreplist5 = r4ss::SS_output(dir = Dir5, ncols = 400, covar = F, printstats = F, verbose = FALSE)
+    myreplist5 = r4ss::SS_output(dir = Dir5, covar = F, printstats = F, verbose = FALSE)
     
     SB_dif <- data.frame(
         Year = myreplist1$timeseries$Yr[3:n_year + 2],
