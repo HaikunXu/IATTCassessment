@@ -69,6 +69,8 @@ impact_plot = function(Dir, n_year, BaseName = "Base", n_fishery, title) {
 
         Catch <- Catch_combined %>% filter(year > 0, fleet > 0) %>% select(year, fleet, catch) %>% spread(fleet,
             catch)
+        
+        # print(Catch)
 
         # plot(Catch$year,Catch$fleet,xlim=c(1,200),main=title)
 
@@ -80,8 +82,8 @@ impact_plot = function(Dir, n_year, BaseName = "Base", n_fishery, title) {
 
         ParDir <- paste0(paste0(Dir, step_name[step]), "/ss3.par")
         ParFile <- readLines(ParDir, warn = F)
-        ParFile[Line_initial+3] <- toString(Init_F_2 * sum(Catch[1:20, 1:7])/sum(Catch0[1:20, 1:7]))
-        ParFile[Line_initial+5] <- toString(Init_F_16 * sum(Catch[1:20, c(15:19,21:22)])/sum(Catch0[1:20, c(15:19,21:22)]))
+        ParFile[Line_initial+3] <- Init_F_2 * sum(Catch[1:20, 2:8])/sum(Catch0[1:20, 2:8])
+        ParFile[Line_initial+5] <- Init_F_16 * sum(Catch[1:20, c(15:19,21:22)+1])/sum(Catch0[1:20, c(15:19,21:22)+1])
 
         writeLines(ParFile, ParDir)
 
@@ -109,12 +111,12 @@ impact_plot = function(Dir, n_year, BaseName = "Base", n_fishery, title) {
     myreplist5 = r4ss::SS_output(dir = Dir5, covar = F, printstats = F, verbose = FALSE)
     
     SB_dif <- data.frame(
-        Year = myreplist1$timeseries$Yr[3:n_year + 2],
-        SB = myreplist1$timeseries$SpawnBio[3:n_year + 2],
-        SB0 = myreplist5$timeseries$SpawnBio[3:n_year + 2],
-        noDisc = myreplist2$timeseries$SpawnBio[3:n_year + 2] - myreplist1$timeseries$SpawnBio[3:n_year + 2],
-        noPS = myreplist3$timeseries$SpawnBio[3:n_year + 2] - myreplist1$timeseries$SpawnBio[3:n_year + 2],
-        noLL = myreplist4$timeseries$SpawnBio[3:n_year + 2] - myreplist1$timeseries$SpawnBio[3:n_year + 2]
+        Year = myreplist1$timeseries$Yr[4:(n_year + 2)],
+        SB = myreplist1$timeseries$SpawnBio[4:(n_year + 2)],
+        SB0 = myreplist5$timeseries$SpawnBio[4:(n_year + 2)],
+        noDisc = myreplist2$timeseries$SpawnBio[4:(n_year + 2)] - myreplist1$timeseries$SpawnBio[4:(n_year + 2)],
+        noPS = myreplist3$timeseries$SpawnBio[4:(n_year + 2)] - myreplist1$timeseries$SpawnBio[4:(n_year + 2)],
+        noLL = myreplist4$timeseries$SpawnBio[4:(n_year + 2)] - myreplist1$timeseries$SpawnBio[4:(n_year + 2)]
     )
     
     SB_dif$noDisc_dif <- SB_dif$noDisc / apply(SB_dif[, 4:6], c(1), sum) * (SB_dif$SB0 - SB_dif$SB)
@@ -148,7 +150,7 @@ impact_plot = function(Dir, n_year, BaseName = "Base", n_fishery, title) {
       theme(plot.title = element_text(hjust = 0.5))
     
     ggsave(f, file = paste0(Dir, "impact_plots.png"), width = 8, height = 6)
-    ggsave(f, file = paste0(Dir, "impact_plots.eps"), width = 8, height = 6)
+    ggsave(f, file = paste0(Dir, "impact_plots.pdf"), width = 8, height = 6)
     
     return(f)
 }
