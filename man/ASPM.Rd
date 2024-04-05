@@ -4,7 +4,7 @@
 \alias{ASPM}
 \title{Make ASPM runs}
 \usage{
-ASPM(Path, ASPM_Path, Rdevs)
+ASPM(Path, ASPM_Path, Rdevs, Hessian = FALSE)
 }
 \description{
 \code{ASPM} This function generates ASPM

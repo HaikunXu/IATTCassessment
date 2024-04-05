@@ -4,7 +4,7 @@
 \alias{CCA}
 \title{Make CCA runs}
 \usage{
-CCA(Path, CCA_Path)
+CCA(Path, CCA_Path, Hessian = FALSE)
 }
 \description{
 \code{CCA} This function generates CCA

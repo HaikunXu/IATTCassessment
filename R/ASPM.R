@@ -4,12 +4,13 @@
 #' 
 #' @export
 
-ASPM = function(Path, ASPM_Path, Rdevs) {
+ASPM = function(Path, ASPM_Path, Rdevs, Hessian = FALSE) {
   
   dir.create(ASPM_Path) # create a folder to run the ASPM
   
   files = c(
     paste0(Path, "/go.bat"),
+    paste0(Path, "/go_nohess.bat"),
     paste0(Path, "/starter.ss"),
     paste0(Path, "/forecast.ss"),
     paste0(Path, "/control.ss_new"),
@@ -74,7 +75,9 @@ ASPM = function(Path, ASPM_Path, Rdevs) {
   setwd(ASPM_Path)
   print(ASPM_Path)
   
-  command <- paste("cd", ASPM_Path, "& go.bat", sep = " ")
+  if(Hessian == FALSE) command <- paste("cd", ASPM_Path, "& go_nohess.bat", sep = " ")
+  else command <- paste("cd", ASPM_Path, "& go.bat", sep = " ")
+    
   ss <- shell(cmd = command, intern = T, wait = T)
   
   # check the max gradient

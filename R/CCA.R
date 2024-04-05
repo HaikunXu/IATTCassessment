@@ -4,12 +4,13 @@
 #' 
 #' @export
 
-CCA = function(Path, CCA_Path) {
+CCA = function(Path, CCA_Path, Hessian = FALSE) {
   
   dir.create(CCA_Path)
   
   files = c(
     paste0(Path, "/go.bat"),
+    paste0(Path, "/go_nohess.bat"),
     paste0(Path, "/starter.ss"),
     paste0(Path, "/forecast.ss"),
     paste0(Path, "/control.ss_new"),
@@ -55,7 +56,9 @@ CCA = function(Path, CCA_Path) {
   setwd(CCA_Path)
   print(CCA_Path)
   
-  command <- paste("cd", CCA_Path, "& go.bat", sep = " ")
+  if(Hessian == FALSE) command <- paste("cd", ASPM_Path, "& go_nohess.bat", sep = " ")
+  else command <- paste("cd", ASPM_Path, "& go.bat", sep = " ")
+  
   ss <- shell(cmd = command, intern = T, wait = T)
   
   # check the max gradient
