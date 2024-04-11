@@ -144,7 +144,7 @@ makeManagTable.new <- function(Path, FFleets, FlimitPath, dMSYPath) {
     Dynamic.rep <- r4ss::SS_output(dir = dMSYPath, covar = F, verbose = F, printstats = F)  # dyanmic Smsy
     
     dSPBdat <- Dynamic.rep$timeseries
-    dSPBdat$Yr2 <- 1975 + (dSPBdat$Y/4) - 0.25
+    dSPBdat$Yr2 <- 1975 + (dSPBdat$Yr/4) - 0.25
     x <- dSPBdat$Yr2[(3+(lyear-fyear+1)*4):(length(dSPBdat$Yr2))]
     y <- dSPBdat$SpawnBio[(3+(lyear-fyear+1)*4):(length(dSPBdat$SpawnBio))]
     x2 <- unique(floor(x)) 
@@ -217,6 +217,7 @@ makeManagTable.new <- function(Path, FFleets, FlimitPath, dMSYPath) {
     ManagTable[21, 2] <- format(Prob_Ftarget, digits = 8, nsmall = 8)
     ManagTable[22, 2] <- format(SrecentSlim_std, digits = 8, nsmall = 8)
     ManagTable[23, 2] <- format(FrecentFlim_std, digits = 8, nsmall = 8)
+
     Out <- list(Fvector = Fvector, FmultScale = FmultScale, ManagTable = ManagTable)
     
     return(Out)

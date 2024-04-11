@@ -56,7 +56,7 @@ make_kobetable_SAC11 <- function(Path, KobePath, FFleets, STD_only = TRUE, newSS
   
   # Get dyanmic SBR_msy series
   dSPBdat <- Dynamic.rep$timeseries
-  dSPBdat$Yr2 <- 1975 + (dSPBdat$Y/4) - 0.25
+  dSPBdat$Yr2 <- 1975 + (dSPBdat$Yr/4) - 0.25
   x <- dSPBdat$Yr2[(3+(lyear-fyear+1)*4):(length(dSPBdat$Yr2))]
   y <- dSPBdat$SpawnBio[(3+(lyear-fyear+1)*4):(length(dSPBdat$SpawnBio))]
   x2 <- unique(floor(x))
@@ -138,8 +138,7 @@ make_kobetable_SAC11 <- function(Path, KobePath, FFleets, STD_only = TRUE, newSS
     
     
     # Create the two qrt forecaset definition tables that will actually be used to define the forecast file
-    BmarkTable <- cbind(matrix(QrtsMat[, 3], dim(QrtsMat)[1], 4), QrtsMat[, 2:3], 1, QrtsMat[, 3], 1, QrtsMat[, 
-                                                                                                              3])
+    BmarkTable <- cbind(matrix(QrtsMat[, 3], dim(QrtsMat)[1], 4), QrtsMat[, 2:3], 17, QrtsMat[, 3], 17, QrtsMat[, 3])
     FcastTable <- cbind(matrix(0, dim(QrtsMat)[1], 2), QrtsMat[, 2:3], -999, 0)
     
     
@@ -193,11 +192,11 @@ make_kobetable_SAC11 <- function(Path, KobePath, FFleets, STD_only = TRUE, newSS
       names(MSYtableOut)[i] <- paste("run", i)
       
       MSYtableOut[5,i] <- MSYtableOut[5,i]*dS0 # new dSmsy early: S/Smsy = dS0*(Smsy/S0)
-      MSYtableOut[8,i] <- dSpawnBioYr.Out[i + 2, 2] # new dSmsy late
+      MSYtableOut[8,i] <- dSpawnBioYr.Out[i + 3, 2] # new dSmsy late
       p <- (i - 1) / (dim(QrtsMat)[1] - 1)
       MSYtableOut[2,i] <- (1 - p) * MSYtableOut[5,i] + p * MSYtableOut[8,i]
       MSYtableOut[4,i] <- p
-      MSYtableOut[6,i] <- SpawnBioYr.Out[i + 2, 2]/MSYtableOut[2,i]
+      MSYtableOut[6,i] <- SpawnBioYr.Out[i + 3, 2]/MSYtableOut[2,i]
       }
     
     # NEED TO GET A VECTOR OF YEAR LabelS Get the years corresponding to the 3-yr averages YearsAvg <-
