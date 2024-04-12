@@ -6,7 +6,7 @@
 
 plot_R = function(SS_Dir, lyear, fyear, legend, Save_Dir, ymax = 2, figure_name = "", title = "", xlim, alpha = 0.1) {
     for (i in 1:length(lyear)) {
-        cor_mat <- read.table(paste0(SS_Dir[i], "ss.cor"), skip = 1, fill = NA, header = TRUE)
+        cor_mat <- read.table(paste0(SS_Dir[i], "ss3.cor"), skip = 1, fill = NA, header = TRUE)
         R_est <- cor_mat$value[which(cor_mat$name == "recr_std")[3:((lyear[i] - (fyear[i]-1)) * 4 + 2)]]
         R_std <- cor_mat$std.dev[which(cor_mat$name == "recr_std")[3:((lyear[i] - (fyear[i]-1)) * 4 + 2)]]
         if(sum(R_std)==0) R_std <- cor_mat$std_dev[which(cor_mat$name == "recr_std")[3:((lyear[i] - (fyear[i]-1)) * 4 + 2)]]

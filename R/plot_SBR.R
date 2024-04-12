@@ -6,7 +6,7 @@
 
 plot_SBR = function(SS_Dir, lyear, fyear, legend, Save_Dir, ymax, figure_name, title, xlim, alpha = 0.1, ref = 0) {
     for (i in 1:length(lyear)) {
-        cor_mat <- read.table(paste0(SS_Dir[i], "ss.std"), skip = 1, fill = NA, header = FALSE)
+        cor_mat <- read.table(paste0(SS_Dir[i], "ss3.std"), skip = 1, fill = NA, header = FALSE)
         names(cor_mat) <- c("index","name","value","std.dev")
         SB_est <- cor_mat$value[which(cor_mat$name == "depletion")[1:((lyear[i] - (fyear[i]-1)) * 4)]]
         SB_std <- cor_mat$std.dev[which(cor_mat$name == "depletion")[1:((lyear[i] - (fyear[i]-1)) * 4)]]
