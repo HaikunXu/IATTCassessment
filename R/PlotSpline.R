@@ -14,30 +14,37 @@ PlotSpline<-function(Path,Save_Path,Fleet,model_name,fyear,lyear,dim,w,h){
   
   for(m in 1:length(Path)) {
     print(m)
-    Rep <- r4ss::SS_output(dir = Path[m], ncols = 400, covar = F, printstats = F, verbose = FALSE)
+    Rep <- r4ss::SS_output(dir = Path[m], covar = F, printstats = F, verbose = FALSE)
     
     tt<-Rep$sizeselex[Rep$sizeselex$Factor == "Lsel" & 
                         Rep$sizeselex$Fleet %in% Fleet & 
                         Rep$sizeselex$Sex %in% c(1), 
                       ]
-    tt<-tt[2,]
+    tt<-tt[nrow(tt),]
     
-    plot(seq(20,198,2),tt[,15:104],main = model_name[m])
+    plot(seq(20,186,2),tt[,15:98], type="l", main = model_name[m])
     
-    tt2 <- Rep$lendbase[Rep$lendbase$Fleet %in% Fleet & 
-                          Rep$lendbase$Sex %in% c(1), 
+    tt2 <- Rep$sizedbase[Rep$sizedbase$Fleet %in% Fleet & 
+                          Rep$sizedbase$Sex %in% c(1), 
                         ]
-    tt2<-tapply(tt2$Obs, tt2$Bin,FUN =mean)
+    tt2<-tapply(tt2$Obs, tt2$Bin, FUN =mean)
     
-    tt3<-Rep$natlen[Rep$natlen$Sex %in% c(1,2) &                                              #average oiver both sexes
+    tt3<-Rep$natlen[Rep$natlen$Sex %in% c(1,2) &                      #average over both sexes
                       Rep$natlen$"Beg/Mid" %in% c("B") &
                       Rep$natlen$Era %in% c("TIME"),
                     ] %>% filter(Yr>=fyear,Yr<=lyear)
-    tt3<-apply(tt3[,13:122], 2,mean)
     
-    tt4<-tt2/tt3[10:99]
+    tt3_df <- tt3 %>% gather(13:122,key="Length",value=N) %>%
+      mutate(L = cut(as.numeric(Length), breaks = c(seq(60, 190, 10), 250), right = F, labels = seq(60, 190, 10))) %>%
+      na.omit() %>%
+      group_by(L) %>%
+      summarise(N_mean=mean(N))
     
-    lines(seq(20,196,2),tt4[1:89]/max(tt4[1:89]),col="red")
+    # tt3<-apply(tt3[,13:122], 2,mean)
+    
+    tt4<-tt2/tt3_df$N_mean
+    
+    lines(seq(65,185,10),tt4[1:13]/max(tt4[1:13]),col="red",type="p")
     # lines(seq(20,196,2),lowess(tt4[1:89],f=f)$y/max(lowess(tt4[1:89],f=f)$y),col="red")
   }
   dev.off()
