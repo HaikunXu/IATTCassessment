@@ -119,38 +119,26 @@ impact_plot = function(Dir, n_year, BaseName = "Base", n_fishery, title) {
         noLL = myreplist4$timeseries$SpawnBio[4:(n_year + 2)] - myreplist1$timeseries$SpawnBio[4:(n_year + 2)]
     )
     
-    SB_dif$noDisc_dif <- SB_dif$noDisc / apply(SB_dif[, 4:6], c(1), sum) * (SB_dif$SB0 - SB_dif$SB)
-    SB_dif$noPS_dif <- SB_dif$noPS / apply(SB_dif[, 4:6], c(1), sum) * (SB_dif$SB0 - SB_dif$SB)
-    SB_dif$noLL_dif <- SB_dif$noLL / apply(SB_dif[, 4:6], c(1), sum) * (SB_dif$SB0 - SB_dif$SB)
+    SB_dif$Disc <- SB_dif$noDisc / apply(SB_dif[, 4:6], c(1), sum) * (SB_dif$SB0 - SB_dif$SB)
+    SB_dif$PS <- SB_dif$noPS / apply(SB_dif[, 4:6], c(1), sum) * (SB_dif$SB0 - SB_dif$SB)
+    SB_dif$LL <- SB_dif$noLL / apply(SB_dif[, 4:6], c(1), sum) * (SB_dif$SB0 - SB_dif$SB)
     
     SB_dif$Year <- SB_dif$Year / 4 + 1974.75
     
     write.csv(SB_dif, file = paste0(Dir, "SB.csv"), row.names = FALSE)
+    # 
+    SB_all <- SB_dif[,c(1,2,7,8,9)] %>%
+      gather(2:5, key = "Fishery", value = "SB")
     
-    f <-ggplot(data = SB_dif) +
-      geom_ribbon(aes(x = Year, ymin = 0, ymax = SB), fill = "red") +
-      geom_ribbon(aes(
-        x = Year,
-        ymin = SB,
-        ymax = SB + noDisc_dif
-      ), fill = "green") +
-      geom_ribbon(aes(
-        x = Year,
-        ymin = SB + noDisc_dif,
-        ymax = SB +
-          noDisc_dif + noPS_dif
-      ), fill = "purple") +
-      geom_ribbon(aes(
-        x = Year,
-        ymin = SB + noDisc_dif + noPS_dif,
-        ymax = SB0
-      ), fill = "blue") +
+    SB_all$Fishery <- factor(SB_all$Fishery, levels = c("LL", "PS", "Disc", "SB"))
+    
+    f <- ggplot(data = SB_all) +
+      geom_area(aes(x = Year, y = SB, fill = Fishery)) +
       theme_bw() + ylab("") + xlab("") +
       coord_cartesian(expand = FALSE) + ggtitle(title) +
       theme(plot.title = element_text(hjust = 0.5))
-    
-    ggsave(f, file = paste0(Dir, "impact_plots.png"), width = 8, height = 6)
-    ggsave(f, file = paste0(Dir, "impact_plots.pdf"), width = 8, height = 6)
-    
-    return(f)
+
+      ggsave(f, file = paste0(Dir, "impact_plots.png"), width = 8, height = 6)
+
+    return(SB_dif)
 }
