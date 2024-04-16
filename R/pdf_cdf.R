@@ -4,11 +4,12 @@
 #' 
 #' @export
 
-pdf_cdf = function(x, DF, n_model) {
+pdf_cdf = function(x, DF) {
   R_y <- DF
   mean <- R_y$Est
   sd <- R_y$Std
   weight <- R_y$Weight
+  n_model <- length(weight)
   
   for (m in 1:n_model) {
     if(m == 1) pdf <- dnorm(x,mean=mean[m],sd=sd[m]) * weight[m]

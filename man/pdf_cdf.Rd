@@ -4,7 +4,7 @@
 \alias{pdf_cdf}
 \title{Fishing mortality by age group}
 \usage{
-pdf_cdf(x, DF, n_model)
+pdf_cdf(x, DF)
 }
 \description{
 \code{pdf_cdf} This function computes the fishing mortality by age group for the stock assessment report
