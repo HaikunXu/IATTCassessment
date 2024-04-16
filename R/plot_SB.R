@@ -13,22 +13,22 @@ plot_SB = function(SS_Dir, lyear, fyear, legend, Save_Dir, ymax, figure_name = "
         # if(sum(SB_std)==0) SB_std <- cor_mat$std_dev[which(cor_mat$name == "SSB_std")[1:((lyear[i] - (fyear[i]-1)) * 4)]]
         SB <- data.frame(est = SB_est, std = SB_std, year = rep(fyear[i]:lyear[i], each = 4), yq = seq(fyear[i], lyear[i] + 0.75, 0.25))
         
-        if(i==1) SB_A <- SB %>% mutate(Model=legend[i])
-        else SB_A <- rbind(SB_A,SB %>% mutate(Model=legend[i]))
+        if(i==1) SB_A <- SB %>% mutate(Spec=legend[i])
+        else SB_A <- rbind(SB_A,SB %>% mutate(Spec=legend[i]))
     }
     
-    SB_A <- SB_A %>% data.frame() %>% mutate(Model=factor(Model))
+    SB_A <- SB_A %>% data.frame()
     
     f <- ggplot(data = SB_A) +
       geom_ribbon(aes(
         x = yq,
         ymin = est - 1.96 * std,
         ymax = est + 1.96 * std,
-        fill = Model
+        fill = Spec
       ),
       alpha = alpha) +
-      geom_line(aes(x = yq, y = est, color = Model), size = 1) +
-      geom_point(aes(x = yq, y = est, color = Model),
+      geom_line(aes(x = yq, y = est, color = Spec), size = 1) +
+      geom_point(aes(x = yq, y = est, color = Spec),
                  size = 2,
                  data = SB_A %>% filter(yq == year)) +
       theme_bw(20) + xlab("") + ylab("") +
@@ -41,6 +41,6 @@ plot_SB = function(SS_Dir, lyear, fyear, legend, Save_Dir, ymax, figure_name = "
     ggsave(f, file = paste0(Save_Dir, figure_name, "-SB.png"), width = 12, height = 8)
     ggsave(f, file = paste0(Save_Dir, figure_name, "-SB.pdf"), width = 12, height = 8)
     
-    return(f)
+    return(SB_A)
     
 }

@@ -13,35 +13,35 @@ plot_SBR = function(SS_Dir, lyear, fyear, legend, Save_Dir, ymax, figure_name, t
         # if(sum(SB_std)==0) SB_std <- cor_mat$std_dev[which(cor_mat$name == "depletion")[1:((lyear[i] - (fyear[i]-1)) * 4)]]
         SB <- data.frame(est = SB_est, std = SB_std, year = rep(fyear[i]:lyear[i], each = 4), yq = seq(fyear[i], lyear[i] + 0.75, 0.25))
     
-        if(i==1) SB_A <- SB %>% mutate(Model=legend[i])
-        else SB_A <- rbind(SB_A,SB %>% mutate(Model=legend[i]))
+        if(i==1) SB_A <- SB %>% mutate(Spec=legend[i])
+        else SB_A <- rbind(SB_A,SB %>% mutate(Spec=legend[i]))
     }
     
-    SB_A <- SB_A %>% data.frame() %>% mutate(Model=factor(Model))
+    SB_A <- SB_A %>% data.frame()
     
     if(ref == 0) {
         f <- ggplot(data = SB_A) + 
-          geom_ribbon(aes(x = yq, ymin = est - 1.96 * std, ymax = est + 1.96 * std, fill = Model), alpha=alpha) + 
-          geom_line(aes(x = yq, y = est, color = Model), size = 1) + 
-          geom_point(aes(x = yq, y = est, color = Model), size = 2,data = SB_A %>% filter(yq==year)) + 
+          geom_ribbon(aes(x = yq, ymin = est - 1.96 * std, ymax = est + 1.96 * std, fill = Spec), alpha=alpha) + 
+          geom_line(aes(x = yq, y = est, color = Spec), size = 1) + 
+          geom_point(aes(x = yq, y = est, color = Spec), size = 2,data = SB_A %>% filter(yq==year)) + 
           theme_bw(20) + xlab("") + ylab("") + geom_hline(yintercept = 1, linetype = "dashed") +
           coord_cartesian(ylim = c(0,ymax),xlim=xlim,expand = FALSE) + ggtitle(title)
     }
 
     else {
       f <- ggplot(data = SB_A) + 
-        geom_ribbon(aes(x = yq, ymin = est - 1.96 * std, ymax = est + 1.96 * std, fill = Model), alpha=alpha) + 
-        geom_line(aes(x = yq, y = est, color = Model), size = 1) + 
-        geom_point(aes(x = yq, y = est, color = Model), size = 2.5, data = SB_A %>% filter(yq==year)) + 
-        geom_line(aes(x = yq, y = est, color = Model), size = 1, data = SB_A %>% filter(Model %in% legend[ref])) + 
-        geom_point(aes(x = yq, y = est, color = Model), size = 4.5, data = SB_A %>% filter(yq==year, Model %in% legend[ref])) + 
+        geom_ribbon(aes(x = yq, ymin = est - 1.96 * std, ymax = est + 1.96 * std, fill = Spec), alpha=alpha) + 
+        geom_line(aes(x = yq, y = est, color = Spec), size = 1) + 
+        geom_point(aes(x = yq, y = est, color = Spec), size = 2.5, data = SB_A %>% filter(yq==year)) + 
+        geom_line(aes(x = yq, y = est, color = Spec), size = 1, data = SB_A %>% filter(Spec %in% legend[ref])) + 
+        geom_point(aes(x = yq, y = est, color = Spec), size = 4.5, data = SB_A %>% filter(yq==year, Spec %in% legend[ref])) + 
         theme_bw(20) + xlab("") + ylab("") + geom_hline(yintercept = 1, linetype = "dashed") +
         coord_cartesian(ylim = c(0,ymax),xlim=xlim,expand = FALSE) + ggtitle(title)
     }
 
     ggsave(f, file = paste0(Save_Dir, figure_name, "-SBR.png"), width = 12, height = 10)
-    ggsave(f, file = paste0(Save_Dir, figure_name, "-SBR.pdf"), width = 12, height = 10)
+    # ggsave(f, file = paste0(Save_Dir, figure_name, "-SBR.pdf"), width = 12, height = 10)
     
-    return(f)
+    return(SB_A)
     
 }
