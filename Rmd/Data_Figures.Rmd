@@ -66,6 +66,8 @@ f1b <- ggplot(data=Catch_Fleet_all) +
 ggsave(f1b,file=paste0(Path,"Catch_all.pdf"),width=10,height=10)
 ggsave(f1b,file=paste0(Path,"Catch_all.png"),width=10,height=10)
 
+write.csv(Catch_Fleet_all, file = paste0(Path,"Catch_all.csv"), row.names = FALSE)
+
 f1a
 f1b
 
