@@ -57,8 +57,9 @@ plot_R = function(SS_Dir, lyear, fyear, legend, Save_Dir, ymax = 2, figure_name 
         coord_cartesian(ylim = c(0,ymax),xlim=xlim,expand = FALSE) + ggtitle(title) + theme(plot.title = element_text(hjust = 0.5))
 
         # f_all <- gridExtra::grid.arrange(f1, f2, nrow = 2)
-    ggsave(f2, file = paste0(Save_Dir, figure_name, "-R.png"), width = 15, height = 10)
-
+    ggsave(f2, file = paste0(Save_Dir, figure_name, "-R.png"), width = 12, height = 8)
+    ggsave(f2, file = paste0(Save_Dir, figure_name, "-R.pdf"), width = 12, height = 8)
+    
     # f <- list("f1"=f1,"f2"=f2)
     return(R_A)
     

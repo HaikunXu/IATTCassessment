@@ -4,7 +4,7 @@
 #' 
 #' @export
 
-plot_SBR = function(SS_Dir, lyear, fyear, legend, Save_Dir, ymax, figure_name, title, xlim, alpha = 0.1, ref = 0) {
+plot_SBR = function(SS_Dir, lyear, fyear, legend, Save_Dir, ymax, figure_name = "", title = "", xlim, alpha = 0.1, ref = 0) {
     for (i in 1:length(lyear)) {
         cor_mat <- read.table(paste0(SS_Dir[i], "ss3.std"), skip = 1, fill = NA, header = FALSE)
         names(cor_mat) <- c("index","name","value","std.dev")
@@ -39,8 +39,8 @@ plot_SBR = function(SS_Dir, lyear, fyear, legend, Save_Dir, ymax, figure_name, t
         coord_cartesian(ylim = c(0,ymax),xlim=xlim,expand = FALSE) + ggtitle(title)
     }
 
-    ggsave(f, file = paste0(Save_Dir, figure_name, "-SBR.png"), width = 12, height = 10)
-    # ggsave(f, file = paste0(Save_Dir, figure_name, "-SBR.pdf"), width = 12, height = 10)
+    ggsave(f, file = paste0(Save_Dir, figure_name, "-SBR.png"), width = 12, height = 8)
+    ggsave(f, file = paste0(Save_Dir, figure_name, "-SBR.pdf"), width = 12, height = 8)
     
     return(SB_A)
     

@@ -53,7 +53,7 @@ plot_retro = function(SS_Dir, lyear, fyear, Save_Dir, title, figure_name = "Retr
     # coord_cartesian(ylim = ylim, xlim = xlim) +
     labs(x = "", y = "", color = "Year") +
     theme_bw(20) + ggtitle(title) +
-  theme(plot.title = element_text(hjust = 0.5))
+    theme(plot.title = element_text(hjust = 0.5))
   
   ggsave(
     f1,
