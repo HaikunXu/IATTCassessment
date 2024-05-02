@@ -25,10 +25,11 @@ plot_ASPM2 = function(SS_Dir, lyear, fyear, legend, Save_Dir, ymax, figure_name,
     geom_point(aes(x = yq, y = est, color = Model), size = 1.5,data = SB_A %>% filter(yq==year)) + 
     theme_bw(20) + xlab("") + ylab("") + geom_hline(yintercept = 1, linetype = "dashed") +
     # coord_cartesian(ylim = c(0,ymax),xlim=xlim,expand = FALSE)+
-    ggtitle(title) + ggeasy::easy_center_title()
+    ggtitle(title) +
+    theme(plot.title = element_text(hjust = 0.5))
   
   ggsave(f, file = paste0(Save_Dir, figure_name, "-SBR2.png"), width = 12, height = 8)
-  ggsave(f, file = paste0(Save_Dir, figure_name, "-SBR2.eps"), width = 12, height = 8,device=cairo_ps)
+  ggsave(f, file = paste0(Save_Dir, figure_name, "-SBR2.edf"), width = 12, height = 8)
   
   return(f)
   
