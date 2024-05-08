@@ -58,7 +58,19 @@ make_kobetable_SAC11 <- function(Path, KobePath, FFleets, STD_only = TRUE, newSS
   dSPBdat <- Dynamic.rep$timeseries
   dSPBdat$Yr2 <- 1975 + (dSPBdat$Yr/4) - 0.25
   x <- dSPBdat$Yr2[(3+(lyear-fyear+1)*4):(length(dSPBdat$Yr2))]
-  y <- dSPBdat$SpawnBio[(3+(lyear-fyear+1)*4):(length(dSPBdat$SpawnBio))]
+  # y <- dSPBdat$SpawnBio[(3+(lyear-fyear+1)*4):(length(dSPBdat$SpawnBio))]
+  
+  # new dmsy code updated in May 7, 2024
+  ForeRepName <- paste(dMSYPath, "Forecast-report.SSO", sep = "")
+  # Get management report
+  ForeRepStart <- grep("FORECAST:_With_Constant_F=Fofl;_No_Input_Catches_or_Adjustments;_Equil_Recr;_No_inpl_error", readLines(ForeRepName))
+  ForeRepEnd <- grep("FORECAST:_With_F=Fabc;_With_Input_Catches_and_Catch_Adjustments;_Equil_Recr;_No_inpl_error", readLines(ForeRepName))[1]
+  
+  ForeDat <- read.table(file = ForeRepName, header = TRUE, fill = T, quote = "", colClasses = "character", 
+                        nrows = ForeRepEnd - ForeRepStart - 2, skip = ForeRepStart)
+  ForeDat <- as.data.frame(ForeDat)
+  y <- as.numeric(ForeDat$SpawnBio)
+  
   x2 <- unique(floor(x))
   y2 <- y[x %in% x2]
   # for (yy in 1:length(x2)) y2[yy] <- mean(y[floor(x) %in% (x2[yy]-1)])
@@ -207,10 +219,7 @@ make_kobetable_SAC11 <- function(Path, KobePath, FFleets, STD_only = TRUE, newSS
                   "Fmultiplier")
     MSYtableOut <- cbind(RowNames, MSYtableOut)
     write.csv(MSYtableOut, paste0(KobePath, "KobePlotOut.csv"), row.names = FALSE)
-    # For debugging MSYtableOut <-
-    # read.table('C:/Users/alexdasilva/Documents/IATTC/IATTC_2012/MEETINGS/SAC3/SS_work/BET/KOBE_PLOT/BET_KobePlotOut.csv',
-    # sep=',')
-    
+
     ################################################################################################# STEP 3 - Compute the time series to make the Kobe plots
     
     SoverSmsy <- rep(0, dim(MSYtableOut)[2] - 1)

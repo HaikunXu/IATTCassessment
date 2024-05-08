@@ -146,7 +146,19 @@ makeManagTable.new <- function(Path, FFleets, FlimitPath, dMSYPath) {
     dSPBdat <- Dynamic.rep$timeseries
     dSPBdat$Yr2 <- 1975 + (dSPBdat$Yr/4) - 0.25
     x <- dSPBdat$Yr2[(3+(lyear-fyear+1)*4):(length(dSPBdat$Yr2))]
-    y <- dSPBdat$SpawnBio[(3+(lyear-fyear+1)*4):(length(dSPBdat$SpawnBio))]
+    # y <- dSPBdat$SpawnBio[(3+(lyear-fyear+1)*4):(length(dSPBdat$SpawnBio))]
+    
+    # new dmsy code updated in May 7, 2024
+    ForeRepName <- paste(dMSYPath, "Forecast-report.SSO", sep = "")
+    # Get management report
+    ForeRepStart <- grep("FORECAST:_With_Constant_F=Fofl;_No_Input_Catches_or_Adjustments;_Equil_Recr;_No_inpl_error", readLines(ForeRepName))
+    ForeRepEnd <- grep("FORECAST:_With_F=Fabc;_With_Input_Catches_and_Catch_Adjustments;_Equil_Recr;_No_inpl_error", readLines(ForeRepName))[1]
+    
+    ForeDat <- read.table(file = ForeRepName, header = TRUE, fill = T, quote = "", colClasses = "character", 
+                          nrows = ForeRepEnd - ForeRepStart - 2, skip = ForeRepStart)
+    ForeDat <- as.data.frame(ForeDat)
+    y <- as.numeric(ForeDat$SpawnBio)
+    
     x2 <- unique(floor(x)) 
     y2 <- y[x %in% x2]
     dSpawnBioYr.Out <- cbind(x2-(lyear-fyear+1), y2)
