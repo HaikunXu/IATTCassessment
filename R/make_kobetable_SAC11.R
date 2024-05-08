@@ -61,7 +61,7 @@ make_kobetable_SAC11 <- function(Path, KobePath, FFleets, STD_only = TRUE, newSS
   # y <- dSPBdat$SpawnBio[(3+(lyear-fyear+1)*4):(length(dSPBdat$SpawnBio))]
   
   # new dmsy code updated in May 7, 2024
-  ForeRepName <- paste(dMSYPath, "Forecast-report.SSO", sep = "")
+  ForeRepName <- paste(DynamicPath, "Forecast-report.SSO", sep = "")
   # Get management report
   ForeRepStart <- grep("FORECAST:_With_Constant_F=Fofl;_No_Input_Catches_or_Adjustments;_Equil_Recr;_No_inpl_error", readLines(ForeRepName))
   ForeRepEnd <- grep("FORECAST:_With_F=Fabc;_With_Input_Catches_and_Catch_Adjustments;_Equil_Recr;_No_inpl_error", readLines(ForeRepName))[1]
