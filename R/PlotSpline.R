@@ -9,8 +9,8 @@ PlotSpline<-function(Path,Save_Path,Fleet,model_name,fyear,lyear,dim,w,h){
   ###Mark's code
   # ****** Use this *******
 
-  tiff(paste0(Save_Path,"Fleet",toString(Fleet)," Selex.tif"),width = w, height =h)  
-  par(mfrow = dim) #,mar=c(2, 2, 2, 2) + 0.1)
+  tiff(paste0(Save_Path,"Fleet",toString(Fleet)," Selex.tif"), width = w, height = h)  
+  par(mfrow = dim)
   
   for(m in 1:length(Path)) {
     print(m)
@@ -22,12 +22,14 @@ PlotSpline<-function(Path,Save_Path,Fleet,model_name,fyear,lyear,dim,w,h){
                       ]
     tt<-tt[nrow(tt),]
     
-    plot(seq(20,186,2),tt[,15:98], type="l", main = model_name[m])
+    plot(seq(20,186,2), tt[,15:98], type="l", main = model_name[m],
+         xlab = "Length", ylab = "Selectivity", cex=3)
     
     tt2 <- Rep$sizedbase[Rep$sizedbase$Fleet %in% Fleet & 
                           Rep$sizedbase$Sex %in% c(1), 
-                        ]
-    tt2<-tapply(tt2$Obs, tt2$Bin, FUN =mean)
+                        ] %>% filter(Yr>=fyear,Yr<=lyear)
+      
+    tt2<-tapply(tt2$Obs * tt2$Nsamp_adj, tt2$Bin, FUN = mean)
     
     tt3<-Rep$natlen[Rep$natlen$Sex %in% c(1,2) &                      #average over both sexes
                       Rep$natlen$"Beg/Mid" %in% c("B") &
@@ -44,7 +46,7 @@ PlotSpline<-function(Path,Save_Path,Fleet,model_name,fyear,lyear,dim,w,h){
     
     tt4<-tt2/tt3_df$N_mean
     
-    lines(seq(65,185,10),tt4[1:13]/max(tt4[1:13]),col="red",type="p")
+    lines(seq(65,185,10), tt4[1:13]/max(tt4[1:13]), col="red", type="p")
     # lines(seq(20,196,2),lowess(tt4[1:89],f=f)$y/max(lowess(tt4[1:89],f=f)$y),col="red")
   }
   dev.off()
