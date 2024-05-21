@@ -56,8 +56,8 @@ CCA = function(Path, CCA_Path, Hessian = FALSE) {
   setwd(CCA_Path)
   print(CCA_Path)
   
-  if(Hessian == FALSE) command <- paste("cd", ASPM_Path, "& go_nohess.bat", sep = " ")
-  else command <- paste("cd", ASPM_Path, "& go.bat", sep = " ")
+  if(Hessian == FALSE) command <- paste("cd", CCA_Path, "& go_nohess.bat", sep = " ")
+  else command <- paste("cd", CCA_Path, "& go.bat", sep = " ")
   
   ss <- shell(cmd = command, intern = T, wait = T)
   
