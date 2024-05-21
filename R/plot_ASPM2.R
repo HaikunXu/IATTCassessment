@@ -31,6 +31,6 @@ plot_ASPM2 = function(SS_Dir, lyear, fyear, legend, Save_Dir, ymax, figure_name,
   ggsave(f, file = paste0(Save_Dir, figure_name, "-SBR2.png"), width = 12, height = 8)
   ggsave(f, file = paste0(Save_Dir, figure_name, "-SBR2.edf"), width = 12, height = 8)
   
-  return(f)
+  return(SB_A)
   
 }

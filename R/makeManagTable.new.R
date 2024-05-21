@@ -206,8 +206,8 @@ makeManagTable.new <- function(Path, FFleets, FlimitPath, dMSYPath) {
     names(ManagTable) <- c("quant", "val")
     # Populate table with quantities
     ManagTable[, 1] <- RowNames
-    ManagTable[1, 2] <- format(msy, digits = 1)
-    ManagTable[2, 2] <- format(msy_d, digits = 1)
+    ManagTable[1, 2] <- format(msy)
+    ManagTable[2, 2] <- format(msy_d)
     ManagTable[3, 2] <- format(Smsy, digits = 1)
     ManagTable[4, 2] <- format(SrecentSzero, digits = 8, nsmall = 8)
     ManagTable[5, 2] <- format(SmsySzero, digits = 8, nsmall = 8)
