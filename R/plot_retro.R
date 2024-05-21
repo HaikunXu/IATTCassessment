@@ -18,7 +18,9 @@ plot_retro = function(SS_Dir, lyear, fyear, Save_Dir, title, figure_name = "Retr
       SBR <-
         data.frame(
           "Year" = 1975 + (Myreplist$timeseries$Yr - 1) / 4,
-          "SBR" = Myreplist$timeseries$SpawnBio,
+          "SB" = Myreplist$timeseries$SpawnBio,
+          "SBR" = Myreplist$timeseries$SpawnBio/Myreplist$timeseries$SpawnBio[1],
+          "R" = Myreplist$timeseries$Recruit_0,
           "Assess_Year" = lyear[i]
         )
     }
@@ -28,7 +30,9 @@ plot_retro = function(SS_Dir, lyear, fyear, Save_Dir, title, figure_name = "Retr
           SBR,
           data.frame(
             "Year" = 1975 + (Myreplist$timeseries$Yr - 1) / 4,
-            "SBR" = Myreplist$timeseries$SpawnBio,
+            "SB" = Myreplist$timeseries$SpawnBio,
+            "SBR" = Myreplist$timeseries$SpawnBio/Myreplist$timeseries$SpawnBio[1],
+            "R" = Myreplist$timeseries$Recruit_0,
             "Assess_Year" = lyear[i]
           )
         )
@@ -37,7 +41,7 @@ plot_retro = function(SS_Dir, lyear, fyear, Save_Dir, title, figure_name = "Retr
   
   SBR <-
     SBR %>% mutate(
-      label1 = ifelse(Year >= fyear &
+      label1 = ifelse(Year >= fyear[1] &
                         Year < (Assess_Year + 1), 1, 0),
       label2 = ifelse(Year == Assess_Year + 0.75, 1, 0)
     )
@@ -61,6 +65,6 @@ plot_retro = function(SS_Dir, lyear, fyear, Save_Dir, title, figure_name = "Retr
     width = 8,
     height = 6
   )
-  return(f1)
+  return(SBR)
     
 }

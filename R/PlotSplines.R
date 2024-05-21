@@ -35,10 +35,10 @@ PlotSplines<-function(Path=Path,Allfleets,f,fyears,lyears,nr,nc,w,h,name="Selex"
     # }
     # else {
       tt2 <- Rep$sizedbase[Rep$sizedbase$Fleet %in% fleets &
-                             Rep$sizedbase$Sex %in% c(1),]
+                             Rep$sizedbase$Sex %in% c(1),] %>% filter(Yr>=fyear,Yr<=lyear)
     # }
 
-    tt2<-tapply(tt2$Obs, tt2$Bin, FUN =mean)
+    tt2<-tapply(tt2$Obs, tt2$Bin, FUN = mean)
     
     tt3<-Rep$natlen[Rep$natlen$Sex %in% c(1,2) &            # average over both sexes
                       Rep$natlen$"Beg/Mid" %in% c("B") &
