@@ -3,7 +3,6 @@
 export(ASPM)
 export(CCA)
 export(CompareEffN)
-export(Dir)
 export(Index_CV)
 export(Path)
 export(PlotComps)
