@@ -68,6 +68,6 @@ plot_R0profile = function(Path, R0, R0_MLE, Fleet_comps) {
   
   ggsave(f2, file = paste0(Path, "R0_F.png"), width = 10, height = 5)
   
-  return(f1)
+  return(NLL_amin)
     
 }

@@ -13,21 +13,26 @@
 # Inspired by http://www.iotc.org/sites/default/files/documents/2018/10/IOTC-2018-WPM09-12_Rev1.pdf
 # Haikun Xu; 1/30/2019
 
-select_data <- function(data,c1,c2,c3,c4) {
+select_data <- function(data, c1, c2, c3, c4) {
+  # Generate the quantities for data selection
+  Data <- data %>%
+    mutate(year = ceiling(Year / 4) + 1974) %>%
+    group_by(Vessel) %>% mutate(setsbyvessel = n(),
+                                # total number of sets per vessel
+                                quartersbyvessel = length(unique(Year))) %>% # total number of quarters fished per vessel
+    group_by(Lat, Lon) %>% mutate(setsbygrid = n(),
+                                  # total number of sets per grid cell
+                                  quartersbygrid = length(unique(Year))) # # total number of quarters per grid cell
   
-# Generate the quantities for data selection
-Data <- data %>%
-  mutate(year=ceiling(Year/4)+1974) %>%
-  group_by(Vessel) %>% mutate(setsbyvessel=n(), # total number of sets per vessel
-                                quartersbyvessel=length(unique(Year))) %>% # total number of quarters fished per vessel
-  group_by(Lat,Lon) %>% mutate(setsbygrid=n(), # total number of sets per grid cell
-                               quartersbygrid=length(unique(Year))) # # total number of quarters per grid cell
-
-# Data selection
-data_selected <- Data %>% filter(setsbyvessel>=c1, # select vessel
-                                quartersbyvessel>=c2, # select vessel
-                                setsbygrid>=c3, # select grid
-                                quartersbygrid>=c4) # select grid
-
-return(data_selected)
+  # Data selection
+  data_select <- Data %>% filter(setsbyvessel >= c1,
+                                   # select vessel
+                                   quartersbyvessel >= c2,
+                                   # select vessel
+                                   setsbygrid >= c3,
+                                   # select grid
+                                   quartersbygrid >= c4) # select grid
+  
+  return(data_select)
+  
 }

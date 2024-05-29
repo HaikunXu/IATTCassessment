@@ -6,7 +6,7 @@
 
 faa = function(Dir, Last_Year, xlim, ylim) {
     
-    myreplist = r4ss::SS_output(dir = Dir, ncols = 500, covar = F, verbose = FALSE, printstats = FALSE)
+    myreplist = r4ss::SS_output(dir = Dir, covar = F, verbose = FALSE, printstats = FALSE)
     
     Z <- myreplist$Z_at_age
     M <- myreplist$M_at_age
