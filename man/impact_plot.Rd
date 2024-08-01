@@ -6,6 +6,17 @@
 \usage{
 impact_plot(Dir, n_year, BaseName = "Base", n_fishery, title)
 }
+\arguments{
+\item{Dir}{The directory in which the base model is stored as a subfolder (not the directory of the base model folder)}
+
+\item{n_year}{The number of model time steps}
+
+\item{BaseName}{The name of the base model folder}
+
+\item{n_fishery}{The number of fishery fleets}
+
+\item{title}{The title of the impact plot}
+}
 \description{
-\code{impact_plot} This function automayically generates the fishery impact plot for SS v3.23
+\code{impact_plot} This function automatically generates the fishery impact plot for SS v3.30
 }
