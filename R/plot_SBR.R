@@ -4,7 +4,7 @@
 #' 
 #' @export
 
-plot_SBR = function(SS_Dir, lyear, fyear, legend, Save_Dir, ymax, figure_name = "", title = "", xlim, alpha = 0.1, ref = 0) {
+plot_SBR = function(SS_Dir, lyear, fyear, legend, Save_Dir, ymax, figure_name = "", title = "", xlim, alpha = 0.1, ylabel = "", xlabel = "") {
     for (i in 1:length(lyear)) {
         cor_mat <- read.table(paste0(SS_Dir[i], "ss3.std"), skip = 1, fill = NA, header = FALSE)
         names(cor_mat) <- c("index","name","value","std.dev")
@@ -19,25 +19,12 @@ plot_SBR = function(SS_Dir, lyear, fyear, legend, Save_Dir, ymax, figure_name = 
     
     SB_A <- SB_A %>% data.frame()
     
-    if(ref == 0) {
-        f <- ggplot(data = SB_A) + 
-          geom_ribbon(aes(x = yq, ymin = est - 1.96 * std, ymax = est + 1.96 * std, fill = Spec), alpha=alpha) + 
-          geom_line(aes(x = yq, y = est, color = Spec), size = 1) + 
-          geom_point(aes(x = yq, y = est, color = Spec), size = 2,data = SB_A %>% filter(yq==year)) + 
-          theme_bw(20) + xlab("") + ylab("") + geom_hline(yintercept = 1, linetype = "dashed") +
-          coord_cartesian(ylim = c(0,ymax),xlim=xlim,expand = FALSE) + ggtitle(title)
-    }
-
-    else {
-      f <- ggplot(data = SB_A) + 
-        geom_ribbon(aes(x = yq, ymin = est - 1.96 * std, ymax = est + 1.96 * std, fill = Spec), alpha=alpha) + 
-        geom_line(aes(x = yq, y = est, color = Spec), size = 1) + 
-        geom_point(aes(x = yq, y = est, color = Spec), size = 2.5, data = SB_A %>% filter(yq==year)) + 
-        geom_line(aes(x = yq, y = est, color = Spec), size = 1, data = SB_A %>% filter(Spec %in% legend[ref])) + 
-        geom_point(aes(x = yq, y = est, color = Spec), size = 4.5, data = SB_A %>% filter(yq==year, Spec %in% legend[ref])) + 
-        theme_bw(20) + xlab("") + ylab("") + geom_hline(yintercept = 1, linetype = "dashed") +
-        coord_cartesian(ylim = c(0,ymax),xlim=xlim,expand = FALSE) + ggtitle(title)
-    }
+    f <- ggplot(data = SB_A) + 
+      geom_ribbon(aes(x = yq, ymin = est - 1.96 * std, ymax = est + 1.96 * std, fill = Spec), alpha=alpha) + 
+      geom_line(aes(x = yq, y = est, color = Spec), size = 1) + 
+      geom_point(aes(x = yq, y = est, color = Spec), size = 2,data = SB_A %>% filter(yq==year)) + 
+      theme_bw(20) + xlab(xlabel) + ylab(ylabel) + geom_hline(yintercept = 1, linetype = "dashed") +
+      coord_cartesian(ylim = c(0,ymax),xlim=xlim,expand = FALSE) + ggtitle(title)
 
     ggsave(f, file = paste0(Save_Dir, figure_name, "-SBR.png"), width = 12, height = 8)
     ggsave(f, file = paste0(Save_Dir, figure_name, "-SBR.pdf"), width = 12, height = 8)

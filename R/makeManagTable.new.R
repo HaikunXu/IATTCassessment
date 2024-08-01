@@ -110,15 +110,6 @@ makeManagTable.new <- function(Path, FFleets, FlimitPath, dMSYPath) {
     SrecentS0 <- cor_mat$value[max(which(cor_mat$name == "depletion"))]
     SrecentS0_std <- cor_mat$std.dev[max(which(cor_mat$name == "depletion"))]
     
-    # png(paste0(Path,"SrecentSlim.png"),width = 500, height =500)  
-    # plot(seq(0,3*SrecentSlim,0.01),pnorm(seq(0,3*SrecentSlim,0.01),SrecentSlim,SrecentSlim_std),
-    #      main = "SrecentSlim(+-std)",xlab="Srecent/Slim",ylab="P(Scur<Slimit)")
-    # abline(v=SrecentSlim)
-    # abline(v=SrecentSlim-SrecentSlim_std,lty="dashed")
-    # abline(v=SrecentSlim+SrecentSlim_std,lty="dashed")
-    # abline(v=1,col="red")
-    # dev.off()
-    
     Prob_Slimit <- pnorm(1,SrecentSlim,SrecentSlim_std) # P(Scur<Slimit)
     
     # Get Frecent/Flimit (5/5/2020)

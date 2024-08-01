@@ -15,7 +15,8 @@ plot_SBR(
   title = "",
   xlim,
   alpha = 0.1,
-  ref = 0
+  ylabel = "",
+  xlabel = ""
 )
 }
 \description{

@@ -10,9 +10,7 @@ faa = function(Dir, Last_Year, xlim, ylim) {
     
     Z <- myreplist$Z_at_age
     M <- myreplist$M_at_age
-    # M_Matrix <- rbind(matrix(rep(data.matrix(M[1, ]), nrow(Z)/2), nrow = nrow(Z)/2, byrow = T), matrix(rep(data.matrix(M[2, 
-    #     ]), nrow(Z)/2), nrow = nrow(Z)/2, byrow = T))
-    
+
     F_M <- Z
     F_M[, 4:43] <- Z[, 4:43] - data.matrix(M[, 4:43])
     
