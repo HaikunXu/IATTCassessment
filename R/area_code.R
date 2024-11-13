@@ -23,25 +23,9 @@ area_code = function(Lat, Lon, Species) {
     }
     
     if (Species == "YFT") {
-      YFT_DEL <- read.csv("D:/OneDrive - IATTC/IATTC/2024/Irregular clustering/YFT DEL/cluster_YFT.csv")
-      
+
       Locations <- data.frame("lat" = Lat, "lon" = Lon)
-      Locations <- dplyr::left_join(Locations, YFT_DEL)
-      
-      for (i in 1:length(Lat)) {
-        if((Locations$lat[i] > 10 & Locations$lon[i] > (-105))) Locations$area[i] <- 1
-        if(Locations$lat[i] < 0) Locations$area[i] <- 3
-        if(Locations$lon[i] < (-130)) Locations$area[i] <- 3
-        if(Locations$lat[i] > 15 & Locations$lon[i] < (-125)) Locations$area[i] <- 3
-        if(Locations$lat[i] > 30) Locations$area[i] <- 1
-        if(Locations$lat[i] > 15 & Locations$lon[i] < (-125)) Locations$area[i] <- 3
-        if(Locations$lat[i] > 5 & Locations$lat[i] < 30 & Locations$lon[i] < (-115) & Locations$lon[i] > (-125)) Locations$area[i] <- 2
-        if(Locations$lat[i] < 5 & Locations$lon[i] > (-95)) Locations$area[i] <- 4
-        if(Locations$lat[i] == 2.5 & Locations$lon[i] == -77.5) Locations$area[i] <- 2
-        if(Locations$lat[i] > -20 & Locations$lat[i] < -10 & Locations$lon[i] < -90) Locations$area[i] <- 3
-        if(Locations$lat[i] > 10 & Locations$lon[i] < (-125)) Locations$area[i] <- 5
-        if(Locations$lat[i] == 12.5 & Locations$lon[i] == -127.5) Locations$area[i] <- 2
-      }
+      Locations <- dplyr::left_join(Locations, YFT_area)
       
       if(sum(is.na(Locations$area)) > 0) {
         print(Locations[which(is.na(Locations$area)==1),1:2])
