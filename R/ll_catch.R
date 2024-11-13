@@ -84,14 +84,44 @@ ll_catch = function(Grid_Catch, FSR_Catch, Species, last_year, dir) {
     allocation_flag <- rep(3, nrow(FSR_annual))
     flag_id <- FSR_annual$Year %in% Grid_number_annual$Yrr
     if (Countries[c] %in% Special_Countires) {
-      allocation_flag[flag_id == TRUE] <- ifelse(Grid_number_annual$EPO > 0, ifelse(Grid_weight_annual$EPO > 
-                                                                                      0 & Grid_weight_annual$EPO < FSR_annual[which(FSR_annual$Year %in% Grid_weight_annual$Yrr), "mt"], 
-                                                                                    1, 0), ifelse(Grid_weight_annual$EPO > 0, ifelse(Grid_weight_annual$EPO < FSR_annual[which(FSR_annual$Year %in% 
-                                                                                                                                                                                 Grid_weight_annual$Yrr), "mt"], 1, 2), 3))
-    } else {
-      allocation_flag[flag_id == TRUE] <- ifelse(Grid_number_annual$EPO > 0, 0, ifelse(Grid_weight_annual$EPO > 
-                                                                                         0, ifelse(Grid_weight_annual$EPO < FSR_annual[which(FSR_annual$Year %in% Grid_weight_annual$Yrr), 
-                                                                                                                                       "mt"], 1, 2), 3))
+      allocation_flag_temp <- ifelse(Grid_number_annual$EPO > 0,
+                                     ifelse(Grid_weight_annual$EPO > 0 & Grid_weight_annual$EPO < FSR_annual[which(FSR_annual$Year %in% Grid_weight_annual$Yrr), "mt"],
+                                            1,
+                                            0),
+                                     ifelse(Grid_weight_annual$EPO > 0, 
+                                            ifelse(Grid_weight_annual$EPO < FSR_annual[which(FSR_annual$Year %in% Grid_weight_annual$Yrr), "mt"], 
+                                                   1, 
+                                                   2), 
+                                            3))
+      
+      if(length(allocation_flag_temp) != length(allocation_flag[flag_id == TRUE])) {
+        print(FSR_annual$Year[flag_id == TRUE])
+        print(Grid_number_annual$Yrr)
+        stop(paste0("Please check flag: ", Countries[c], ".The FSR and Gridded years above are not consistent"))
+      }
+      else {
+        allocation_flag[flag_id == TRUE] <- allocation_flag_temp
+      }
+      
+    }
+    
+    else {
+      allocation_flag_temp <- ifelse(Grid_number_annual$EPO > 0, 
+                                     0, 
+                                     ifelse(Grid_weight_annual$EPO > 0,
+                                            ifelse(Grid_weight_annual$EPO < FSR_annual[which(FSR_annual$Year %in% Grid_weight_annual$Yrr), "mt"],
+                                                   1,
+                                                   2),
+                                            3))
+      
+      if(length(allocation_flag_temp) != length(allocation_flag[flag_id == TRUE])) {
+        print(FSR_annual$Year[flag_id == TRUE])
+        print(Grid_number_annual$Yrr)
+        stop(paste0("Please check flag: ", Countries[c], ".The FSR and Gridded years above are not consistent"))
+      }
+      else {
+        allocation_flag[flag_id == TRUE] <- allocation_flag_temp
+      }
     }
     # a quick look at the allocation flag vector plot(FSR_annual$Year,allocation_flag,main=Countries[c])
     print(Countries[c])
