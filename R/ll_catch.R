@@ -11,7 +11,7 @@ ll_catch = function(Grid_Catch, FSR_Catch, Species, last_year, dir) {
   data <- data.frame(Lat = Grid_Catch$Lat, Lon = Grid_Catch$Lon, Areas = as.factor(Grid_Catch$NewAreas))
   
   wmap <- ggplot2::map_data("world")
-  ggplot() + geom_point(aes(x = Lon, y = Lat, color = Areas), data = data, size = 6, shape = 15) +
+  ggplot() + geom_tile(aes(x = Lon, y = Lat, fill = Areas), color = "black", data = data) +
     geom_polygon(data = wmap, 
                  aes(long, lat, group = group), fill = "black", colour = "white", alpha = 1, lwd = 0.5) + coord_quickmap(ylim = c(-40, 
                                                                                                                                   40), xlim = c(-150, -70)) + theme_bw(8)
@@ -259,7 +259,7 @@ ll_catch = function(Grid_Catch, FSR_Catch, Species, last_year, dir) {
   if (Species == "BET")
     Area_Flag <- c(6, 4, 4, 4, 6, 4, 4, 4, 4) + 1 # "CHL" "COL" "CRI" "ECU" "ESP" "HND" "PER" "PRT" "SLV"
   if (Species == "YFT")
-    Area_Flag <- c(3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3) + 1
+    Area_Flag <- c(6, 5, 5, 1, 4, 3, 1, 1, 1, 5, 3, 1, 3) # "CAN" "CHL" "COL" "CRI" "ECU" "ESP" "GTM" "HND" "NIC" "PER" "PRT" "SLV" "UNK"
   
   print(Coastal_Countries)
   print(Area_Flag)

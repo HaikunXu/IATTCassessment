@@ -25,7 +25,7 @@ area_code = function(Lat, Lon, Species) {
     if (Species == "YFT") {
 
       Locations <- data.frame("lat" = Lat, "lon" = Lon)
-      Locations <- dplyr::left_join(Locations, YFT_area)
+      Locations <- dplyr::left_join(Locations, YFT_area_LL)
       
       if(sum(is.na(Locations$area)) > 0) {
         print(Locations[which(is.na(Locations$area)==1),1:2])
