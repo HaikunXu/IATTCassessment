@@ -259,7 +259,7 @@ ll_catch = function(Grid_Catch, FSR_Catch, Species, last_year, dir) {
   if (Species == "BET")
     Area_Flag <- c(6, 4, 4, 4, 6, 4, 4, 4, 4) + 1 # "CHL" "COL" "CRI" "ECU" "ESP" "HND" "PER" "PRT" "SLV"
   if (Species == "YFT")
-    Area_Flag <- c(6, 5, 5, 1, 4, 3, 1, 1, 1, 5, 3, 1, 3) # "CAN" "CHL" "COL" "CRI" "ECU" "ESP" "GTM" "HND" "NIC" "PER" "PRT" "SLV" "UNK"
+    Area_Flag <- c(6, 5, 2, 2, 4, 3, 1, 1, 1, 5, 3, 1, 3) # "CAN" "CHL" "COL" "CRI" "ECU" "ESP" "GTM" "HND" "NIC" "PER" "PRT" "SLV" "UNK"
   
   print(Coastal_Countries)
   print(Area_Flag)
