@@ -1,2 +1,2 @@
 # IATTCassessment
-The R Code repository for IATTC (https://www.iattc.org/HomeENG.htm) stock assessments
+The R Code repository for the IATTC (https://www.iattc.org/HomeENG.htm) stock assessment program
