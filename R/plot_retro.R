@@ -4,9 +4,11 @@
 #' 
 #' @export
 
-plot_retro = function(SS_Dir, lyear, fyear, Save_Dir, title, figure_name = "Retro_SB", xlim, ylim) {
-  # spawning biomass ratio
+plot_retro = function(SS_Dir, lyear, fyear, Save_Dir, title, figure_name = "Retro_SB", xlim, ylim, Fages = 1:8) {
+
+  # SSB and SBR
   for (i in 1:length(lyear)) {
+    
     Myreplist = r4ss::SS_output(
       dir = SS_Dir[i],
       covar = F,
@@ -14,6 +16,26 @@ plot_retro = function(SS_Dir, lyear, fyear, Save_Dir, title, figure_name = "Retr
       verbose = FALSE,
       printstats = FALSE
     )
+    
+    # get F for bigeye
+    Z <- Myreplist$Z_at_age
+    M <- Myreplist$M_at_age
+    
+    F_M <- Z
+    F_M[, 4:ncol(Z)] <- Z[, 4:ncol(Z)] - data.matrix(M[,  4:ncol(Z)])
+    
+    F_Matrix <- F_M %>% gather(4:ncol(Z), key = "Age", value = "FAA")
+    F_Matrix$Age <- as.numeric(F_Matrix$Age)
+    F_Matrix$Year2 <- ceiling(F_Matrix$Yr/4) + 1974
+    
+    F_ts <- F_Matrix %>%
+      filter(Age %in% Fages) %>%
+      group_by(Sex, Year2) %>% summarise(F_annual = sum(FAA)) %>%
+      group_by(Year2) %>% summarise(F_group = mean(F_annual))
+    
+    # get dynamic depletion
+    Dynamic_SBR <- Myreplist$Dynamic_Bzero$SSB / Myreplist$Dynamic_Bzero$SSB_nofishing
+    
     if (i == 1) {
       SBR <-
         data.frame(
@@ -21,6 +43,8 @@ plot_retro = function(SS_Dir, lyear, fyear, Save_Dir, title, figure_name = "Retr
           "SB" = Myreplist$timeseries$SpawnBio,
           "SBR" = Myreplist$timeseries$SpawnBio/Myreplist$timeseries$SpawnBio[1],
           "R" = Myreplist$timeseries$Recruit_0,
+          "F" = c(0, 0, rep(F_ts$F_group, each = 4), 0),
+          "dSBR" = Dynamic_SBR,
           "Assess_Year" = lyear[i]
         )
     }
@@ -33,6 +57,8 @@ plot_retro = function(SS_Dir, lyear, fyear, Save_Dir, title, figure_name = "Retr
             "SB" = Myreplist$timeseries$SpawnBio,
             "SBR" = Myreplist$timeseries$SpawnBio/Myreplist$timeseries$SpawnBio[1],
             "R" = Myreplist$timeseries$Recruit_0,
+            "F" = c(0, 0, rep(F_ts$F_group, each = 4), 0),
+            "dSBR" = Dynamic_SBR,
             "Assess_Year" = lyear[i]
           )
         )

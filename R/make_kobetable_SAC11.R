@@ -162,7 +162,7 @@ make_kobetable_SAC11 <- function(Path, KobePath, FFleets, STD_only = TRUE, newSS
     MSYtableOut <- matrix(0, 9, 0)
     MSYtableOut <- as.data.frame(MSYtableOut)
     
-    # Loop over the elments of the qrt definition tables (BmarkTable,FcastTable)
+    # Loop over the elements of the qrt definition tables (BmarkTable,FcastTable)
     for (i in 1:dim(QrtsMat)[1]) # for(i in 1:3)
     {
       print(paste("run", i, "out of", dim(QrtsMat)[1], "runs"))

@@ -1,10 +1,10 @@
 #' Make CCA runs
 #' 
-#' \code{CCA} This function generates CCA
+#' \code{CCA_indexcomps} This function generates CCA
 #' 
 #' @export
 
-CCA = function(Path, CCA_Path, Index_fleet, Hessian = FALSE, dat_name = "BET-EPO.dat", ctl_name = "BET-EPO.ctl", ss_name = "ss.exe", par_line = 6) {
+CCA_indexcomps = function(Path, CCA_Path, Index_fleet, Hessian = FALSE, dat_name = "BET-EPO.dat", ctl_name = "BET-EPO.ctl", ss_name = "ss.exe", par_line = 6) {
   
   dir.create(CCA_Path)
   
@@ -42,6 +42,42 @@ CCA = function(Path, CCA_Path, Index_fleet, Hessian = FALSE, dat_name = "BET-EPO
   
   # make sure no G pars are estimated
   ctl$MG_parms$PHASE[1:6] <- -1
+  
+  # turn off fishery comp likelihood
+  ctl$Variance_adjustment_list$value[which(ctl$Variance_adjustment_list$fleet != Index_fleet)] <- 0
+  
+  # turn off selex par estimation
+  
+  #get a vector with the fleet number for each selectivity parameter
+  n<-nrow(ctl$size_selex_parms)
+  all_fleets<-vector(length=n)
+  for(i in 1:nrow(ctl$size_selex_parms)) all_fleets[i]<-as.numeric(gsub(".*\\((\\d+)\\).*", "\\1", rownames(ctl$size_selex_parms[i,])))
+  
+  # Loop through the size selectivity parameters and modify for the fleets_to_disable
+  for (i in 1:nrow(ctl$size_selex_parms)) {
+    # If the fleet is in the fleets_to_disable, turn off its selectivity
+    if (all_fleets[i] != Index_fleet) 
+      # Set phase to a negative value
+      ctl$size_selex_parms$PHASE[i] <- -1  # Or another value depending on the desired effect
+    
+  }
+  
+  # turn off time-varying selectivity
+  ctl$size_selex_parms_tv$PHASE <- -1
+  
+  # added on April 14 2025
+  #get a vector with the fleet number for each selectivity parameter
+  n<-nrow(ctl$age_selex_parms)
+  all_fleets<-vector(length=n)
+  for(i in 1:nrow(ctl$age_selex_parms)) all_fleets[i]<-as.numeric(gsub(".*\\((\\d+)\\).*", "\\1", rownames(ctl$age_selex_parms[i,])))
+  
+  for (i in 1:nrow(ctl$age_selex_parms)) {
+    # If the fleet is in the fleets_to_disable, turn off its selectivity
+    if (all_fleets[i] != Index_fleet) 
+      # Set phase to a negative value
+      ctl$age_selex_parms$PHASE[i] <- -1   # Or another value depending on the desired effect
+    
+  }
   
   # write the new control file
   r4ss::SS_writectl_3.30(

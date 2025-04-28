@@ -10,7 +10,7 @@
 #' 
 #' @export
 
-impact_plot = function(Dir, n_year, BaseName = "Base", n_fishery, title) {
+impact_plot = function(Dir, n_year, BaseName = "Base", n_fishery, title, proj_year = 0) {
   
   step_name <- c("noDisc", "noPS", "noLL", "noF")
   n_step <- length(step_name)
@@ -120,12 +120,15 @@ impact_plot = function(Dir, n_year, BaseName = "Base", n_fishery, title) {
   myreplist5 = r4ss::SS_output(dir = Dir5, covar = F, printstats = F, verbose = FALSE)
   
   SB_dif <- data.frame(
-    Year = myreplist1$timeseries$Yr[4:(n_year + 2)],
-    SB = myreplist1$timeseries$SpawnBio[4:(n_year + 2)],
-    SB0 = myreplist5$timeseries$SpawnBio[4:(n_year + 2)],
-    noDisc = myreplist2$timeseries$SpawnBio[4:(n_year + 2)] - myreplist1$timeseries$SpawnBio[4:(n_year + 2)],
-    noPS = myreplist3$timeseries$SpawnBio[4:(n_year + 2)] - myreplist1$timeseries$SpawnBio[4:(n_year + 2)],
-    noLL = myreplist4$timeseries$SpawnBio[4:(n_year + 2)] - myreplist1$timeseries$SpawnBio[4:(n_year + 2)]
+    Year = myreplist1$timeseries$Yr[4:(n_year + 2 + proj_year)],
+    SB = myreplist1$timeseries$SpawnBio[4:(n_year + 2 + proj_year)],
+    SB0 = myreplist5$timeseries$SpawnBio[4:(n_year + 2 + proj_year)],
+    noDisc = myreplist2$timeseries$SpawnBio[4:(n_year + 2 + proj_year)] - 
+      myreplist1$timeseries$SpawnBio[4:(n_year + 2 + proj_year)],
+    noPS = myreplist3$timeseries$SpawnBio[4:(n_year + 2 + proj_year)] -
+      myreplist1$timeseries$SpawnBio[4:(n_year + 2 + proj_year)],
+    noLL = myreplist4$timeseries$SpawnBio[4:(n_year + 2 + proj_year)] -
+      myreplist1$timeseries$SpawnBio[4:(n_year + 2 + proj_year)]
   )
   
   SB_dif$Disc <- SB_dif$noDisc / apply(SB_dif[, 4:6], c(1), sum) * (SB_dif$SB0 - SB_dif$SB)

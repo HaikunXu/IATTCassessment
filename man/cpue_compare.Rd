@@ -17,10 +17,13 @@ cpue_compare(
   CV = FALSE,
   w = 15,
   h = 8,
-  smooth = TRUE,
+  smooth = FALSE,
   version = "New",
   s = 0.1,
-  Figure_name = "CPUE_Compare"
+  Figure_name = "CPUE_Compare",
+  Year_first = 0,
+  Year_last = 2500,
+  Legend_name = "Index"
 )
 }
 \description{

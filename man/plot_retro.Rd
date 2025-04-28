@@ -12,7 +12,8 @@ plot_retro(
   title,
   figure_name = "Retro_SB",
   xlim,
-  ylim
+  ylim,
+  Fages = 1:8
 )
 }
 \description{

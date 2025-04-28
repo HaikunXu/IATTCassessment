@@ -1,6 +1,6 @@
 Package: IATTCassessment
 Title: R functions for IATTC Stock Assessments
-Version: 1.15
+Version: 1.16
 Author: Haikun Xu
 Maintainer: Haikun Xu <hkxu@iattc.org>
 Description: This package provides some R functions to automate data precessing and result visualization

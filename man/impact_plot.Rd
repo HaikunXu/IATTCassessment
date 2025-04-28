@@ -4,7 +4,7 @@
 \alias{impact_plot}
 \title{Fishing impact plot}
 \usage{
-impact_plot(Dir, n_year, BaseName = "Base", n_fishery, title)
+impact_plot(Dir, n_year, BaseName = "Base", n_fishery, title, proj_year = 0)
 }
 \arguments{
 \item{Dir}{The directory in which the base model is stored as a subfolder (not the directory of the base model folder)}
