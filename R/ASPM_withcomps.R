@@ -4,7 +4,7 @@
 #' 
 #' @export
 
-ASPM_withcomps = function(Path, ASPM_Path, Rdevs, Index_fleet, Hessian = FALSE, dat_name = "BET-EPO.dat", ctl_name = "BET-EPO.ctl", ss_name = "ss.exe", par_line = 6) {
+ASPM_withcomps = function(Path, ASPM_Path, Rdevs, comp_fleet, Hessian = FALSE, dat_name = "BET-EPO.dat", ctl_name = "BET-EPO.ctl", ss_name = "ss.exe", par_line = 6) {
   
   dir.create(ASPM_Path) # create a folder to run the ASPM
   
@@ -37,7 +37,7 @@ ASPM_withcomps = function(Path, ASPM_Path, Rdevs, Index_fleet, Hessian = FALSE, 
   # ctl$Q_parms$PHASE <- 1
   
   # turn off fishery comp likelihood
-  ctl$Variance_adjustment_list$value[which(ctl$Variance_adjustment_list$fleet != Index_fleet)] <- 0
+  ctl$Variance_adjustment_list$value[which(ctl$Variance_adjustment_list$fleet %in% comp_fleet == FALSE)] <- 0
   
   # turn off selex par estimation
   
@@ -49,7 +49,7 @@ ASPM_withcomps = function(Path, ASPM_Path, Rdevs, Index_fleet, Hessian = FALSE, 
   # Loop through the size selectivity parameters and modify for the fleets_to_disable
   for (i in 1:nrow(ctl$size_selex_parms)) {
     # If the fleet is in the fleets_to_disable, turn off its selectivity
-    if (all_fleets[i] != Index_fleet) 
+    if (all_fleets[i] %in% comp_fleet == FALSE) 
       # Set phase to a negative value
       ctl$size_selex_parms$PHASE[i] <- -1  # Or another value depending on the desired effect
     
@@ -66,7 +66,7 @@ ASPM_withcomps = function(Path, ASPM_Path, Rdevs, Index_fleet, Hessian = FALSE, 
   
   for (i in 1:nrow(ctl$age_selex_parms)) {
     # If the fleet is in the fleets_to_disable, turn off its selectivity
-    if (all_fleets[i] != Index_fleet) 
+    if (all_fleets[i] %in% comp_fleet == FALSE) 
       # Set phase to a negative value
       ctl$age_selex_parms$PHASE[i] <- -1   # Or another value depending on the desired effect
     

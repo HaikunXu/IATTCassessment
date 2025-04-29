@@ -8,7 +8,7 @@ ASPM_withcomps(
   Path,
   ASPM_Path,
   Rdevs,
-  Index_fleet,
+  comp_fleet,
   Hessian = FALSE,
   dat_name = "BET-EPO.dat",
   ctl_name = "BET-EPO.ctl",
