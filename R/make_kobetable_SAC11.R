@@ -4,7 +4,7 @@
 #' 
 #' @export
 
-make_kobetable_SAC11 <- function(Path, KobePath, FFleets, STD_only = TRUE, newSS, FlimitPath, DynamicPath) {
+make_kobetable_SAC11 <- function(Path, KobePath, FFleets, STD_only = TRUE, newSS, FlimitPath, DynamicPath, nruns = 1000) {
   ##################################################################################################################### STEP 1 - Get time series of BioSmr and SBR from the base case run
   if(STD_only==FALSE) print("change starter file (use par and do not estimate) in KobePath before this section!!!")
   
@@ -125,7 +125,7 @@ make_kobetable_SAC11 <- function(Path, KobePath, FFleets, STD_only = TRUE, newSS
     QrtsMat <- matrix(0, 0, 3)  # Output table
     vecTemp <- rep(0, 3)
     
-    for (i in 1:1000) {
+    for (i in 1:nruns) {
       # Fill in the elements of the current vector in the table
       vecTemp[1] <- i
       if (i == 1) {

@@ -11,7 +11,8 @@ make_kobetable_SAC11(
   STD_only = TRUE,
   newSS,
   FlimitPath,
-  DynamicPath
+  DynamicPath,
+  nruns = 1000
 )
 }
 \description{
