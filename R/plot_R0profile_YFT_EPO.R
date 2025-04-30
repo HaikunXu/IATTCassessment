@@ -20,10 +20,10 @@ plot_R0profile_YFT_EPO = function(Path, R0, R0_MLE, Fleet_comps = 1:37) {
     myreplist = r4ss::SS_output(dir = paste0(Path,toString(R0[n])),covar = F,verbose = FALSE, printstats = FALSE)
     print(n/N)
 
-    NLL_a[n,c(1,2,5)] <- myreplist$likelihoods_used$values[c(1,4,7)]
+    NLL_a[n,c(1,2,5)] <- myreplist$likelihoods_used$values[c(1,4,8)]
     NLL_a[n,3] <- myreplist$likelihoods_by_fleet[10,2] # PS fishery comps
     # NLL_a[n,4] <- sum(myreplist$likelihoods_by_fleet[18,26:39]) # LL fishery comps
-    NLL_a[n,4] <- myreplist$likelihoods_by_fleet[16,40]
+    NLL_a[n,4] <- myreplist$likelihoods_by_fleet[20,40]
     
     NLL_temp <- myreplist$likelihoods_by_fleet
     for(c in 1:length(Fleet_comps)) {
