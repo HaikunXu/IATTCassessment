@@ -4,7 +4,7 @@
 #' 
 #' @export
 
-make_kobetable_SAC11 <- function(Path, KobePath, FFleets, STD_only = TRUE, newSS, FlimitPath, DynamicPath, nruns = 1000) {
+make_kobetable_SAC11 <- function(Path, KobePath, FFleets, STD_only = TRUE, newSS = TRUE, FlimitPath, DynamicPath, nruns = 1000) {
   ##################################################################################################################### STEP 1 - Get time series of BioSmr and SBR from the base case run
   if(STD_only==FALSE) print("change starter file (use par and do not estimate) in KobePath before this section!!!")
   

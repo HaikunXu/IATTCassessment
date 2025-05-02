@@ -71,7 +71,7 @@ impact_plot = function(Dir, n_year, BaseName = "Base", n_fishery, title, proj_ye
     if (step == 4) fishery <- fishery4
     
     Catch1 <- Catch %>% filter(fleet %in% fishery) %>%
-      mutate(catch = ifelse(year > 0, 0, catch))  # change catch to 0
+      mutate(catch = ifelse(year > 0, 0.01, catch))  # change catch to near 0
     Catch2 <- Catch %>% filter((fleet %in% fishery) == FALSE)
     
     Catch_combined <- rbind(Catch1, Catch2)
@@ -93,7 +93,7 @@ impact_plot = function(Dir, n_year, BaseName = "Base", n_fishery, title, proj_ye
     ParFile[Line_initial+5] <- Init_F_16 * sum(Catch[1:20, c(15:19,21:22)+1])/sum(Catch0[1:20, c(15:19,21:22)+1])
     
     # write new par file
-    writeLines(ParFile, ParDir)
+    # writeLines(ParFile, ParDir)
     
     # run the SS model
     setwd(paste0(Dir, step_name[step]))

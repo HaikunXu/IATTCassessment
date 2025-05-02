@@ -9,7 +9,7 @@ make_kobetable_SAC11(
   KobePath,
   FFleets,
   STD_only = TRUE,
-  newSS,
+  newSS = TRUE,
   FlimitPath,
   DynamicPath,
   nruns = 1000

@@ -58,7 +58,7 @@ makeManagTable.new <- function(Path, FFleets, FlimitPath, dMSYPath) {
     Szero<- as.numeric(ForeDat[ForeDat[, 1] == c("SSB_unfished(Bmark)"),2])
     # CrecentMsy <- Crecent/msy
     # Brecent/Bmsy
-    SrecentSzero <- Srecent/Szero
+    # SrecentSzero <- Srecent/Szero
     # S recent/Smsy
     SrecentSmsy <- Srecent/Smsy
     
@@ -84,7 +84,10 @@ makeManagTable.new <- function(Path, FFleets, FlimitPath, dMSYPath) {
     
     Fmult <- 1/FrecentFmsy
     
-    # Fmult_std <- FrecentFmsy_std / FrecentFmsy ^2 # std(1/x) = std(x)/x^2
+    # get the std of Srecent/S0; 5/1/2025
+    SrecentS0_line <- which(STD$name=="depletion")[endYr-startYr+2] # the first forecast year
+    SrecentS0 <- STD$value[SrecentS0_line]
+    SrecentS0_std <- STD$std[SrecentS0_line]
     
     ### carolina's code to add S0_dynamic
     RepName <- paste0(Path, "Report.sso")
@@ -190,7 +193,7 @@ makeManagTable.new <- function(Path, FFleets, FlimitPath, dMSYPath) {
     RowNames <- c("msy", "msy_d", "Smsy", "Srecent/Szero", "Smsy/Szero", "Crecent/msy_d", "Brecent/Bmsy",
                   "Srecent/Smsy", "Fmultiplier","Szero", "Szero_dynamic","Srecent/dSmsy","Srecent/Slim",
                   "P(Srecent<Slim)", "Frecent/Fmsy", "Frecent/Fmsy std","Frecent/Flim","P(Frecent>Flim)",
-                  "Srecent/dS0","P(Srecent<Starget)","P(Frecent>Ftarget)", "Srecent/Slimit std","Frecent/Flimit std")
+                  "Srecent/dS0","P(Srecent<Starget)","P(Frecent>Ftarget)", "Srecent/Slimit std","Frecent/Flimit std", "Srecent/Szero std")
     
     ManagTable <- matrix(NA, length(RowNames), 2)
     ManagTable <- data.frame(ManagTable)
@@ -200,7 +203,7 @@ makeManagTable.new <- function(Path, FFleets, FlimitPath, dMSYPath) {
     ManagTable[1, 2] <- format(msy)
     ManagTable[2, 2] <- format(msy_d)
     ManagTable[3, 2] <- format(Smsy, digits = 1)
-    ManagTable[4, 2] <- format(SrecentSzero, digits = 8, nsmall = 8)
+    ManagTable[4, 2] <- format(SrecentS0, digits = 8, nsmall = 8)
     ManagTable[5, 2] <- format(SmsySzero, digits = 8, nsmall = 8)
     ManagTable[6, 2] <- format(CrecentMsy, digits = 8, nsmall = 8)
     ManagTable[7, 2] <- format(NA, digits = 8, nsmall = 8)
@@ -220,7 +223,8 @@ makeManagTable.new <- function(Path, FFleets, FlimitPath, dMSYPath) {
     ManagTable[21, 2] <- format(Prob_Ftarget, digits = 8, nsmall = 8)
     ManagTable[22, 2] <- format(SrecentSlim_std, digits = 8, nsmall = 8)
     ManagTable[23, 2] <- format(FrecentFlim_std, digits = 8, nsmall = 8)
-
+    ManagTable[24, 2] <- format(SrecentS0_std, digits = 8, nsmall = 8)
+    
     Out <- list(Fvector = Fvector, FmultScale = FmultScale, ManagTable = ManagTable)
     
     return(Out)
