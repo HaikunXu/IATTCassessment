@@ -4,7 +4,7 @@
 #' 
 #' @export
 
-makeManagTable.new <- function(Path, FFleets, FlimitPath, dMSYPath) {
+makeManagTable.new <- function(Path, FFleets, FlimitPath, dMSYPath, F30Path = NA) {
     replist <- r4ss::SS_output(dir = Path, covar = T, printstats = F, verbose = FALSE)
     TimeSeries <- replist$timeseries
     # numFleets <- replist$nfleets # all fleets including surveys
@@ -115,6 +115,7 @@ makeManagTable.new <- function(Path, FFleets, FlimitPath, dMSYPath) {
     
     Prob_Slimit <- pnorm(1,SrecentSlim,SrecentSlim_std) # P(Scur<Slimit)
     
+    
     # Get Frecent/Flimit (5/5/2020)
     STD <- read.table(file = paste0(FlimitPath,"ss3.std"),skip = 1)
     names(STD) <- c("index", "name", "value", "std")
@@ -122,17 +123,23 @@ makeManagTable.new <- function(Path, FFleets, FlimitPath, dMSYPath) {
     FrecentFlim_line <- which(STD$name=="F_std")[endYr-startYr+1] # the last 12 quarters
     FrecentFlim <- STD$value[FrecentFlim_line]
     FrecentFlim_std <- STD$std[FrecentFlim_line]
-    
-    # png(paste0(Path,"FrecentFlim.png"),width = 500, height =500)  
-    # plot(seq(0,2*FrecentFlim,0.01),pnorm(seq(0,2*FrecentFlim,0.01),FrecentFlim,FrecentFlim_std),
-    #      main = "FrecentFlim(+-std)",xlab="Frecent/Flim",ylab="P(Fcur>Flimit)")
-    # abline(v=FrecentFlim)
-    # abline(v=FrecentFlim-FrecentFlim_std,lty="dashed")
-    # abline(v=FrecentFlim+FrecentFlim_std,lty="dashed")
-    # abline(v=1,col="red")
-    # dev.off()
-    
     Prob_Flimit <- 1 - pnorm(1,FrecentFlim,FrecentFlim_std) # P(Fcur>Flimit)
+    
+    
+    # Get Frecent/F30% (5/6/2025)
+    if(is.na(F30Path) == TRUE) {
+      FrecentF30 <- NA
+      FrecentF30_std <- NA
+    }
+    else {
+      STD <- read.table(file = paste0(F30Path,"ss3.std"),skip = 1)
+      names(STD) <- c("index", "name", "value", "std")
+      
+      FrecentF30_line <- which(STD$name=="F_std")[endYr-startYr+1] # the last 12 quarters
+      FrecentF30 <- STD$value[FrecentF30_line]
+      FrecentF30_std <- STD$std[FrecentF30_line]
+    }
+    
     
     ### dynamic SMSY (5/13/2020); from function makeManagTable.new
     Dynamic.rep <- r4ss::SS_output(dir = dMSYPath, covar = F, verbose = F, printstats = F)  # dyanmic Smsy
@@ -193,7 +200,8 @@ makeManagTable.new <- function(Path, FFleets, FlimitPath, dMSYPath) {
     RowNames <- c("msy", "msy_d", "Smsy", "Srecent/Szero", "Smsy/Szero", "Crecent/msy_d", "Brecent/Bmsy",
                   "Srecent/Smsy", "Fmultiplier","Szero", "Szero_dynamic","Srecent/dSmsy","Srecent/Slim",
                   "P(Srecent<Slim)", "Frecent/Fmsy", "Frecent/Fmsy std","Frecent/Flim","P(Frecent>Flim)",
-                  "Srecent/dS0","P(Srecent<Starget)","P(Frecent>Ftarget)", "Srecent/Slimit std","Frecent/Flimit std", "Srecent/Szero std")
+                  "Srecent/dS0","P(Srecent<Starget)","P(Frecent>Ftarget)", "Srecent/Slimit std","Frecent/Flimit std", "Srecent/Szero std",
+                  "FrecentF30", "FrecentF30_std")
     
     ManagTable <- matrix(NA, length(RowNames), 2)
     ManagTable <- data.frame(ManagTable)
@@ -224,6 +232,8 @@ makeManagTable.new <- function(Path, FFleets, FlimitPath, dMSYPath) {
     ManagTable[22, 2] <- format(SrecentSlim_std, digits = 8, nsmall = 8)
     ManagTable[23, 2] <- format(FrecentFlim_std, digits = 8, nsmall = 8)
     ManagTable[24, 2] <- format(SrecentS0_std, digits = 8, nsmall = 8)
+    ManagTable[25, 2] <- format(FrecentF30, digits = 8, nsmall = 8)
+    ManagTable[26, 2] <- format(FrecentF30_std, digits = 8, nsmall = 8)
     
     Out <- list(Fvector = Fvector, FmultScale = FmultScale, ManagTable = ManagTable)
     
