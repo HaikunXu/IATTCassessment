@@ -4,7 +4,7 @@
 #' 
 #' @export
 
-make_kobetable_SAC11 <- function(Path, KobePath, FFleets, STD_only = TRUE, newSS = TRUE, FlimitPath, DynamicPath, nruns = 1000) {
+make_kobetable_SAC11 <- function(Path, KobePath, FFleets, STD_only = TRUE, newSS = TRUE, FlimitPath, DynamicPath, nruns = 1000, F30Path = NA) {
   ##################################################################################################################### STEP 1 - Get time series of BioSmr and SBR from the base case run
   if(STD_only==FALSE) print("change starter file (use par and do not estimate) in KobePath before this section!!!")
   
@@ -95,7 +95,7 @@ make_kobetable_SAC11 <- function(Path, KobePath, FFleets, STD_only = TRUE, newSS
       F_mult_high <- F_mult_last+1.96*F_mult_recentSD
     }
     else {
-      Table <- makeManagTable.new(Path, FFleets = FFleets, FlimitPath, DynamicPath)
+      Table <- makeManagTable.new(Path, FFleets = FFleets, FlimitPath, DynamicPath, F30Path)
       # STD_Table <- data.frame(read.table(file = paste0(Path,"ss.std"),header = TRUE))
       print("************do use the new ss************")
       FrecentFmsy <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="Frecent/Fmsy")])
@@ -106,12 +106,49 @@ make_kobetable_SAC11 <- function(Path, KobePath, FFleets, STD_only = TRUE, newSS
       SrecentdSmsy_std <- SrecentdSmsy * FrecentFmsy_std / FrecentFmsy # assume that CV(SrecentdSmsy)=CV(FrecentFmsy)
       SrecentdSmsy_low <- SrecentdSmsy-1.96*SrecentdSmsy_std
       SrecentdSmsy_high <- SrecentdSmsy+1.96*SrecentdSmsy_std
+      
+      if(is.na(F30Path) == FALSE) {
+        # add F and SB 30% quantities; 5/7/2025
+        FrecentF30 <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="FrecentF30")])
+        FrecentF30_std <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="FrecentF30_std")])
+        FrecentF30_low <- FrecentF30-1.96*FrecentF30_std
+        FrecentF30_high <- FrecentF30+1.96*FrecentF30_std
+        SrecentdS30 <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="Srecent/dS0")]) / 0.3
+        SrecentdS30_std <- SrecentdS30 * FrecentF30_std / FrecentF30
+        SrecentdS30_low <- SrecentdS30-1.96*SrecentdS30_std
+        SrecentdS30_high <- SrecentdS30+1.96*SrecentdS30_std
+      }
+      
+      # add F and SB MSY quantities; 5/7/2025
+      FrecentFlimit <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="Frecent/Flim")])
+      FrecentFlimit_std <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="Frecent/Flimit std")])
+      FrecentFlimit_low <- FrecentFlimit-1.96*FrecentFlimit_std
+      FrecentFlimit_high <- FrecentFlimit+1.96*FrecentFlimit_std
+      SrecentSlimit <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="Srecent/Slim")])
+      SrecentSlimit_std <- as.numeric(Table$ManagTable$val[which(Table$ManagTable$quant=="Srecent/Slimit std")])
+      SrecentSlimit_low <- SrecentSlimit-1.96*SrecentSlimit_std
+      SrecentSlimit_high <- SrecentSlimit+1.96*SrecentSlimit_std
     }
     
     if(newSS==FALSE) STD <- data.frame("Fmultiplier"=c(F_mult_low,F_mult_last,F_mult_high),
                                        "SB"=c(SBR_recent_low,SBR_last,SBR_recent_high))
-    else STD <- data.frame("FrecentFmsy"=c(FrecentFmsy_low,FrecentFmsy,FrecentFmsy_high),
-                           "SB"=c(SrecentdSmsy_low,SrecentdSmsy,SrecentdSmsy_high))
+    else {
+      if(is.na(F30Path) == FALSE) {
+        STD <- data.frame("FrecentFmsy"=c(FrecentFmsy_low,FrecentFmsy,FrecentFmsy_high),
+                          "SrecentdSmsy"=c(SrecentdSmsy_low,SrecentdSmsy,SrecentdSmsy_high),
+                          "FrecentFlimit"=c(FrecentFlimit_low,FrecentFlimit,FrecentFlimit_high),
+                          "SrecentSlimit"=c(SrecentSlimit_low,SrecentSlimit,SrecentSlimit_high),
+                          "FrecentF30"=c(FrecentF30_low,FrecentF30,FrecentF30_high),
+                          "SrecentdS30"=c(SrecentdS30_low,SrecentdS30,SrecentdS30_high))
+      }
+      else {
+        STD <- data.frame("FrecentFmsy"=c(FrecentFmsy_low,FrecentFmsy,FrecentFmsy_high),
+                          "SrecentdSmsy"=c(SrecentdSmsy_low,SrecentdSmsy,SrecentdSmsy_high),
+                          "FrecentFlimit"=c(FrecentFlimit_low,FrecentFlimit,FrecentFlimit_high),
+                          "SrecentSlimit"=c(SrecentSlimit_low,SrecentSlimit,SrecentSlimit_high))
+      }
+      
+    }
     
     Kobe.Out <- list(STD=STD)
   }

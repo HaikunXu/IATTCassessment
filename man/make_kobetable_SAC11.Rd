@@ -12,7 +12,8 @@ make_kobetable_SAC11(
   newSS = TRUE,
   FlimitPath,
   DynamicPath,
-  nruns = 1000
+  nruns = 1000,
+  F30Path = NA
 )
 }
 \description{
