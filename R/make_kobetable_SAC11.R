@@ -134,18 +134,18 @@ make_kobetable_SAC11 <- function(Path, KobePath, FFleets, STD_only = TRUE, newSS
                                        "SB"=c(SBR_recent_low,SBR_last,SBR_recent_high))
     else {
       if(is.na(F30Path) == FALSE) {
-        STD <- data.frame("FrecentFmsy"=c(FrecentFmsy_low,FrecentFmsy,FrecentFmsy_high),
-                          "SrecentdSmsy"=c(SrecentdSmsy_low,SrecentdSmsy,SrecentdSmsy_high),
-                          "FrecentFlimit"=c(FrecentFlimit_low,FrecentFlimit,FrecentFlimit_high),
-                          "SrecentSlimit"=c(SrecentSlimit_low,SrecentSlimit,SrecentSlimit_high),
-                          "FrecentF30"=c(FrecentF30_low,FrecentF30,FrecentF30_high),
-                          "SrecentdS30"=c(SrecentdS30_low,SrecentdS30,SrecentdS30_high))
+        STD <- data.frame("FrecentFmsy"=c(FrecentFmsy,FrecentFmsy_std),
+                          "SrecentdSmsy"=c(SrecentdSmsy,SrecentdSmsy_std),
+                          "FrecentFlimit"=c(FrecentFlimit,FrecentFlimit_std),
+                          "SrecentSlimit"=c(SrecentSlimit,SrecentSlimit_std),
+                          "FrecentF30"=c(FrecentF30,FrecentF30_std),
+                          "SrecentdS30"=c(SrecentdS30,SrecentdS30_std))
       }
       else {
-        STD <- data.frame("FrecentFmsy"=c(FrecentFmsy_low,FrecentFmsy,FrecentFmsy_high),
-                          "SrecentdSmsy"=c(SrecentdSmsy_low,SrecentdSmsy,SrecentdSmsy_high),
-                          "FrecentFlimit"=c(FrecentFlimit_low,FrecentFlimit,FrecentFlimit_high),
-                          "SrecentSlimit"=c(SrecentSlimit_low,SrecentSlimit,SrecentSlimit_high))
+        STD <- data.frame("FrecentFmsy"=c(FrecentFmsy,FrecentFmsy_std),
+                          "SrecentdSmsy"=c(SrecentdSmsy,SrecentdSmsy_std),
+                          "FrecentFlimit"=c(FrecentFlimit,FrecentFlimit_std),
+                          "SrecentSlimit"=c(SrecentSlimit,SrecentSlimit_std))
       }
       
     }
