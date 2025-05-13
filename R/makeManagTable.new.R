@@ -140,6 +140,20 @@ makeManagTable.new <- function(Path, FFleets, FlimitPath, dMSYPath, F30Path = NA
       FrecentF30_std <- STD$std[FrecentF30_line]
     }
     
+    # Get Srecent/S30% (5/6/2025)
+    if(is.na(F30Path) == TRUE) {
+      SrecentS30 <- NA
+      SrecentS30_std <- NA
+    }
+    else {
+      STD <- read.table(file = paste0(F30Path,"ss3.std"),skip = 1)
+      names(STD) <- c("index", "name", "value", "std")
+      
+      SrecentS30_line <- which(STD$name=="depletion")[endYr-startYr+2] # the first forecast year
+      SrecentS30 <- STD$value[SrecentS30_line]
+      SrecentS30_std <- STD$std[SrecentS30_line]
+    }
+    
     
     ### dynamic SMSY (5/13/2020); from function makeManagTable.new
     Dynamic.rep <- r4ss::SS_output(dir = dMSYPath, covar = F, verbose = F, printstats = F)  # dyanmic Smsy
@@ -201,7 +215,7 @@ makeManagTable.new <- function(Path, FFleets, FlimitPath, dMSYPath, F30Path = NA
                   "Srecent/Smsy", "Fmultiplier","Szero", "Szero_dynamic","Srecent/dSmsy","Srecent/Slim",
                   "P(Srecent<Slim)", "Frecent/Fmsy", "Frecent/Fmsy std","Frecent/Flim","P(Frecent>Flim)",
                   "Srecent/dS0","P(Srecent<Starget)","P(Frecent>Ftarget)", "Srecent/Slimit std","Frecent/Flimit std", "Srecent/Szero std",
-                  "FrecentF30", "FrecentF30_std")
+                  "FrecentF30", "FrecentF30_std","SrecentS30", "SrecentS30_std")
     
     ManagTable <- matrix(NA, length(RowNames), 2)
     ManagTable <- data.frame(ManagTable)
@@ -234,6 +248,8 @@ makeManagTable.new <- function(Path, FFleets, FlimitPath, dMSYPath, F30Path = NA
     ManagTable[24, 2] <- format(SrecentS0_std, digits = 8, nsmall = 8)
     ManagTable[25, 2] <- format(FrecentF30, digits = 8, nsmall = 8)
     ManagTable[26, 2] <- format(FrecentF30_std, digits = 8, nsmall = 8)
+    ManagTable[27, 2] <- format(SrecentS30, digits = 8, nsmall = 8)
+    ManagTable[28, 2] <- format(SrecentS30_std, digits = 8, nsmall = 8)
     
     Out <- list(Fvector = Fvector, FmultScale = FmultScale, ManagTable = ManagTable)
     
