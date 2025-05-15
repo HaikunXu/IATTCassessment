@@ -12,14 +12,13 @@
 
 impact_plot = function(Dir, n_year, BaseName = "Base", n_fishery, title, proj_year = 0) {
   
-  step_name <- c("noDisc", "noPS", "noLL", "noF")
+  step_name <- c("noDisc", "noPS", "noLL")
   n_step <- length(step_name)
   
   fishery1 <- 20 # discard fishery fleet
   fishery2 <- c(15:19,21:22) # PS fishery fleet
   fishery3 <- seq(1,14) # LL fishery fleets
-  fishery4 <- seq(1,22) # all fleets
-  
+
   print("change starter file (use par and do not estimate) before this section!!!")
   
   # step = 0; read base-case catch data
@@ -68,8 +67,7 @@ impact_plot = function(Dir, n_year, BaseName = "Base", n_fishery, title, proj_ye
     if (step == 1) fishery <- fishery1
     if (step == 2) fishery <- fishery2
     if (step == 3) fishery <- fishery3
-    if (step == 4) fishery <- fishery4
-    
+
     Catch1 <- Catch %>% filter(fleet %in% fishery) %>%
       mutate(catch = ifelse(year > 0, 0.01, catch))  # change catch to near 0
     Catch2 <- Catch %>% filter((fleet %in% fishery) == FALSE)
@@ -116,13 +114,10 @@ impact_plot = function(Dir, n_year, BaseName = "Base", n_fishery, title, proj_ye
   Dir4 <- paste0(Dir, step_name[3])
   myreplist4 = r4ss::SS_output(dir = Dir4, covar = F, printstats = F, verbose = FALSE)
   
-  Dir5 <- paste0(Dir, step_name[4])
-  myreplist5 = r4ss::SS_output(dir = Dir5, covar = F, printstats = F, verbose = FALSE)
-  
   SB_dif <- data.frame(
     Year = myreplist1$timeseries$Yr[4:(n_year + 2 + proj_year)],
     SB = myreplist1$timeseries$SpawnBio[4:(n_year + 2 + proj_year)],
-    SB0 = myreplist5$timeseries$SpawnBio[4:(n_year + 2 + proj_year)],
+    SB0 = myreplist1$Dynamic_Bzero$SSB_nofishing[4:(n_year + 2 + proj_year)],
     noDisc = myreplist2$timeseries$SpawnBio[4:(n_year + 2 + proj_year)] - 
       myreplist1$timeseries$SpawnBio[4:(n_year + 2 + proj_year)],
     noPS = myreplist3$timeseries$SpawnBio[4:(n_year + 2 + proj_year)] -
