@@ -7,5 +7,5 @@
 get_jitter_results(Dir, njitters)
 }
 \description{
-\code{get_jitter_results} This function generates an area code for longline catch allocation
+\code{get_jitter_results} This function make jitter plots
 }

@@ -5,10 +5,10 @@
 #' @export
 #' 
 
-Path <- c("C:/Users/hkxu/OneDrive - IATTC/IATTC/2020/BET research/EPO/R-DN",
-          "C:/Users/hkxu/OneDrive - IATTC/IATTC/2020/BET research/EPO/R-Spline")
-FleetNums <- c(1,2,3,4,5,6)
-Legend <- c("R-DN","R-Spline")
+# Path <- c("C:/Users/hkxu/OneDrive - IATTC/IATTC/2020/BET research/EPO/R-DN",
+#           "C:/Users/hkxu/OneDrive - IATTC/IATTC/2020/BET research/EPO/R-Spline")
+# FleetNums <- c(1,2,3,4,5,6)
+# Legend <- c("R-DN","R-Spline")
 
 CompareSelex <- function(Path, FleetNums, Legend)
 {

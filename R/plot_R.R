@@ -51,11 +51,20 @@ plot_R = function(SS_Dir, lyear, fyear, legend, Save_Dir, ymax = 2, figure_name 
     #     coord_cartesian(ylim = c(0,ymax[1]),xlim=xlim,expand = FALSE) + ggtitle(title) + theme(plot.title = element_text(hjust = 0.5))
 
     
-    f2 <- ggplot(data = R_A) + geom_ribbon(aes(x = year, ymin = R * exp(-1.96 * STD), ymax = R * exp(1.96 * STD), fill = Spec), alpha=alpha) +
-        geom_line(aes(x = year, y = R, color = Spec), size = 1) + geom_point(aes(x = year, y = R, color = Spec),size=3) +
-        theme_bw(20) + xlab("") + ylab("") + geom_hline(yintercept = 1, linetype = "dashed") +
-        coord_cartesian(ylim = c(0,ymax),xlim=xlim,expand = FALSE) + ggtitle(title) + theme(plot.title = element_text(hjust = 0.5))
-
+    f2 <- ggplot(data = R_A) +
+      geom_errorbar(aes(
+        x = year,
+        ymin = R * exp(-STD),
+        ymax = R * exp(STD),
+        color = Spec
+      ), alpha = alpha) +
+      geom_line(aes(x = year, y = R, color = Spec), size = 1) +
+      geom_point(aes(x = year, y = R, color = Spec), size = 3) +
+      theme_bw(20) + xlab("") + ylab("") + geom_hline(yintercept = 1, linetype = "dashed") +
+      coord_cartesian(ylim = c(0, ymax),
+                      xlim = xlim,
+                      expand = FALSE) + ggtitle(title) + theme(plot.title = element_text(hjust = 0.5))
+    
         # f_all <- gridExtra::grid.arrange(f1, f2, nrow = 2)
     ggsave(f2, file = paste0(Save_Dir, figure_name, "-R.png"), width = 12, height = 8)
     ggsave(f2, file = paste0(Save_Dir, figure_name, "-R.pdf"), width = 12, height = 8)
