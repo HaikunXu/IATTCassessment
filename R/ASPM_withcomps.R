@@ -49,28 +49,29 @@ ASPM_withcomps = function(Path, ASPM_Path, Rdevs, comp_fleet, Hessian = FALSE, d
   # Loop through the size selectivity parameters and modify for the fleets_to_disable
   for (i in 1:nrow(ctl$size_selex_parms)) {
     # If the fleet is in the fleets_to_disable, turn off its selectivity
-    if (all_fleets[i] %in% comp_fleet == FALSE) 
+    if (all_fleets[i] %in% comp_fleet == FALSE) {
       # Set phase to a negative value
       ctl$size_selex_parms$PHASE[i] <- -1  # Or another value depending on the desired effect
-    
+    }
   }
+  
+  #get a vector with the fleet number for each selectivity parameter
+  n<-nrow(ctl$size_selex_parms_tv)
+  all_fleets<-vector(length=n)
+  for(i in 1:nrow(ctl$size_selex_parms_tv)) all_fleets[i]<-as.numeric(gsub(".*\\((\\d+)\\).*", "\\1", rownames(ctl$size_selex_parms_tv[i,])))
+  
+  # Loop through the size selectivity parameters and modify for the fleets_to_disable
+  for (i in 1:nrow(ctl$size_selex_parms_tv)) {
+    # If the fleet is in the fleets_to_disable, turn off its selectivity
+    if (all_fleets[i] %in% comp_fleet == FALSE) {
+      # Set phase to a negative value
+      ctl$size_selex_parms_tv$PHASE[i] <- -1  # Or another value depending on the desired effect
+    }
+  }
+  
+  # ctl$size_selex_parms_tv$PHASE[i] <- -1
   
   # turn off time-varying selectivity
-  ctl$size_selex_parms_tv$PHASE <- -1
-  
-  # added on April 14 2025
-  #get a vector with the fleet number for each selectivity parameter
-  n<-nrow(ctl$age_selex_parms)
-  all_fleets<-vector(length=n)
-  for(i in 1:nrow(ctl$age_selex_parms)) all_fleets[i]<-as.numeric(gsub(".*\\((\\d+)\\).*", "\\1", rownames(ctl$age_selex_parms[i,])))
-  
-  for (i in 1:nrow(ctl$age_selex_parms)) {
-    # If the fleet is in the fleets_to_disable, turn off its selectivity
-    if (all_fleets[i] %in% comp_fleet == FALSE) 
-      # Set phase to a negative value
-      ctl$age_selex_parms$PHASE[i] <- -1   # Or another value depending on the desired effect
-    
-  }
 
   # no R devs and R regime shift for ASPM
   if (Rdevs == FALSE) {
