@@ -21,11 +21,11 @@ Fmult = function(Path) {
   FvectorRepStart <- grep("Seasonal_apicalF=Fmult", readLines(ForeRepName))
   Fvector <- read.table(file = ForeRepName, nrows = 1, skip = FvectorRepStart[1] + 1)
   Fvector <- Fvector[3:length(Fvector)]
-  FmultScale <- sum(Fvector)
+  FmultScale <- sum(Fvector) # F
   
   # # Fmultiplier
-  Fmult <- as.numeric(ForeDat[ForeDat[, 1] == c("Fmult"), 2])[3]
-  Fmult <- Fmult/FmultScale
+  Fmult <- as.numeric(ForeDat[ForeDat[, 1] == c("Fmult"), 2])[3] # FMSY
+  Fmult <- Fmult/FmultScale # FMSY/F
   
   return(Fmult)
 }
